@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">HomeWorkOne</string>
+    <string name="contacts">Контакты</string>
+    <string name="load_contacts">Загрузить контакты</string>
+    <string name="loading_contacts">Загрузка контактов</string>
+    <string name="permission_description_error">Для загрузки контактов необходимо разрешение на их чтение</string>
+    <string name="repeat_request">Повторить запрос</string>
+    <string name="cancel">Отмена</string>
 </resources>
