@@ -3,10 +3,12 @@ package ru.fasdev.homeworkone.data.contacts
 import android.content.Context
 import android.net.Uri
 import android.provider.ContactsContract
+import android.telephony.PhoneNumberUtils
 import ru.fasdev.homeworkone.data.contacts.model.Contact
 import ru.fasdev.homeworkone.feature.getValue
 import ru.fasdev.homeworkone.feature.getValueOrNull
 import ru.fasdev.homeworkone.feature.wrapUse
+import java.util.*
 
 class ContactsRepoImpl(context: Context): ContactsRepo
 {
@@ -41,9 +43,14 @@ class ContactsRepoImpl(context: Context): ContactsRepo
         return arrayContacts
     }
 
-    private fun getPhone(lookupKey: String): String =
-            queryOneValue(lookupKey,
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PHONE_COLUMN)
+    private fun getPhone(lookupKey: String): String {
+        val phone = queryOneValue(lookupKey,
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PHONE_COLUMN)
+
+        return PhoneNumberUtils.formatNumber(queryOneValue(lookupKey,
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PHONE_COLUMN),
+            Locale.getDefault().country) ?: phone
+    }
 
     private fun getEmail(lookupKey: String): String =
             queryOneValue(lookupKey,
