@@ -12,6 +12,10 @@ import ru.fasdev.homeworkone.databinding.ActivityFirstBinding
 import ru.fasdev.homeworkone.ui.adapter.contact.ContactsRvAdapter
 
 class FirstActivity : AppCompatActivity() {
+    companion object {
+        const val KEY_CONTACTS = "contacts"
+    }
+
     private lateinit var binding: ActivityFirstBinding
 
     private val startResultSecondActivity =
@@ -19,10 +23,11 @@ class FirstActivity : AppCompatActivity() {
             when (it.resultCode) {
                 RESULT_OK -> {
                     val intent = it.data
-                    val array = intent?.getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
+                    val array = intent?.
+                        getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
 
                     array?.let {
-                        adapter.update(it)
+                        contactsList = it
                     }
                 }
             }
@@ -30,14 +35,24 @@ class FirstActivity : AppCompatActivity() {
 
     private val adapter: ContactsRvAdapter = ContactsRvAdapter()
 
+    private var contactsList: List<Contact> = listOf()
+        set(value) {
+            field = value
+            adapter.update(value)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        savedInstanceState?.getParcelableArrayList<Contact>(KEY_CONTACTS)?.let {
+            contactsList = it
+        }
+
+        if (contactsList.isEmpty())
+            toLoadContacts()
+
         binding = ActivityFirstBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.nextBtn.setOnClickListener {
-            startResultSecondActivity.launch(Intent(this, SecondActivity::class.java))
-        }
 
         binding.toolbarLayout.toolbar.apply {
             title = resources.getString(R.string.contacts)
@@ -52,5 +67,21 @@ class FirstActivity : AppCompatActivity() {
             layoutManager.orientation)
 
         binding.listContacts.addItemDecoration(dividerItemDecoration)
+
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+            toLoadContacts()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.apply {
+            putParcelableArrayList(KEY_CONTACTS, ArrayList(contactsList))
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun toLoadContacts() {
+        startResultSecondActivity.launch(Intent(this, SecondActivity::class.java))
     }
 }

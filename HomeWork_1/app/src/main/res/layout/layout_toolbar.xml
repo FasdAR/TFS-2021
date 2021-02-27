@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.appbar.MaterialToolbar
-        style="@style/Widget.Thrift.Toolbar"
+        style="@style/Widget.HomeWorkOne.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:id="@+id/toolbar" />

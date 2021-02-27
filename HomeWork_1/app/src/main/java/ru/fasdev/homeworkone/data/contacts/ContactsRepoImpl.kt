@@ -1,9 +1,11 @@
 package ru.fasdev.homeworkone.data.contacts
 
 import android.content.Context
+import android.net.Uri
 import android.provider.ContactsContract
-import androidx.core.database.getStringOrNull
 import ru.fasdev.homeworkone.data.contacts.model.Contact
+import ru.fasdev.homeworkone.feature.getValue
+import ru.fasdev.homeworkone.feature.getValueOrNull
 import ru.fasdev.homeworkone.feature.wrapUse
 
 class ContactsRepoImpl(context: Context): ContactsRepo
@@ -16,24 +18,20 @@ class ContactsRepoImpl(context: Context): ContactsRepo
         const val EMAIL_COLUMN = ContactsContract.CommonDataKinds.Email.ADDRESS
     }
 
-    private val contactsProjection = arrayOf(DISPLAY_NAME_COLUMN, LOOK_UP_COLUMN)
-
     private val contentResolver = context.contentResolver
 
     override fun getContacts(): List<Contact>
     {
-        val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, contactsProjection,
+        val cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
+                arrayOf(DISPLAY_NAME_COLUMN, LOOK_UP_COLUMN),
             null, null, null)
 
         val arrayContacts: MutableList<Contact> = mutableListOf()
 
         cursor.wrapUse { cursor ->
             while (cursor.moveToNext()) {
-                val displayNameIndex = cursor.getColumnIndex(DISPLAY_NAME_COLUMN)
-                val lookUpIndex = cursor.getColumnIndex(LOOK_UP_COLUMN)
-
-                val nameContact = cursor.getString(displayNameIndex)
-                val lookUpContact = cursor.getString(lookUpIndex)
+                val nameContact = cursor.getValue(DISPLAY_NAME_COLUMN)
+                val lookUpContact = cursor.getValue(LOOK_UP_COLUMN)
 
                 arrayContacts.add(Contact(lookUpContact, nameContact,
                     getPhone(lookUpContact), getEmail(lookUpContact)))
@@ -43,39 +41,26 @@ class ContactsRepoImpl(context: Context): ContactsRepo
         return arrayContacts
     }
 
-    private fun getPhone(lookupKey: String): String {
-        val cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-            arrayOf(PHONE_COLUMN), "${ContactsContract.Data.LOOKUP_KEY} = ?",
-            arrayOf(lookupKey), null)
+    private fun getPhone(lookupKey: String): String =
+            queryOneValue(lookupKey,
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PHONE_COLUMN)
 
-        var phoneContact = ""
+    private fun getEmail(lookupKey: String): String =
+            queryOneValue(lookupKey,
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI, EMAIL_COLUMN)
 
-        cursor.wrapUse {
-            while (it.moveToNext()) {
-                val phoneIndex = it.getColumnIndex(PHONE_COLUMN)
+    private fun queryOneValue(lookupKey: String, uri: Uri, projection: String): String {
+        val cursor = contentResolver.query(uri, arrayOf(projection), "${ContactsContract.Data.LOOKUP_KEY} = ?",
+        arrayOf(lookupKey), null)
 
-                phoneContact = it.getStringOrNull(phoneIndex) ?: ""
-            }
-        }
-
-        return phoneContact
-    }
-
-    private fun getEmail(lookupKey: String): String {
-        val cursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-            arrayOf(EMAIL_COLUMN), "${ContactsContract.Data.LOOKUP_KEY} = ?",
-            arrayOf(lookupKey), null)
-
-        var emailContact = ""
+        var value = ""
 
         cursor.wrapUse {
             while (it.moveToNext()) {
-                val emailIndex = it.getColumnIndex(EMAIL_COLUMN)
-
-                emailContact = it.getStringOrNull(emailIndex) ?: ""
+                value = it.getValueOrNull(projection) ?: ""
             }
         }
 
-        return emailContact
+        return value
     }
 }

@@ -11,13 +11,13 @@
         <item name="android:statusBarColor">@color/main_black_gray_900</item>
         <item name="android:windowBackground">@color/main_white_50</item>
 
-        <item name="textAppearanceButton">@style/TextAppearance.Thrift.Button</item>
-        <item name="materialButtonStyle">@style/Widget.Thrift.Button.UnelevatedButton</item>
+        <item name="textAppearanceButton">@style/TextAppearance.HomeWorkOne.Button</item>
+        <item name="materialButtonStyle">@style/Widget.HomeWorkOne.Button.UnelevatedButton</item>
     </style>
 
     <style name="Theme.HomeWorkOne.Main" parent="Theme.HomeWorkOne.Base"/>
 
-    <style name="ThemeOverlay.Thrift.RecyclerView" parent="Widget">
+    <style name="ThemeOverlay.HomeWorkOne.RecyclerView" parent="Widget">
         <item name="android:colorEdgeEffect">@color/main_teal_400</item>
     </style>
 </resources>

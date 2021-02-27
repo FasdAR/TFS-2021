@@ -23,12 +23,10 @@ class SecondActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
+        if (isGranted)
             startSyncContacts()
-        }
-        else {
+        else
             toRequestPermissionState()
-        }
     }
 
     private val localBroadcastReceiver = SyncContactsBroadcastReceiver(this)
