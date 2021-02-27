@@ -1,9 +1,9 @@
 package ru.fasdev.homeworkone.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,8 +24,8 @@ class FirstActivity : AppCompatActivity() {
             when (it.resultCode) {
                 RESULT_OK -> {
                     val intent = it.data
-                    val array = intent?.
-                        getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
+                    val array = intent
+                        ?.getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
 
                     array?.let {
                         contactsList = it
@@ -34,7 +34,7 @@ class FirstActivity : AppCompatActivity() {
                     checkState()
                 }
             }
-    }
+        }
 
     private val adapter: ContactsRvAdapter = ContactsRvAdapter()
 
@@ -66,8 +66,10 @@ class FirstActivity : AppCompatActivity() {
         binding.listContacts.layoutManager = layoutManager
         binding.listContacts.adapter = adapter
 
-        val dividerItemDecoration = DividerItemDecoration(this,
-            layoutManager.orientation)
+        val dividerItemDecoration = DividerItemDecoration(
+            this,
+            layoutManager.orientation
+        )
 
         binding.listContacts.addItemDecoration(dividerItemDecoration)
 
@@ -101,7 +103,7 @@ class FirstActivity : AppCompatActivity() {
             toBusyState()
     }
 
-    //#region Ui State
+    // #region Ui State
     private fun toEmptyState() {
         binding.emptyContacts.isVisible = true
         binding.listContacts.isVisible = false
@@ -111,5 +113,5 @@ class FirstActivity : AppCompatActivity() {
         binding.emptyContacts.isVisible = false
         binding.listContacts.isVisible = true
     }
-    //#endregion
+    // #endregion
 }

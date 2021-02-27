@@ -16,51 +16,23 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Редников Андрей"/>
 
-    <LinearLayout
+    <TextView
+        style="@style/Widget.HomeWorkOne.Text.Contact.ItemRow.Desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:id="@+id/phone"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableLeftCompat="@drawable/ic_baseline_phone"
+        tools:text="+7 885 02 06 08" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_baseline_phone"/>
-
-        <TextView
-            style="@style/Widget.HomeWorkOne.Text.Contact.ItemRow.Desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/phone_text"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="+7 885 02 06 08"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
+        style="@style/Widget.HomeWorkOne.Text.Contact.ItemRow.Desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:id="@+id/email"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_baseline_email"/>
-
-        <TextView
-            style="@style/Widget.HomeWorkOne.Text.Contact.ItemRow.Desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/email_text"
-            android:layout_marginStart="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="andreyrednikov@gmail.com"/>
-
-    </LinearLayout>
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableLeftCompat="@drawable/ic_baseline_email"
+        tools:text="andreyrednikov@gmail.com" />
 </LinearLayout>

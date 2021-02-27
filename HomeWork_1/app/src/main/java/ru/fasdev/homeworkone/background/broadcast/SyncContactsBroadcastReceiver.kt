@@ -5,8 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 
-class SyncContactsBroadcastReceiver(private val activity: AppCompatActivity): BroadcastReceiver()
-{
+class SyncContactsBroadcastReceiver(private val activity: AppCompatActivity) : BroadcastReceiver() {
     companion object {
         const val ACTION_CONTACTS = "contacts"
         const val KEY_CONTACTS = "contacts"

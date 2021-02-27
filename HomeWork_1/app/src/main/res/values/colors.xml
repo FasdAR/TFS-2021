@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="main_black_blue_900">#2F3641</color>
     <color name="main_black_gray_900">#191E25</color>
-    <color name="main_gray_600">#627084</color>
-    <color name="main_gray_400">#818EA1</color>
-    <color name="main_gray_300">#E6E6E6</color>
     <color name="main_white_50">#ffffff</color>
-    <color name="main_blue_gray_50">#E6EAEF</color>
-    <color name="main_blue_gray_100">#E8EEF2</color>
     <color name="main_teal_500">#00a688</color>
     <color name="main_teal_400">#21B499</color>
-    <color name="main_teal_100">#B7E3DD</color>
 </resources>

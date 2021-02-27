@@ -7,14 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.homeworkone.R
 import ru.fasdev.homeworkone.data.contacts.model.Contact
 
-class ContactsRvAdapter: RecyclerView.Adapter<ContactsViewHolder>()
-{
+class ContactsRvAdapter : RecyclerView.Adapter<ContactsViewHolder>() {
     private val localData: MutableList<Contact> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
         return ContactsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_contact, parent,
-                false)
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_contact, parent,
+                false
+            )
         )
     }
 
@@ -33,5 +34,4 @@ class ContactsRvAdapter: RecyclerView.Adapter<ContactsViewHolder>()
 
         diffResult.dispatchUpdatesTo(this)
     }
-
 }

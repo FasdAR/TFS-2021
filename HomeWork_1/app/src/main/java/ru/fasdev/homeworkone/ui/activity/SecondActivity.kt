@@ -4,9 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -23,11 +23,11 @@ class SecondActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted)
-            startSyncContacts()
-        else
-            toRequestPermissionState()
-    }
+            if (isGranted)
+                startSyncContacts()
+            else
+                toRequestPermissionState()
+        }
 
     private val localBroadcastReceiver = SyncContactsBroadcastReceiver(this)
 
@@ -45,11 +45,11 @@ class SecondActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        //#region Register Local Receiver
+        // #region Register Local Receiver
         val intentFilter = IntentFilter(SyncContactsBroadcastReceiver.ACTION_CONTACTS)
         LocalBroadcastManager.getInstance(this)
-                .registerReceiver(localBroadcastReceiver, intentFilter)
-        //#endregion
+            .registerReceiver(localBroadcastReceiver, intentFilter)
+        // #endregion
     }
 
     override fun onPause() {
@@ -60,7 +60,8 @@ class SecondActivity : AppCompatActivity() {
 
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED)
+            == PackageManager.PERMISSION_GRANTED
+        )
             startSyncContacts()
         else
             requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
@@ -73,7 +74,7 @@ class SecondActivity : AppCompatActivity() {
         startService(intentService)
     }
 
-    //#region Ui State
+    // #region Ui State
     private fun toLoadingState() {
         binding.permission.isVisible = false
         binding.loading.isVisible = true

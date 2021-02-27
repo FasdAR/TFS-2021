@@ -44,7 +44,8 @@
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@drawable/ic_baseline_error"/>
+            android:src="@drawable/ic_baseline_error"
+            tools:ignore="ContentDescription" />
 
         <TextView
             style="@style/Widget.HomeWorkOne.Text.Description"
