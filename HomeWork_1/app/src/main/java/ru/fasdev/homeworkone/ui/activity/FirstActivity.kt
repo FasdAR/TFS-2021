@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.homeworkone.R
@@ -29,6 +30,8 @@ class FirstActivity : AppCompatActivity() {
                     array?.let {
                         contactsList = it
                     }
+
+                    checkState()
                 }
             }
     }
@@ -74,6 +77,12 @@ class FirstActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        checkState()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.apply {
             putParcelableArrayList(KEY_CONTACTS, ArrayList(contactsList))
@@ -84,4 +93,23 @@ class FirstActivity : AppCompatActivity() {
     private fun toLoadContacts() {
         startResultSecondActivity.launch(Intent(this, SecondActivity::class.java))
     }
+
+    private fun checkState() {
+        if (contactsList.isEmpty())
+            toEmptyState()
+        else
+            toBusyState()
+    }
+
+    //#region Ui State
+    private fun toEmptyState() {
+        binding.emptyContacts.isVisible = true
+        binding.listContacts.isVisible = false
+    }
+
+    private fun toBusyState() {
+        binding.emptyContacts.isVisible = false
+        binding.listContacts.isVisible = true
+    }
+    //#endregion
 }

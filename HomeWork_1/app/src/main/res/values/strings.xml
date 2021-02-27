@@ -6,4 +6,5 @@
     <string name="permission_description_error">Для загрузки контактов необходимо разрешение на их чтение</string>
     <string name="repeat_request">Повторить запрос</string>
     <string name="cancel">Отмена</string>
+    <string name="empty_contacts">Список контактов пустой</string>
 </resources>
