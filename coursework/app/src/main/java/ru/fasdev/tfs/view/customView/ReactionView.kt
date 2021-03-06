@@ -5,7 +5,6 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.util.toDp
 import ru.fasdev.tfs.view.util.toSp
 
 class ReactionView
@@ -14,15 +13,13 @@ class ReactionView
         context: Context,
         attributeSet: AttributeSet? = null,
         defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
+        defStyleRes: Int = R.style.ReactionView
     ): View(context, attributeSet, defStyleAttr, defStyleRes)
 {
     companion object {
         const val DEFAULT_EMOJI = "\uD83D\uDE02"
         val DEFAULT_TEXT_SIZE: Float = 14f.toSp
         val DEFAULT_TEXT_COLOR = Color.parseColor("#CCCCCC")
-        val DEFAULT_X_PADDING = 9.toDp
-        val DEFAULT_Y_PADDING = 4.8f.toDp
     }
 
     //#region Pain Instrument
@@ -58,6 +55,14 @@ class ReactionView
 
     val text
         get() = "$emoji $reactionCount"
+
+    var isFixedReaction: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidate()
+            }
+        }
     //#endregion
 
     init {
@@ -71,10 +76,10 @@ class ReactionView
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         textPaint.getTextBounds(text, 0, text.length, textBounds)
 
-        val contentWidth = DEFAULT_X_PADDING * 2 + textBounds.width()
-        val contentHeight = DEFAULT_Y_PADDING.toInt() * 2 + textBounds.height()
+        val contentWidth = paddingLeft + paddingRight + textBounds.width()
+        val contentHeight = paddingTop + paddingBottom + textBounds.height()
 
-        textPoint.set(contentWidth.toFloat() / 2, contentHeight.toFloat() / 2 + DEFAULT_Y_PADDING)
+        textPoint.set(contentWidth.toFloat() / 2, contentHeight.toFloat() - (textBounds.height() / 2))
 
         setMeasuredDimension(contentWidth, contentHeight)
     }
