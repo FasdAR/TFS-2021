@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".view.activity.MainActivity">
 
     <TextView
@@ -18,7 +19,11 @@
     <ru.fasdev.tfs.view.customView.ReactionView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/reaction_view"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:rvSelectedBgColor="@color/purple_700"
+        app:rvCountReaction="15"
+        app:rvEmoji="🤤"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

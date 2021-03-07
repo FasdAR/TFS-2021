@@ -3,6 +3,7 @@ package ru.fasdev.tfs.view.customView
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.util.toSp
@@ -17,9 +18,11 @@ class ReactionView
     ): View(context, attributeSet, defStyleAttr, defStyleRes)
 {
     companion object {
-        const val DEFAULT_EMOJI = "\uD83D\uDE02"
-        val DEFAULT_TEXT_SIZE: Float = 14f.toSp
-        val DEFAULT_TEXT_COLOR = Color.parseColor("#CCCCCC")
+        private const val DEFAULT_EMOJI = "\uD83D\uDE02"
+        private val DEFAULT_TEXT_SIZE: Float = 14f.toSp
+        private val DEFAULT_TEXT_COLOR = Color.parseColor("#CCCCCC")
+
+        private val DRAWABLE_STATES = IntArray(1) {android.R.attr.state_selected}
     }
 
     //#region Pain Instrument
@@ -28,6 +31,7 @@ class ReactionView
         textAlign = Paint.Align.CENTER
         color = DEFAULT_TEXT_COLOR
         textSize = DEFAULT_TEXT_SIZE
+        isAntiAlias = true
     }
     //#endregion
 
@@ -53,16 +57,16 @@ class ReactionView
             }
         }
 
+    private var isSelectedReaction: Boolean = false
+        set(value) {
+            field = value
+            isSelected = value
+
+            if (isSelected) reactionCount += 1 else reactionCount -=1
+        }
+
     val text
         get() = "$emoji $reactionCount"
-
-    var isFixedReaction: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                invalidate()
-            }
-        }
     //#endregion
 
     init {
@@ -86,5 +90,19 @@ class ReactionView
 
     override fun onDraw(canvas: Canvas) {
         canvas.drawText(text, textPoint.x, textPoint.y, textPaint)
+    }
+
+    override fun onCreateDrawableState(extraSpace: Int): IntArray {
+        val drawableState = super.onCreateDrawableState(extraSpace + DRAWABLE_STATES.size)
+
+        if (isSelected) {
+            mergeDrawableStates(drawableState, DRAWABLE_STATES)
+        }
+
+        return drawableState
+    }
+
+    fun clickReaction() {
+        isSelectedReaction = !isSelectedReaction
     }
 }
