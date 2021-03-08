@@ -85,7 +85,7 @@ class ReactionView
 
         textPoint.set(contentWidth.toFloat() / 2, contentHeight.toFloat() - (textBounds.height() / 2))
 
-        setMeasuredDimension(contentWidth, contentHeight)
+        setMeasuredDimension(resolveSize(contentWidth, widthMeasureSpec), resolveSize(contentHeight, heightMeasureSpec))
     }
 
     override fun onDraw(canvas: Canvas) {

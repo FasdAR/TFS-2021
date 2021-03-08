@@ -9,9 +9,5 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        findViewById<ReactionView>(R.id.reaction_view).setOnClickListener {
-            (it as ReactionView).clickReaction()
-        }
     }
 }
