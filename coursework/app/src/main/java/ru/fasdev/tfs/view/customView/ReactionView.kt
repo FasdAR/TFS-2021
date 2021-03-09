@@ -3,9 +3,8 @@ package ru.fasdev.tfs.view.customView
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.util.toDp
 import ru.fasdev.tfs.view.util.toSp
@@ -20,8 +19,8 @@ class ReactionView
     ): View(context, attributeSet, defStyleAttr, defStyleRes)
 {
     companion object {
-        private val MIN_HEIGHT = 30.toDp
-        private val MIN_WIDTH = 45.toDp
+        internal val MIN_HEIGHT = 30.toDp
+        internal val MIN_WIDTH = 45.toDp
 
         private const val DEFAULT_EMOJI = "\uD83D\uDE02"
         private val DEFAULT_TEXT_SIZE: Float = 14f.toSp
@@ -34,7 +33,7 @@ class ReactionView
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         textAlign = Paint.Align.CENTER
-        color = DEFAULT_TEXT_COLOR
+        color = selectedTextColor
         textSize = DEFAULT_TEXT_SIZE
         isAntiAlias = true
     }
@@ -62,6 +61,28 @@ class ReactionView
             }
         }
 
+    var isSelectedReaction: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+
+                isSelected = isSelectedReaction
+
+                updateSelectedState()
+            }
+        }
+
+    var selectedTextColor: Int = DEFAULT_TEXT_COLOR
+        set(value) {
+            field = value
+            updateSelectedState()
+        }
+    var unSelectedTextColor: Int = DEFAULT_TEXT_COLOR
+        set(value) {
+            field = value
+            updateSelectedState()
+        }
+
     private val text get() = "$emoji $reactionCount"
     //#endregion
 
@@ -69,8 +90,15 @@ class ReactionView
         context.obtainStyledAttributes(attributeSet, R.styleable.ReactionView).apply {
             emoji = getString(R.styleable.ReactionView_rvEmoji) ?: DEFAULT_EMOJI
             reactionCount = getInt(R.styleable.ReactionView_rvCountReaction, 0)
+            selectedTextColor = getColor(R.styleable.ReactionView_rvSelectedTextColor,
+                    ContextCompat.getColor(context, R.color.black_200))
+            unSelectedTextColor = getColor(R.styleable.ReactionView_rvUnselectedTextColor,
+                    ContextCompat.getColor(context, R.color.black_400))
+
             recycle()
         }
+
+        updateSelectedState()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -101,8 +129,15 @@ class ReactionView
         return drawableState
     }
 
+    private fun updateSelectedState() {
+        if (isSelected) textPaint.color = selectedTextColor
+        else textPaint.color = unSelectedTextColor
+
+        invalidate()
+    }
+
     fun selectedReaction() {
-        isSelected = !isSelected
+        isSelectedReaction = !isSelectedReaction
         if (isSelected) reactionCount += 1 else reactionCount -=1
     }
 }

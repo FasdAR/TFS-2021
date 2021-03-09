@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ReactionView.Global">
-        <attr name="rvSelectedBgColor" format="reference|color"/>
-        <attr name="rvUnselectedBgColor" format="reference|color"/>
-
-        <!--
-        <attr name="rvSelectedTextColor" format="reference|color"/>
-        <attr name="rvUnselectedTextColor" format="reference|color"/>
-        -->
-
-        <attr name="rvRippleColor" format="reference|color"/>
-    </declare-styleable>
-
     <declare-styleable name="MessageView">
         <attr name="msgText" format="string"/>
         <attr name="nameText" format="string"/>
@@ -27,6 +15,9 @@
     </declare-styleable>
 
     <declare-styleable name="ReactionView">
+        <attr name="rvSelectedTextColor" format="reference|color"/>
+        <attr name="rvUnselectedTextColor" format="reference|color"/>
+
         <attr name="rvEmoji" format="string"/>
         <attr name="rvCountReaction" format="integer"/>
     </declare-styleable>

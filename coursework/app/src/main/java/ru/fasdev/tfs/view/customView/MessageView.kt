@@ -11,7 +11,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
-import androidx.core.view.updateLayoutParams
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.model.ReactionUiModel
 import ru.fasdev.tfs.view.util.getHeightMeasuredMargin
@@ -43,6 +42,7 @@ class MessageView
     private val msgTextView: TextView
     private val nameTextView: TextView
 
+    //#region Layout Params
     private val avatarLayoutParams: MarginLayoutParams
         get() = avatarImageView.layoutParams as MarginLayoutParams
 
@@ -51,10 +51,13 @@ class MessageView
 
     private val reactionLayoutParams: MarginLayoutParams
         get() = reactionLayout.layoutParams as MarginLayoutParams
+    //#endregion
 
+    //#region Rect
     private val avatarRect = Rect()
     private val msgRect = Rect()
     private val reactionRect = Rect()
+    //#endregion
 
     //#region Data
     var onClickReactionListener: OnClickReactionListener? = null
@@ -149,9 +152,6 @@ class MessageView
         if (avatarSrc.isDigitsOnly()) {
             avatarImageView.setImageResource(avatarSrc.toInt())
         }
-        else {
-            //TODO: Load from other method
-        }
     }
 
     private fun updateNameText() {
@@ -167,9 +167,10 @@ class MessageView
 
         reactionList.forEach { reaction ->
             val reactionView = ReactionView(context)
+
             reactionView.reactionCount = reaction.reactionCount
             reactionView.emoji = reaction.emoji
-            reactionView.isSelected = reaction.isSelected
+            reactionView.isSelectedReaction = reaction.isSelected
 
             reactionView.setOnClickListener {
                 onClickReactionListener?.onClick(it as ReactionView)
@@ -180,7 +181,7 @@ class MessageView
 
         val addImageView = ImageView(context)
         addImageView.scaleType = ImageView.ScaleType.CENTER
-        addImageView.layoutParams = ViewGroup.LayoutParams(45.toDp, 30.toDp)
+        addImageView.layoutParams = LayoutParams(ReactionView.MIN_WIDTH, ReactionView.MIN_HEIGHT)
         addImageView.setBackgroundResource(R.drawable.sh_reaction)
         addImageView.setImageResource(R.drawable.ic_plus)
 
@@ -194,7 +195,6 @@ class MessageView
         measureChildWithMargins(avatarImageView, widthMeasureSpec, 0,
                 heightMeasureSpec, 0)
 
-        val avatarHeight = avatarImageView.getHeightMeasuredMargin()
         val avatarWidth = avatarImageView.getWidthMeasuredMargin()
         //#endregion
 

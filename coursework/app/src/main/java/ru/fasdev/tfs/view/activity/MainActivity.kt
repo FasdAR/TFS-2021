@@ -21,15 +21,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         msgView.reactionList = arrayListOf(
-                ReactionUiModel("\uD83D\uDE02", 2),
-                ReactionUiModel("\uD83D\uDE02", 2, isSelected = true),
-                ReactionUiModel("\uD83D\uDE02", 2),
-                ReactionUiModel("\uD83D\uDE02", 2),
-                ReactionUiModel("\uD83D\uDE02", 2, isSelected = true),
-                ReactionUiModel("\uD83D\uDE02", 2),
-                ReactionUiModel("\uD83D\uDE02", 2),
-                ReactionUiModel("\uD83D\uDE02", 2, isSelected = true),
-                ReactionUiModel("\uD83D\uDE02", 2)
+                ReactionUiModel("\uD83D\uDE00", 2),
+                ReactionUiModel("\uD83D\uDE03", 2, isSelected = true),
+                ReactionUiModel("\uD83E\uDD76", 2),
+                ReactionUiModel("\uD83D\uDE1D", 2),
+                ReactionUiModel("\uD83D\uDE0A", 2, isSelected = true),
+                ReactionUiModel("\uD83E\uDD2D", 2),
+                ReactionUiModel("\uD83E\uDD2C", 2),
+                ReactionUiModel("\uD83E\uDD22", 2, isSelected = true),
+                ReactionUiModel("\uD83D\uDE44", 2)
         )
     }
 }

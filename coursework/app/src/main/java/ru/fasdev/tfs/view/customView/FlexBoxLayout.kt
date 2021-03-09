@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.view.customView
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -89,6 +90,7 @@ class FlexBoxLayout
         setMeasuredDimension(resolveWidth, resolveHeight)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val maxXPos = measuredWidth
 
