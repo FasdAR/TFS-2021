@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MessageView">
+    <declare-styleable name="MessageViewGroup">
         <attr name="msgText" format="string"/>
         <attr name="nameText" format="string"/>
         <attr name="srcAvatar" format="reference|color"/>
@@ -9,7 +9,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="FlexBoxLayout">
+    <declare-styleable name="FlexboxLayout">
         <attr name="android:verticalSpacing"/>
         <attr name="android:horizontalSpacing"/>
     </declare-styleable>

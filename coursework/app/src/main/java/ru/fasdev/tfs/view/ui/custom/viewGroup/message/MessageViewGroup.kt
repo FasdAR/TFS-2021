@@ -126,25 +126,25 @@ constructor(
         updateMsgText()
         updateReactionLayout()
 
-        context.obtainStyledAttributes(attrs, R.styleable.MessageView).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.MessageViewGroup).apply {
             avatarSrc = getResourceId(
-                R.styleable.MessageView_srcAvatar,
+                R.styleable.MessageViewGroup_srcAvatar,
                 R.drawable.ic_launcher_background
             ).toString()
-            msgText = getString(R.styleable.MessageView_msgText) ?: ""
-            name = getString(R.styleable.MessageView_nameText) ?: ""
+            msgText = getString(R.styleable.MessageViewGroup_msgText) ?: ""
+            name = getString(R.styleable.MessageViewGroup_nameText) ?: ""
 
-            val type = getType(R.styleable.MessageView_msgViewMaxSize)
+            val type = getType(R.styleable.MessageViewGroup_msgViewMaxSize)
 
             when {
                 type == TypedValue.TYPE_DIMENSION -> {
                     msgViewMaxSize = getDimensionPixelSize(
-                        R.styleable.MessageView_msgViewMaxSize,
+                        R.styleable.MessageViewGroup_msgViewMaxSize,
                         MAX_MSG_VIEW_SIZE
                     )
                 }
                 type >= TypedValue.TYPE_FIRST_INT && type <= TypedValue.TYPE_LAST_INT -> {
-                    msgViewMaxSize = getInt(R.styleable.MessageView_msgViewMaxSize, MATCH_PARENT)
+                    msgViewMaxSize = getInt(R.styleable.MessageViewGroup_msgViewMaxSize, MATCH_PARENT)
                 }
             }
 

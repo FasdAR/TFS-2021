@@ -42,13 +42,13 @@ constructor(
     init {
         setWillNotDraw(false)
 
-        context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.FlexboxLayout).apply {
             verticalSpace = getDimension(
-                R.styleable.FlexBoxLayout_android_verticalSpacing,
+                R.styleable.FlexboxLayout_android_verticalSpacing,
                 DEFAULT_VERTICAL_SPACE.toFloat()
             ).toInt()
             horizontalSpace = getDimension(
-                R.styleable.FlexBoxLayout_android_horizontalSpacing,
+                R.styleable.FlexboxLayout_android_horizontalSpacing,
                 DEFAULT_HORIZONTAL_SPACE.toFloat()
             ).toInt()
             recycle()
