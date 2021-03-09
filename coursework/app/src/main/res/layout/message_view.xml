@@ -9,34 +9,42 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:id="@+id/avatar"
-        android:src="@color/black_900" />
+        tools:src="@tools:sample/avatars" />
 
     <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:paddingTop="8dp"
-      android:paddingLeft="13dp"
-      android:paddingRight="13dp"
-      android:paddingBottom="20dp"
-      android:background="@drawable/sh_msg"
-      android:layout_marginStart="9dp"
-      android:id="@+id/msg_layout">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingLeft="13dp"
+        android:paddingRight="13dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/sh_msg"
+        android:layout_marginStart="9dp"
+        android:id="@+id/msg_layout">
 
         <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="#2A9D8F"
-          android:textSize="14sp"
-          android:text="Darrell Steward"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#2A9D8F"
+            android:textSize="14sp"
+            android:id="@+id/name_text"
+            tools:text="@tools:sample/full_names"/>
 
         <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="4dp"
-          android:textSize="16sp"
-          android:textColor="#FAFAFA"
-          android:text="Привет! lshe zabil sdds sd sd sdsa dasd asd sda sd sd sd sd sd"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            android:textColor="#FAFAFA"
+            android:id="@+id/message_text"
+            tools:text="@tools:sample/lorem/random"
+            tools:maxLines="3"/>
     </LinearLayout>
 
+    <ru.fasdev.tfs.view.customView.FlexBoxLayout
+        android:id="@+id/reaction_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp" />
 </merge>

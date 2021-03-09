@@ -19,8 +19,8 @@ class FlexBoxLayout
     ): ViewGroup(context, attrs, defStyleAttr, defStyleRes)
 {
     companion object {
-        val DEFAULT_VERTICAL_SPACE = 7.toDp
-        val DEFAULT_HORIZONTAL_SPACE = 10.toDp
+        private val DEFAULT_VERTICAL_SPACE = 7.toDp
+        private val DEFAULT_HORIZONTAL_SPACE = 10.toDp
     }
 
     var verticalSpace = DEFAULT_VERTICAL_SPACE

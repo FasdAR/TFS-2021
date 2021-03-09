@@ -10,87 +10,13 @@
     android:paddingRight="12dp"
     tools:context=".view.activity.MainActivity">
 
-    <ru.fasdev.tfs.view.customView.FlexBoxLayout
+    <ru.fasdev.tfs.view.customView.MessageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:verticalSpacing="7dp"
-        android:horizontalSpacing="10dp">
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="80000000"/>
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="50000"/>
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="20000"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="1500"/>
-
-
-        <ru.fasdev.tfs.view.customView.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:rvCountReaction="0"/>
-
-    </ru.fasdev.tfs.view.customView.FlexBoxLayout>
+        android:id="@+id/msg_view"
+        app:msgViewMaxSize="260dp"
+        app:srcAvatar="@drawable/ic_launcher_background"
+        app:nameText="Darrell Steward"
+        app:msgText="Привет! lorem ipsum test message dalshe zabil"/>
 
 </FrameLayout>

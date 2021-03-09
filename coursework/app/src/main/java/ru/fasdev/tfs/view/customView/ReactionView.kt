@@ -57,16 +57,7 @@ class ReactionView
             }
         }
 
-    private var isSelectedReaction: Boolean = false
-        set(value) {
-            field = value
-            isSelected = value
-
-            if (isSelected) reactionCount += 1 else reactionCount -=1
-        }
-
-    val text
-        get() = "$emoji $reactionCount"
+    private val text get() = "$emoji $reactionCount"
     //#endregion
 
     init {
@@ -102,7 +93,8 @@ class ReactionView
         return drawableState
     }
 
-    fun clickReaction() {
-        isSelectedReaction = !isSelectedReaction
+    fun selectedReaction() {
+        isSelected = !isSelected
+        if (isSelected) reactionCount += 1 else reactionCount -=1
     }
 }

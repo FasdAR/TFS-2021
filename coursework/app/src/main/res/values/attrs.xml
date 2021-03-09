@@ -12,6 +12,15 @@
         <attr name="rvRippleColor" format="reference|color"/>
     </declare-styleable>
 
+    <declare-styleable name="MessageView">
+        <attr name="msgText" format="string"/>
+        <attr name="nameText" format="string"/>
+        <attr name="srcAvatar" format="reference|color"/>
+        <attr name="msgViewMaxSize" format="dimension|integer">
+            <enum name="match_parent" value="-1" />
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="FlexBoxLayout">
         <attr name="android:verticalSpacing"/>
         <attr name="android:horizontalSpacing"/>
