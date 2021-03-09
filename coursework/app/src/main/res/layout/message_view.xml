@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:parentTag="ru.fasdev.tfs.view.customView.MessageView">
+    tools:parentTag="ru.fasdev.tfs.view.ui.custom.viewGroup.message.MessageViewGroup">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:id="@+id/avatar"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Tfs.Avatar"
         tools:src="@tools:sample/avatars" />
 
     <LinearLayout
@@ -42,7 +44,7 @@
             tools:maxLines="3"/>
     </LinearLayout>
 
-    <ru.fasdev.tfs.view.customView.FlexBoxLayout
+    <ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
         android:id="@+id/reaction_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

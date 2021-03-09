@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.customView
+package ru.fasdev.tfs.view.ui.custom.viewGroup.message
 
 import android.content.Context
 import android.graphics.Rect
@@ -12,13 +12,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.model.ReactionUiModel
-import ru.fasdev.tfs.view.util.getHeightMeasuredMargin
-import ru.fasdev.tfs.view.util.getWidthMeasuredMargin
-import ru.fasdev.tfs.view.util.layout
-import ru.fasdev.tfs.view.util.toDp
+import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
+import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
+import ru.fasdev.tfs.view.feature.util.layout
+import ru.fasdev.tfs.view.feature.util.toDp
+import ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
+import ru.fasdev.tfs.view.ui.custom.view.ReactionView
+import ru.fasdev.tfs.view.ui.custom.viewGroup.message.model.MessageReactionUi
 
-class MessageView
+class MessageViewGroup
     @JvmOverloads
     constructor(
         context: Context,
@@ -37,7 +39,7 @@ class MessageView
 
     private val avatarImageView: ImageView
     private val msgLayout: ViewGroup
-    private val reactionLayout: FlexBoxLayout
+    private val reactionLayout: FlexboxLayout
 
     private val msgTextView: TextView
     private val nameTextView: TextView
@@ -62,7 +64,7 @@ class MessageView
     //#region Data
     var onClickReactionListener: OnClickReactionListener? = null
 
-    var reactionList: ArrayList<ReactionUiModel> = arrayListOf()
+    var reactionList: ArrayList<MessageReactionUi> = arrayListOf()
         set(value) {
             if (field != value) {
                 field.clear()

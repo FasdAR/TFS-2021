@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.customView
+package ru.fasdev.tfs.view.ui.custom.view
 
 import android.content.Context
 import android.graphics.*
@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.util.toDp
-import ru.fasdev.tfs.view.util.toSp
+import ru.fasdev.tfs.view.feature.util.toDp
+import ru.fasdev.tfs.view.feature.util.toSp
 
 class ReactionView
     @JvmOverloads

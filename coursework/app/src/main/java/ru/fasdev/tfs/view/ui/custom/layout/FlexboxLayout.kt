@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.customView
+package ru.fasdev.tfs.view.ui.custom.layout
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,10 +7,10 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.core.view.children
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.util.layout
-import ru.fasdev.tfs.view.util.toDp
+import ru.fasdev.tfs.view.feature.util.layout
+import ru.fasdev.tfs.view.feature.util.toDp
 
-class FlexBoxLayout
+class FlexboxLayout
     @JvmOverloads
     constructor(
         context: Context,

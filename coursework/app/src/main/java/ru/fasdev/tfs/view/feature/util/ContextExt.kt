@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.util
+package ru.fasdev.tfs.view.feature.util
 
 import android.content.res.Resources
 import kotlin.math.roundToInt

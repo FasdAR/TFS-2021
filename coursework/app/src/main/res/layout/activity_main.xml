@@ -5,9 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.MainActivity">
+    tools:context=".view.ui.activity.MainActivity">
 
-    <ru.fasdev.tfs.view.customView.MessageView
+    <ru.fasdev.tfs.view.ui.custom.viewGroup.message.MessageViewGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/msg_view"
