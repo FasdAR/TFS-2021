@@ -1,18 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
     tools:context=".view.activity.MainActivity">
 
-    <ru.fasdev.tfs.view.customView.MessageView
+    <ru.fasdev.tfs.view.customView.FlexBoxLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="80000000"/>
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="50000"/>
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+    </ru.fasdev.tfs.view.customView.FlexBoxLayout>
 
 </FrameLayout>
