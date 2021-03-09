@@ -12,6 +12,11 @@
         <attr name="rvRippleColor" format="reference|color"/>
     </declare-styleable>
 
+    <declare-styleable name="FlexBoxLayout">
+        <attr name="android:verticalSpacing"/>
+        <attr name="android:horizontalSpacing"/>
+    </declare-styleable>
+
     <declare-styleable name="ReactionView">
         <attr name="rvEmoji" format="string"/>
         <attr name="rvCountReaction" format="integer"/>

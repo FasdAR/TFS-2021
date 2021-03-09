@@ -5,7 +5,9 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.core.view.children
+import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.util.layout
+import ru.fasdev.tfs.view.util.toDp
 
 class FlexBoxLayout
     @JvmOverloads
@@ -16,8 +18,37 @@ class FlexBoxLayout
         defStyleRes: Int = 0
     ): ViewGroup(context, attrs, defStyleAttr, defStyleRes)
 {
+    companion object {
+        val DEFAULT_VERTICAL_SPACE = 7.toDp
+        val DEFAULT_HORIZONTAL_SPACE = 10.toDp
+    }
+
+    var verticalSpace = DEFAULT_VERTICAL_SPACE
+        set(value) {
+            if (field != value) {
+                field = value
+                requestLayout()
+            }
+        }
+
+    var horizontalSpace = DEFAULT_HORIZONTAL_SPACE
+        set(value) {
+            if (field != value) {
+                field = value
+                requestLayout()
+            }
+        }
+
     init {
         setWillNotDraw(false)
+
+        context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
+            verticalSpace = getDimension(R.styleable.FlexBoxLayout_android_verticalSpacing,
+                    DEFAULT_VERTICAL_SPACE.toFloat()).toInt()
+            horizontalSpace = getDimension(R.styleable.FlexBoxLayout_android_horizontalSpacing,
+                    DEFAULT_HORIZONTAL_SPACE.toFloat()).toInt()
+            recycle()
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -36,13 +67,13 @@ class FlexBoxLayout
             val nexWidth = cursorX + child.measuredWidth
             if (nexWidth > maxWidth) {
                 cursorX = 0
-                cursorY += maxHeightRow
+                cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
             }
             //#endregion
 
             //#region Calculate Next Position
-            cursorX += child.measuredWidth
+            cursorX += child.measuredWidth + horizontalSpace
 
             if (nexWidth > maxWidthRow) maxWidthRow = nexWidth
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
@@ -71,7 +102,7 @@ class FlexBoxLayout
             val nextWidth = cursorX + child.measuredWidth
             if (nextWidth > maxXPos) {
                 cursorX = 0
-                cursorY += maxHeightRow
+                cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
             }
             //#endregion
@@ -88,7 +119,7 @@ class FlexBoxLayout
             //#endregion
 
             //#region Calculate Next Position
-            cursorX += child.measuredWidth
+            cursorX += child.measuredWidth + horizontalSpace
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             //#endregion
         }

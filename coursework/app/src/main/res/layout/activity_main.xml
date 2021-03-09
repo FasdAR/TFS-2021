@@ -12,7 +12,9 @@
 
     <ru.fasdev.tfs.view.customView.FlexBoxLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:verticalSpacing="7dp"
+        android:horizontalSpacing="10dp">
 
         <ru.fasdev.tfs.view.customView.ReactionView
             android:layout_width="wrap_content"
@@ -70,6 +72,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="20000"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="1500"/>
+
+
+        <ru.fasdev.tfs.view.customView.ReactionView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rvCountReaction="0"/>
 
     </ru.fasdev.tfs.view.customView.FlexBoxLayout>
 
