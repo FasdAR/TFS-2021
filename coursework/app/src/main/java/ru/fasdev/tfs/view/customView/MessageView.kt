@@ -11,6 +11,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
+import androidx.core.view.updateLayoutParams
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.model.ReactionUiModel
 import ru.fasdev.tfs.view.util.getHeightMeasuredMargin
@@ -176,6 +177,14 @@ class MessageView
 
             reactionLayout.addView(reactionView)
         }
+
+        val addImageView = ImageView(context)
+        addImageView.scaleType = ImageView.ScaleType.CENTER
+        addImageView.layoutParams = ViewGroup.LayoutParams(45.toDp, 30.toDp)
+        addImageView.setBackgroundResource(R.drawable.sh_reaction)
+        addImageView.setImageResource(R.drawable.ic_plus)
+
+        reactionLayout.addView(addImageView)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

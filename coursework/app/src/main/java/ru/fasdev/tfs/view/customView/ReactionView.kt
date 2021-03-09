@@ -5,7 +5,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.view.util.toDp
 import ru.fasdev.tfs.view.util.toSp
 
 class ReactionView
@@ -18,6 +20,9 @@ class ReactionView
     ): View(context, attributeSet, defStyleAttr, defStyleRes)
 {
     companion object {
+        private val MIN_HEIGHT = 30.toDp
+        private val MIN_WIDTH = 45.toDp
+
         private const val DEFAULT_EMOJI = "\uD83D\uDE02"
         private val DEFAULT_TEXT_SIZE: Float = 14f.toSp
         private val DEFAULT_TEXT_COLOR = Color.parseColor("#CCCCCC")
@@ -71,10 +76,13 @@ class ReactionView
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         textPaint.getTextBounds(text, 0, text.length, textBounds)
 
-        val contentWidth = paddingLeft + paddingRight + textBounds.width()
-        val contentHeight = paddingTop + paddingBottom + textBounds.height()
+        var contentWidth = paddingLeft + paddingRight + textBounds.width()
+        var contentHeight = textBounds.height()
 
-        textPoint.set(contentWidth.toFloat() / 2, contentHeight.toFloat() - (textBounds.height() / 2))
+        if (contentHeight < MIN_HEIGHT) contentHeight = MIN_HEIGHT
+        if (contentWidth < MIN_WIDTH) contentWidth = MIN_WIDTH
+
+        textPoint.set(contentWidth.toFloat() / 2, contentHeight.toFloat() / 2 + (textBounds.height() / 4))
 
         setMeasuredDimension(resolveSize(contentWidth, widthMeasureSpec), resolveSize(contentHeight, heightMeasureSpec))
     }
