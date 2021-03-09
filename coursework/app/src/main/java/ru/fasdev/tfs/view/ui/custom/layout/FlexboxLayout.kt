@@ -11,14 +11,13 @@ import ru.fasdev.tfs.view.feature.util.layout
 import ru.fasdev.tfs.view.feature.util.toDp
 
 class FlexboxLayout
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
-    ): ViewGroup(context, attrs, defStyleAttr, defStyleRes)
-{
+@JvmOverloads
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
     companion object {
         private val DEFAULT_VERTICAL_SPACE = 7.toDp
         private val DEFAULT_HORIZONTAL_SPACE = 10.toDp
@@ -44,10 +43,14 @@ class FlexboxLayout
         setWillNotDraw(false)
 
         context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
-            verticalSpace = getDimension(R.styleable.FlexBoxLayout_android_verticalSpacing,
-                    DEFAULT_VERTICAL_SPACE.toFloat()).toInt()
-            horizontalSpace = getDimension(R.styleable.FlexBoxLayout_android_horizontalSpacing,
-                    DEFAULT_HORIZONTAL_SPACE.toFloat()).toInt()
+            verticalSpace = getDimension(
+                R.styleable.FlexBoxLayout_android_verticalSpacing,
+                DEFAULT_VERTICAL_SPACE.toFloat()
+            ).toInt()
+            horizontalSpace = getDimension(
+                R.styleable.FlexBoxLayout_android_horizontalSpacing,
+                DEFAULT_HORIZONTAL_SPACE.toFloat()
+            ).toInt()
             recycle()
         }
     }
@@ -62,23 +65,23 @@ class FlexboxLayout
         var maxWidthRow = 0
 
         children.forEach { child ->
-            measureChild(child, widthMeasureSpec,  heightMeasureSpec)
+            measureChild(child, widthMeasureSpec, heightMeasureSpec)
 
-            //#region Checking New Line
+            // #region Checking New Line
             val nexWidth = cursorX + child.measuredWidth
             if (nexWidth > maxWidth) {
                 cursorX = 0
                 cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
             }
-            //#endregion
+            // #endregion
 
-            //#region Calculate Next Position
+            // #region Calculate Next Position
             cursorX += child.measuredWidth + horizontalSpace
 
             if (nexWidth > maxWidthRow) maxWidthRow = nexWidth
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
-            //#endregion
+            // #endregion
         }
 
         val calculateWidth = maxWidthRow
@@ -100,16 +103,16 @@ class FlexboxLayout
         var maxHeightRow = 0
 
         children.forEach { child ->
-            //#region Checking New Line
+            // #region Checking New Line
             val nextWidth = cursorX + child.measuredWidth
             if (nextWidth > maxXPos) {
                 cursorX = 0
                 cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
             }
-            //#endregion
+            // #endregion
 
-            //#region Draw Child
+            // #region Draw Child
             val rectChild = Rect()
 
             rectChild.top = cursorY
@@ -118,12 +121,12 @@ class FlexboxLayout
             rectChild.right = rectChild.left + child.measuredWidth
 
             child.layout(rectChild)
-            //#endregion
+            // #endregion
 
-            //#region Calculate Next Position
+            // #region Calculate Next Position
             cursorX += child.measuredWidth + horizontalSpace
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
-            //#endregion
+            // #endregion
         }
     }
 }

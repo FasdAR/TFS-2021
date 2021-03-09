@@ -1,7 +1,11 @@
 package ru.fasdev.tfs.view.ui.custom.view
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PointF
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -10,14 +14,13 @@ import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.feature.util.toSp
 
 class ReactionView
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = R.style.ReactionView
-    ): View(context, attributeSet, defStyleAttr, defStyleRes)
-{
+@JvmOverloads
+constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = R.style.ReactionView
+) : View(context, attributeSet, defStyleAttr, defStyleRes) {
     companion object {
         internal val MIN_HEIGHT = 30.toDp
         internal val MIN_WIDTH = 45.toDp
@@ -26,10 +29,10 @@ class ReactionView
         private val DEFAULT_TEXT_SIZE: Float = 14f.toSp
         private val DEFAULT_TEXT_COLOR = Color.parseColor("#CCCCCC")
 
-        private val DRAWABLE_STATES = IntArray(1) {android.R.attr.state_selected}
+        private val DRAWABLE_STATES = IntArray(1) { android.R.attr.state_selected }
     }
 
-    //#region Pain Instrument
+    // #region Pain Instrument
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         textAlign = Paint.Align.CENTER
@@ -37,14 +40,14 @@ class ReactionView
         textSize = DEFAULT_TEXT_SIZE
         isAntiAlias = true
     }
-    //#endregion
+    // #endregion
 
-    //#region Position Instrument
+    // #region Position Instrument
     private val textBounds: Rect = Rect()
     private val textPoint: PointF = PointF()
-    //#endregion
+    // #endregion
 
-    //#region Data Var
+    // #region Data Var
     var emoji: String = DEFAULT_EMOJI
         set(value) {
             if (field != value) {
@@ -84,16 +87,20 @@ class ReactionView
         }
 
     private val text get() = "$emoji $reactionCount"
-    //#endregion
+    // #endregion
 
     init {
         context.obtainStyledAttributes(attributeSet, R.styleable.ReactionView).apply {
             emoji = getString(R.styleable.ReactionView_rvEmoji) ?: DEFAULT_EMOJI
             reactionCount = getInt(R.styleable.ReactionView_rvCountReaction, 0)
-            selectedTextColor = getColor(R.styleable.ReactionView_rvSelectedTextColor,
-                    ContextCompat.getColor(context, R.color.black_200))
-            unSelectedTextColor = getColor(R.styleable.ReactionView_rvUnselectedTextColor,
-                    ContextCompat.getColor(context, R.color.black_400))
+            selectedTextColor = getColor(
+                R.styleable.ReactionView_rvSelectedTextColor,
+                ContextCompat.getColor(context, R.color.black_200)
+            )
+            unSelectedTextColor = getColor(
+                R.styleable.ReactionView_rvUnselectedTextColor,
+                ContextCompat.getColor(context, R.color.black_400)
+            )
 
             recycle()
         }
@@ -138,6 +145,6 @@ class ReactionView
 
     fun selectedReaction() {
         isSelectedReaction = !isSelectedReaction
-        if (isSelected) reactionCount += 1 else reactionCount -=1
+        if (isSelected) reactionCount += 1 else reactionCount -= 1
     }
 }

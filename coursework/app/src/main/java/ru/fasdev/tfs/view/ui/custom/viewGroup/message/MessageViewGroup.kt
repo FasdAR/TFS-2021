@@ -21,14 +21,13 @@ import ru.fasdev.tfs.view.ui.custom.view.ReactionView
 import ru.fasdev.tfs.view.ui.custom.viewGroup.message.model.MessageReactionUi
 
 class MessageViewGroup
-    @JvmOverloads
-    constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
-    ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes)
-{
+@JvmOverloads
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
     interface OnClickReactionListener {
         fun onClick(reactionView: ReactionView)
     }
@@ -44,7 +43,7 @@ class MessageViewGroup
     private val msgTextView: TextView
     private val nameTextView: TextView
 
-    //#region Layout Params
+    // #region Layout Params
     private val avatarLayoutParams: MarginLayoutParams
         get() = avatarImageView.layoutParams as MarginLayoutParams
 
@@ -53,15 +52,15 @@ class MessageViewGroup
 
     private val reactionLayoutParams: MarginLayoutParams
         get() = reactionLayout.layoutParams as MarginLayoutParams
-    //#endregion
+    // #endregion
 
-    //#region Rect
+    // #region Rect
     private val avatarRect = Rect()
     private val msgRect = Rect()
     private val reactionRect = Rect()
-    //#endregion
+    // #endregion
 
-    //#region Data
+    // #region Data
     var onClickReactionListener: OnClickReactionListener? = null
 
     var reactionList: ArrayList<MessageReactionUi> = arrayListOf()
@@ -110,7 +109,7 @@ class MessageViewGroup
                 requestLayout()
             }
         }
-    //#endregion
+    // #endregion
 
     init {
         LayoutInflater.from(context).inflate(R.layout.message_view, this, true)
@@ -128,18 +127,21 @@ class MessageViewGroup
         updateReactionLayout()
 
         context.obtainStyledAttributes(attrs, R.styleable.MessageView).apply {
-            avatarSrc = getResourceId(R.styleable.MessageView_srcAvatar,
-                    R.drawable.ic_launcher_background).toString()
+            avatarSrc = getResourceId(
+                R.styleable.MessageView_srcAvatar,
+                R.drawable.ic_launcher_background
+            ).toString()
             msgText = getString(R.styleable.MessageView_msgText) ?: ""
             name = getString(R.styleable.MessageView_nameText) ?: ""
 
             val type = getType(R.styleable.MessageView_msgViewMaxSize)
 
-            when
-            {
+            when {
                 type == TypedValue.TYPE_DIMENSION -> {
-                    msgViewMaxSize = getDimensionPixelSize(R.styleable.MessageView_msgViewMaxSize,
-                            MAX_MSG_VIEW_SIZE)
+                    msgViewMaxSize = getDimensionPixelSize(
+                        R.styleable.MessageView_msgViewMaxSize,
+                        MAX_MSG_VIEW_SIZE
+                    )
                 }
                 type >= TypedValue.TYPE_FIRST_INT && type <= TypedValue.TYPE_LAST_INT -> {
                     msgViewMaxSize = getInt(R.styleable.MessageView_msgViewMaxSize, MATCH_PARENT)
@@ -193,47 +195,53 @@ class MessageViewGroup
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val maxWidth = MeasureSpec.getSize(widthMeasureSpec)
 
-        //#region Avatar Size
-        measureChildWithMargins(avatarImageView, widthMeasureSpec, 0,
-                heightMeasureSpec, 0)
+        // #region Avatar Size
+        measureChildWithMargins(
+            avatarImageView, widthMeasureSpec, 0,
+            heightMeasureSpec, 0
+        )
 
         val avatarWidth = avatarImageView.getWidthMeasuredMargin()
-        //#endregion
+        // #endregion
 
-        //#region MsgLayout Size
+        // #region MsgLayout Size
         var occupiedSpace = avatarWidth + (maxWidth - msgViewMaxSize)
 
         if (msgViewMaxSize == MATCH_PARENT) {
             occupiedSpace = avatarWidth
         }
 
-        measureChildWithMargins(msgLayout, widthMeasureSpec, occupiedSpace,
-                heightMeasureSpec, 0)
+        measureChildWithMargins(
+            msgLayout, widthMeasureSpec, occupiedSpace,
+            heightMeasureSpec, 0
+        )
 
         val msgHeight = msgLayout.getHeightMeasuredMargin()
         val msgWidth = msgLayout.getWidthMeasuredMargin()
-        //#endregion
+        // #endregion
 
-        //#region ReactionLayout Size
-        measureChildWithMargins(reactionLayout, widthMeasureSpec, avatarWidth,
-                heightMeasureSpec, msgHeight)
+        // #region ReactionLayout Size
+        measureChildWithMargins(
+            reactionLayout, widthMeasureSpec, avatarWidth,
+            heightMeasureSpec, msgHeight
+        )
 
         val reactionHeight = if (reactionLayout.childCount == 0) 0
-            else reactionLayout.getHeightMeasuredMargin()
+        else reactionLayout.getHeightMeasuredMargin()
 
         val reactionWidth = reactionLayout.getWidthMeasuredMargin()
-        //#endregion
+        // #endregion
 
-        //#region Width Calculate
+        // #region Width Calculate
         var width = avatarWidth + msgWidth
 
         val resultReactionWidth = reactionWidth - msgWidth
         if (resultReactionWidth > 0) width += resultReactionWidth
-        //#endregion
+        // #endregion
 
-        //#region Height Calculate
+        // #region Height Calculate
         val height = msgHeight + reactionHeight
-        //#endregion
+        // #endregion
 
         val resolveWidth = resolveSize(width, widthMeasureSpec)
         val resolveHeight = resolveSize(height, heightMeasureSpec)
@@ -242,26 +250,26 @@ class MessageViewGroup
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        //#region Avatar Calculate Size
+        // #region Avatar Calculate Size
         avatarRect.left = avatarLayoutParams.leftMargin
         avatarRect.top = avatarLayoutParams.topMargin
         avatarRect.right = avatarRect.left + avatarImageView.measuredWidth
         avatarRect.bottom = avatarRect.top + avatarImageView.measuredHeight
-        //#endregion
+        // #endregion
 
-        //#region Msg Calculate Size
+        // #region Msg Calculate Size
         msgRect.left = avatarImageView.getWidthMeasuredMargin() + msgLayoutParams.leftMargin
         msgRect.top = msgLayoutParams.topMargin
         msgRect.right = msgRect.left + msgLayout.measuredWidth
         msgRect.bottom = msgRect.top + msgLayout.measuredHeight
-        //#endregion
+        // #endregion
 
-        //#region Reaction Layout Calculate Size
+        // #region Reaction Layout Calculate Size
         reactionRect.left = msgRect.left
         reactionRect.top = msgRect.bottom + reactionLayoutParams.topMargin
         reactionRect.right = reactionRect.left + reactionLayout.measuredWidth
         reactionRect.bottom = reactionRect.top + reactionLayout.measuredHeight
-        //#endregion
+        // #endregion
 
         avatarImageView.layout(avatarRect)
         msgLayout.layout(msgRect)
