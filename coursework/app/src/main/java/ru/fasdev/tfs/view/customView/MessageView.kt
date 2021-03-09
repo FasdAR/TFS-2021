@@ -27,6 +27,10 @@ class MessageView
         defStyleRes: Int = 0
     ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes)
 {
+    interface OnClickReactionListener {
+        fun onClick(reactionView: ReactionView)
+    }
+
     companion object {
         private val MAX_MSG_VIEW_SIZE = 260.toDp
     }
@@ -52,6 +56,8 @@ class MessageView
     private val reactionRect = Rect()
 
     //#region Data
+    var onClickReactionListener: OnClickReactionListener? = null
+
     var reactionList: ArrayList<ReactionUiModel> = arrayListOf()
         set(value) {
             if (field != value) {
@@ -163,6 +169,10 @@ class MessageView
             reactionView.reactionCount = reaction.reactionCount
             reactionView.emoji = reaction.emoji
             reactionView.isSelected = reaction.isSelected
+
+            reactionView.setOnClickListener {
+                onClickReactionListener?.onClick(it as ReactionView)
+            }
 
             reactionLayout.addView(reactionView)
         }

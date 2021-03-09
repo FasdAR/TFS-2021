@@ -12,7 +12,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<MessageView>(R.id.msg_view).reactionList = arrayListOf(
+        val msgView = findViewById<MessageView>(R.id.msg_view)
+
+        msgView.onClickReactionListener = object : MessageView.OnClickReactionListener {
+            override fun onClick(reactionView: ReactionView) {
+                reactionView.selectedReaction()
+            }
+        }
+
+        msgView.reactionList = arrayListOf(
                 ReactionUiModel("\uD83D\uDE02", 2),
                 ReactionUiModel("\uD83D\uDE02", 2, isSelected = true),
                 ReactionUiModel("\uD83D\uDE02", 2),
