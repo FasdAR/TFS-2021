@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/msg_text"/>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="0dp"
         android:layout_height="51dp"
         android:id="@+id/msg_text"
