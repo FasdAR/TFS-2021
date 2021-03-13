@@ -15,33 +15,21 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
-import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
-import ru.fasdev.tfs.view.ui.custom.view.ReactionView
-import ru.fasdev.tfs.view.ui.custom.viewGroup.message.model.MessageReactionUi
 
-class MessageViewGroup
-@JvmOverloads
-constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
-    interface OnClickReactionListener {
-        fun onClick(reactionView: ReactionView)
-    }
-
-    companion object {
-        private val MAX_MSG_VIEW_SIZE = 260.toDp
-    }
-
+class ExternalMessageViewGroup
+    @JvmOverloads constructor(
+            context: Context,
+            attrs: AttributeSet? = null,
+            defStyleAttr: Int = 0,
+            defStyleRes: Int = 0
+    ) : SimpleMessageViewGroup(context, attrs, defStyleAttr, defStyleRes)
+{
     private val avatarImageView: ImageView
-    private val msgLayout: ViewGroup
-    private val reactionLayout: FlexboxLayout
-
-    private val msgTextView: TextView
     private val nameTextView: TextView
+    override val msgTextView: TextView
+    private val msgLayout: ViewGroup
+    override val reactionLayout: FlexboxLayout
 
     // #region Layout Params
     private val avatarLayoutParams: MarginLayoutParams
@@ -60,30 +48,7 @@ constructor(
     private val reactionRect = Rect()
     // #endregion
 
-    // #region Data
-    var onClickReactionListener: OnClickReactionListener? = null
-
-    var reactionList: ArrayList<MessageReactionUi> = arrayListOf()
-        set(value) {
-            if (field != value) {
-                field.clear()
-                field.addAll(value)
-
-                updateReactionLayout()
-                requestLayout()
-            }
-        }
-
-    var msgText: String = ""
-        set(value) {
-            if (field != value) {
-                field = value
-
-                updateMsgText()
-                requestLayout()
-            }
-        }
-
+    //#region Data
     var name: String = ""
         set(value) {
             if (field != value) {
@@ -101,18 +66,9 @@ constructor(
                 updateAvatar()
             }
         }
-
-    var msgViewMaxSize: Int = MAX_MSG_VIEW_SIZE
-        set(value) {
-            if (field != value) {
-                field = value
-                requestLayout()
-            }
-        }
-    // #endregion
-
+    //#endregion
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_message, this, true)
+        LayoutInflater.from(context).inflate(R.layout.view_external_message, this, true)
 
         avatarImageView = findViewById(R.id.avatar)
         msgLayout = findViewById(R.id.msg_layout)
@@ -121,75 +77,32 @@ constructor(
         nameTextView = findViewById(R.id.name_text)
         msgTextView = findViewById(R.id.message_text)
 
-        updateAvatar()
-        updateNameText()
-        updateMsgText()
-        updateReactionLayout()
-
-        context.obtainStyledAttributes(attrs, R.styleable.MessageViewGroup).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.ExternalMessageViewGroup).apply {
             avatarSrc = getResourceId(
-                R.styleable.MessageViewGroup_srcAvatar,
-                R.drawable.ic_launcher_background
+                    R.styleable.ExternalMessageViewGroup_srcAvatar,
+                    R.drawable.ic_launcher_background
             ).toString()
-            msgText = getString(R.styleable.MessageViewGroup_msgText) ?: ""
-            name = getString(R.styleable.MessageViewGroup_nameText) ?: ""
+            msgText = getString(R.styleable.ExternalMessageViewGroup_msgText) ?: ""
+            name = getString(R.styleable.ExternalMessageViewGroup_nameText) ?: ""
 
-            val type = getType(R.styleable.MessageViewGroup_msgViewMaxSize)
+            val type = getType(R.styleable.ExternalMessageViewGroup_msgViewMaxSize)
 
             when {
                 type == TypedValue.TYPE_DIMENSION -> {
                     msgViewMaxSize = getDimensionPixelSize(
-                        R.styleable.MessageViewGroup_msgViewMaxSize,
-                        MAX_MSG_VIEW_SIZE
+                            R.styleable.ExternalMessageViewGroup_msgViewMaxSize,
+                            MAX_MSG_VIEW_SIZE
                     )
                 }
                 type >= TypedValue.TYPE_FIRST_INT && type <= TypedValue.TYPE_LAST_INT -> {
-                    msgViewMaxSize = getInt(R.styleable.MessageViewGroup_msgViewMaxSize, MATCH_PARENT)
+                    msgViewMaxSize = getInt(R.styleable.ExternalMessageViewGroup_msgViewMaxSize, MATCH_PARENT)
                 }
             }
 
             recycle()
         }
-    }
 
-    private fun updateAvatar() {
-        if (avatarSrc.isDigitsOnly()) {
-            avatarImageView.setImageResource(avatarSrc.toInt())
-        }
-    }
-
-    private fun updateNameText() {
-        nameTextView.text = name
-    }
-
-    private fun updateMsgText() {
-        msgTextView.text = msgText
-    }
-
-    private fun updateReactionLayout() {
-        reactionLayout.removeAllViews()
-
-        reactionList.forEach { reaction ->
-            val reactionView = ReactionView(context)
-
-            reactionView.reactionCount = reaction.reactionCount
-            reactionView.emoji = reaction.emoji
-            reactionView.isSelectedReaction = reaction.isSelected
-
-            reactionView.setOnClickListener {
-                onClickReactionListener?.onClick(it as ReactionView)
-            }
-
-            reactionLayout.addView(reactionView)
-        }
-
-        val addImageView = ImageView(context)
-        addImageView.scaleType = ImageView.ScaleType.CENTER
-        addImageView.layoutParams = LayoutParams(ReactionView.MIN_WIDTH, ReactionView.MIN_HEIGHT)
-        addImageView.setBackgroundResource(R.drawable.sh_reaction)
-        addImageView.setImageResource(R.drawable.ic_plus)
-
-        reactionLayout.addView(addImageView)
+        updateReactionLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -197,8 +110,8 @@ constructor(
 
         // #region Avatar Size
         measureChildWithMargins(
-            avatarImageView, widthMeasureSpec, 0,
-            heightMeasureSpec, 0
+                avatarImageView, widthMeasureSpec, 0,
+                heightMeasureSpec, 0
         )
 
         val avatarWidth = avatarImageView.getWidthMeasuredMargin()
@@ -212,8 +125,8 @@ constructor(
         }
 
         measureChildWithMargins(
-            msgLayout, widthMeasureSpec, occupiedSpace,
-            heightMeasureSpec, 0
+                msgLayout, widthMeasureSpec, occupiedSpace,
+                heightMeasureSpec, 0
         )
 
         val msgHeight = msgLayout.getHeightMeasuredMargin()
@@ -222,8 +135,8 @@ constructor(
 
         // #region ReactionLayout Size
         measureChildWithMargins(
-            reactionLayout, widthMeasureSpec, avatarWidth,
-            heightMeasureSpec, msgHeight
+                reactionLayout, widthMeasureSpec, avatarWidth,
+                heightMeasureSpec, msgHeight
         )
 
         val reactionHeight = if (reactionLayout.childCount == 0) 0
@@ -249,7 +162,8 @@ constructor(
         setMeasuredDimension(resolveWidth, resolveHeight)
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int)
+    {
         // #region Avatar Calculate Size
         avatarRect.left = avatarLayoutParams.leftMargin
         avatarRect.top = avatarLayoutParams.topMargin
@@ -279,4 +193,14 @@ constructor(
     override fun generateDefaultLayoutParams() = MarginLayoutParams(MATCH_PARENT, WRAP_CONTENT)
     override fun generateLayoutParams(attrs: AttributeSet) = MarginLayoutParams(context, attrs)
     override fun generateLayoutParams(p: LayoutParams) = MarginLayoutParams(p)
+
+    private fun updateAvatar() {
+        if (avatarSrc.isDigitsOnly()) {
+            avatarImageView.setImageResource(avatarSrc.toInt())
+        }
+    }
+
+    private fun updateNameText() {
+        nameTextView.text = name
+    }
 }

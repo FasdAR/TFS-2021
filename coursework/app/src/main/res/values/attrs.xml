@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MessageViewGroup">
+    <declare-styleable name="ExternalMessageViewGroup">
         <attr name="msgText" format="string"/>
         <attr name="nameText" format="string"/>
         <attr name="srcAvatar" format="reference|color"/>
