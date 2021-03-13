@@ -10,7 +10,7 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:id="@+id/avatar"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Tfs.Avatar"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TFS.Circle"
         tools:src="@tools:sample/avatars" />
 
     <LinearLayout

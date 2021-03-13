@@ -112,7 +112,7 @@ constructor(
     // #endregion
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.message_view, this, true)
+        LayoutInflater.from(context).inflate(R.layout.view_message, this, true)
 
         avatarImageView = findViewById(R.id.avatar)
         msgLayout = findViewById(R.id.msg_layout)

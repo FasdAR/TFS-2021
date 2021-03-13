@@ -19,7 +19,7 @@ constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    defStyleRes: Int = R.style.ReactionView
+    defStyleRes: Int = R.style.Widget_TFS_ReactionView
 ) : View(context, attributeSet, defStyleAttr, defStyleRes) {
     companion object {
         internal val MIN_HEIGHT = 30.toDp

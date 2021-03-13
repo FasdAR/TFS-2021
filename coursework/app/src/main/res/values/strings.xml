@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TFS</string>
+    <string name="to_write">Написать...</string>
 </resources>
