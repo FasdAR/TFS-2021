@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ExternalMessageViewGroup">
+    <declare-styleable name="SimpleMessageViewGroup">
         <attr name="msgText" format="string"/>
-        <attr name="nameText" format="string"/>
-        <attr name="srcAvatar" format="reference|color"/>
         <attr name="msgViewMaxSize" format="dimension|integer">
             <enum name="match_parent" value="-1" />
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ExternalMessageViewGroup">
+        <attr name="msgText"/>
+        <attr name="msgViewMaxSize" />
+        <attr name="nameText" format="string"/>
+        <attr name="srcAvatar" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="InternalMessageViewGroup">
+        <attr name="msgText"/>
+        <attr name="msgViewMaxSize" />
     </declare-styleable>
 
     <declare-styleable name="FlexboxLayout">

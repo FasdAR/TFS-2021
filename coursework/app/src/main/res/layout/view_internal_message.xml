@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="ru.fasdev.tfs.view.ui.custom.viewGroup.message.InternalMessageViewGroup">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#FAFAFA"
+        android:background="@drawable/sh_msg_internal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:id="@+id/message_text"
+        tools:text="@tools:sample/lorem/random"
+        tools:maxLines="3"/>
+
+    <ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
+        android:id="@+id/reaction_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp" />
+</merge>

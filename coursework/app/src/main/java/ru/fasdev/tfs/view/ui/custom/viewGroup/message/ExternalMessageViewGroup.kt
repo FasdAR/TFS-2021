@@ -84,20 +84,7 @@ class ExternalMessageViewGroup
             ).toString()
             msgText = getString(R.styleable.ExternalMessageViewGroup_msgText) ?: ""
             name = getString(R.styleable.ExternalMessageViewGroup_nameText) ?: ""
-
-            val type = getType(R.styleable.ExternalMessageViewGroup_msgViewMaxSize)
-
-            when {
-                type == TypedValue.TYPE_DIMENSION -> {
-                    msgViewMaxSize = getDimensionPixelSize(
-                            R.styleable.ExternalMessageViewGroup_msgViewMaxSize,
-                            MAX_MSG_VIEW_SIZE
-                    )
-                }
-                type >= TypedValue.TYPE_FIRST_INT && type <= TypedValue.TYPE_LAST_INT -> {
-                    msgViewMaxSize = getInt(R.styleable.ExternalMessageViewGroup_msgViewMaxSize, MATCH_PARENT)
-                }
-            }
+            msgViewMaxSize = getMsgViewMaxSize()
 
             recycle()
         }
