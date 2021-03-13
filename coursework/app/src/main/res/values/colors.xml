@@ -8,6 +8,8 @@
     <color name="black_810">#282828</color>
     <color name="black_900">#1C1C1C</color>
     <color name="black_910">#121212</color>
+    <color name="black_920">#070707</color>
+    <color name="gray_300">#999999</color>
 
     <color name="white_900">#fff</color>
 </resources>
