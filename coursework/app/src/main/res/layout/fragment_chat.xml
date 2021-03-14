@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ru.fasdev.tfs.view.ui.custom.view.ReactionView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
