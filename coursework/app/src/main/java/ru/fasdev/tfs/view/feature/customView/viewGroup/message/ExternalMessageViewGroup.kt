@@ -52,8 +52,9 @@ class ExternalMessageViewGroup
         set(value) {
             if (field != value) {
                 field = value
-                updateAvatar()
             }
+
+            updateAvatar()
         }
 
     var name: String = ""

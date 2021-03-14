@@ -16,6 +16,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:layout_gravity="center"
+        android:id="@+id/date"
         tools:text="31 Янв"/>
 
 </FrameLayout>
