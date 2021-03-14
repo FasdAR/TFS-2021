@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.ViewGroup
 import androidx.core.view.children
 import ru.fasdev.tfs.R
@@ -21,6 +22,7 @@ constructor(
     companion object {
         private val DEFAULT_VERTICAL_SPACE = 7.toDp
         private val DEFAULT_HORIZONTAL_SPACE = 10.toDp
+        private const val DEFAULT_GRAVITY = Gravity.LEFT
     }
 
     var verticalSpace = DEFAULT_VERTICAL_SPACE
@@ -39,18 +41,28 @@ constructor(
             }
         }
 
+    var gravity = DEFAULT_GRAVITY
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidate()
+            }
+        }
+
     init {
         setWillNotDraw(false)
 
         context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
-            verticalSpace = getDimension(
-                R.styleable.FlexBoxLayout_android_verticalSpacing,
+            verticalSpace = getDimension(R.styleable.FlexBoxLayout_android_verticalSpacing,
                 DEFAULT_VERTICAL_SPACE.toFloat()
             ).toInt()
-            horizontalSpace = getDimension(
-                R.styleable.FlexBoxLayout_android_horizontalSpacing,
+
+            horizontalSpace = getDimension(R.styleable.FlexBoxLayout_android_horizontalSpacing,
                 DEFAULT_HORIZONTAL_SPACE.toFloat()
             ).toInt()
+
+            gravity = getInt(R.styleable.FlexBoxLayout_android_gravity, DEFAULT_GRAVITY)
+
             recycle()
         }
     }
@@ -96,17 +108,21 @@ constructor(
     @SuppressLint("DrawAllocation")
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val maxXPos = measuredWidth
+        val isLeft = gravity == Gravity.LEFT
 
         var cursorY = 0
-        var cursorX = 0
+        var cursorX = if (isLeft) 0 else measuredWidth
 
         var maxHeightRow = 0
 
         children.forEach { child ->
             // #region Checking New Line
-            val nextWidth = cursorX + child.measuredWidth
-            if (nextWidth > maxXPos) {
-                cursorX = 0
+            val nextWidth = if (isLeft) cursorX + child.measuredWidth else cursorX - child.measuredWidth
+            val isNextWidth = if (isLeft) nextWidth > maxXPos else nextWidth < 0
+
+            if (isNextWidth) {
+                cursorX = if (isLeft) 0 else measuredWidth
+
                 cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
             }
@@ -116,15 +132,23 @@ constructor(
             val rectChild = Rect()
 
             rectChild.top = cursorY
-            rectChild.left = cursorX
             rectChild.bottom = rectChild.top + child.measuredHeight
-            rectChild.right = rectChild.left + child.measuredWidth
+
+            if (isLeft) {
+                rectChild.left = cursorX
+                rectChild.right = rectChild.left + child.measuredWidth
+            }
+            else {
+                rectChild.right = cursorX
+                rectChild.left = rectChild.right - child.measuredWidth
+            }
 
             child.layout(rectChild)
             // #endregion
 
             // #region Calculate Next Position
-            cursorX += child.measuredWidth + horizontalSpace
+            if (isLeft) cursorX += child.measuredWidth + horizontalSpace
+            else cursorX -= child.measuredWidth + horizontalSpace
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             // #endregion
         }
