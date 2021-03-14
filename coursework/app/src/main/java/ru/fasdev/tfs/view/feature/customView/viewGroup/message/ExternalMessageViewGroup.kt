@@ -118,7 +118,7 @@ class ExternalMessageViewGroup
         //#region Measure Reaction Layout Size
         measureChildWithMargins(
                 reactionsLayout,
-                widthMeasureSpec, avatarWidth,
+                widthMeasureSpec, avatarWidth + SPACE_REACTIONS_EDGE,
                 heightMeasureSpec, messageHeight
         )
 

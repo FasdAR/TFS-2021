@@ -1,8 +1,10 @@
 package ru.fasdev.tfs.view.feature.customView.viewGroup.message
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
 import ru.fasdev.tfs.R
@@ -42,6 +44,7 @@ class InternalMessageViewGroup
 
         messageTextView = findViewById(R.id.message_text)
         reactionsLayout = findViewById(R.id.reaction_layout)
+        reactionsLayout.gravity = Gravity.RIGHT
 
         context.obtainStyledAttributes(attributeSet, R.styleable.InternalMessageViewGroup).apply {
             message = getString(R.styleable.InternalMessageViewGroup_mvMessage) ?: ""
@@ -69,7 +72,7 @@ class InternalMessageViewGroup
         //#region Measure Reaction Layout Size
         measureChildWithMargins(
                 reactionsLayout,
-                widthMeasureSpec, 0,
+                widthMeasureSpec, SPACE_REACTIONS_EDGE,
                 heightMeasureSpec, messageHeight
         )
         val reactionHeight = if (reactionsLayout.childCount == 0) 0

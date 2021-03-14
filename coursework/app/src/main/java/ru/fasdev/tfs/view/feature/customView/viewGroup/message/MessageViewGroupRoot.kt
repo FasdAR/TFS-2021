@@ -21,6 +21,7 @@ abstract class MessageViewGroupRoot
 {
     companion object {
         val MAX_MESSAGE_WIDTH = 267.toDp
+        val SPACE_REACTIONS_EDGE = 88.toDp
     }
 
     //#region View
