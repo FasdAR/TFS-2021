@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SimpleMessageViewGroup">
-        <attr name="msgText" format="string"/>
-        <attr name="msgViewMaxSize" format="dimension|integer">
-            <enum name="match_parent" value="-1" />
-        </attr>
-    </declare-styleable>
-
-    <declare-styleable name="ExternalMessageViewGroup">
-        <attr name="msgText"/>
-        <attr name="msgViewMaxSize" />
-        <attr name="nameText" format="string"/>
-        <attr name="srcAvatar" format="reference|color"/>
-    </declare-styleable>
-
-    <declare-styleable name="InternalMessageViewGroup">
-        <attr name="msgText"/>
-        <attr name="msgViewMaxSize" />
-    </declare-styleable>
-
-    <declare-styleable name="FlexboxLayout">
+    <declare-styleable name="FlexBoxLayout">
         <attr name="android:verticalSpacing"/>
         <attr name="android:horizontalSpacing"/>
     </declare-styleable>
@@ -31,4 +12,20 @@
         <attr name="rvEmoji" format="string"/>
         <attr name="rvCountReaction" format="integer"/>
     </declare-styleable>
+
+    <!-- #region Message View Groups -->
+    <declare-styleable name="MessageViewGroupRoot">
+        <attr name="mvMessage" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExternalMessageViewGroup">
+        <attr name="mvMessage"/>
+        <attr name="mvName" format="string"/>
+        <attr name="mvSrcAvatar" format="reference|color"/>
+    </declare-styleable>
+
+    <declare-styleable name="InternalMessageViewGroup">
+        <attr name="mvMessage"/>
+    </declare-styleable>
+    <!-- #endregion -->
 </resources>

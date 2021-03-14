@@ -5,8 +5,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.TextView
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
+import ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
 
+/*
 class InternalMessageViewGroup
     @JvmOverloads constructor(
             context: Context,
@@ -16,7 +17,7 @@ class InternalMessageViewGroup
     ) : SimpleMessageViewGroup(context, attrs, defStyleAttr, defStyleRes)
 {
     override val msgTextView: TextView
-    override val reactionLayout: FlexboxLayout
+    override val reactionLayout: FlexBoxLayout
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_internal_message, this, true)
@@ -46,4 +47,4 @@ class InternalMessageViewGroup
     override fun generateDefaultLayoutParams() = MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     override fun generateLayoutParams(attrs: AttributeSet) = MarginLayoutParams(context, attrs)
     override fun generateLayoutParams(p: LayoutParams) = MarginLayoutParams(p)
-}
+}*/

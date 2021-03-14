@@ -19,7 +19,7 @@
         tools:text="@tools:sample/lorem/random"
         tools:maxLines="3"/>
 
-    <ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
+    <ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
         android:id="@+id/reaction_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -10,7 +10,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.layout
 import ru.fasdev.tfs.view.feature.util.toDp
 
-class FlexboxLayout
+class FlexBoxLayout
 @JvmOverloads
 constructor(
     context: Context,
@@ -42,13 +42,13 @@ constructor(
     init {
         setWillNotDraw(false)
 
-        context.obtainStyledAttributes(attrs, R.styleable.FlexboxLayout).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
             verticalSpace = getDimension(
-                R.styleable.FlexboxLayout_android_verticalSpacing,
+                R.styleable.FlexBoxLayout_android_verticalSpacing,
                 DEFAULT_VERTICAL_SPACE.toFloat()
             ).toInt()
             horizontalSpace = getDimension(
-                R.styleable.FlexboxLayout_android_horizontalSpacing,
+                R.styleable.FlexBoxLayout_android_horizontalSpacing,
                 DEFAULT_HORIZONTAL_SPACE.toFloat()
             ).toInt()
             recycle()
