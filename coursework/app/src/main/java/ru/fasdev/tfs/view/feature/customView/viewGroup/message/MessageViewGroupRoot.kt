@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.custom.viewGroup.message
+package ru.fasdev.tfs.view.feature.customView.viewGroup.message
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,9 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.toDp
-import ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
-import ru.fasdev.tfs.view.ui.custom.view.ReactionView
-import ru.fasdev.tfs.view.ui.custom.viewGroup.message.model.MessageReactionUi
+import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
+import ru.fasdev.tfs.view.feature.customView.view.ReactionView
+import ru.fasdev.tfs.view.feature.customView.viewGroup.message.model.MessageReactionUi
 
 abstract class MessageViewGroupRoot
     @JvmOverloads constructor(

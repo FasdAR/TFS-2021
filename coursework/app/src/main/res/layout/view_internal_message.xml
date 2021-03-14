@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:parentTag="ru.fasdev.tfs.view.ui.custom.viewGroup.message.InternalMessageViewGroup">
+    tools:parentTag="ru.fasdev.tfs.view.feature.customView.viewGroup.message.InternalMessageViewGroup">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         tools:text="@tools:sample/lorem/random"
         tools:maxLines="3"/>
 
-    <ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
+    <ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
         android:id="@+id/reaction_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

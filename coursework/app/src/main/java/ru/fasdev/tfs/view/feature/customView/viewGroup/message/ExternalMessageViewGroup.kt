@@ -1,21 +1,18 @@
-package ru.fasdev.tfs.view.ui.custom.viewGroup.message
+package ru.fasdev.tfs.view.feature.customView.viewGroup.message
 
 import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.StyleRes
 import androidx.core.text.isDigitsOnly
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
-import ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
+import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
 
 class ExternalMessageViewGroup
     @JvmOverloads constructor(

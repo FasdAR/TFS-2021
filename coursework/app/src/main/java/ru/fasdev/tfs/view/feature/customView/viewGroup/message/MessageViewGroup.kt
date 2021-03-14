@@ -1,8 +1,8 @@
-package ru.fasdev.tfs.view.ui.custom.viewGroup.message
+package ru.fasdev.tfs.view.feature.customView.viewGroup.message
 
 import android.widget.TextView
-import ru.fasdev.tfs.view.ui.custom.layout.FlexBoxLayout
-import ru.fasdev.tfs.view.ui.custom.view.ReactionView
+import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
+import ru.fasdev.tfs.view.feature.customView.view.ReactionView
 
 interface MessageViewGroup
 {

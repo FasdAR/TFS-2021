@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.custom.layout
+package ru.fasdev.tfs.view.feature.customView.layout
 
 import android.annotation.SuppressLint
 import android.content.Context

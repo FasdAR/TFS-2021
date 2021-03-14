@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.custom.view
+package ru.fasdev.tfs.view.feature.customView.view
 
 import android.content.Context
 import android.graphics.Canvas
