@@ -24,12 +24,9 @@ class FirstActivity : AppCompatActivity() {
             when (it.resultCode) {
                 RESULT_OK -> {
                     val intent = it.data
-                    val array = intent
-                        ?.getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
+                    val array = intent?.getParcelableArrayListExtra<Contact>(SecondActivity.KEY_CONTACTS)
 
-                    array?.let {
-                        contactsList = it
-                    }
+                    array?.let { contactsList = it }
 
                     checkState()
                 }
@@ -51,8 +48,7 @@ class FirstActivity : AppCompatActivity() {
             contactsList = it
         }
 
-        if (contactsList.isEmpty())
-            toLoadContacts()
+        if (contactsList.isEmpty()) toLoadContacts()
 
         binding = ActivityFirstBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -97,10 +93,8 @@ class FirstActivity : AppCompatActivity() {
     }
 
     private fun checkState() {
-        if (contactsList.isEmpty())
-            toEmptyState()
-        else
-            toBusyState()
+        if (contactsList.isEmpty()) toEmptyState()
+        else toBusyState()
     }
 
     // #region Ui State

@@ -1,6 +1,8 @@
 package ru.fasdev.homeworkone.ui.activity
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -10,13 +12,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import ru.fasdev.homeworkone.background.broadcast.SyncContactsBroadcastReceiver
 import ru.fasdev.homeworkone.background.service.SyncContactsService
 import ru.fasdev.homeworkone.databinding.ActivitySecondBinding
 
 class SecondActivity : AppCompatActivity() {
     companion object {
-        const val KEY_CONTACTS = SyncContactsBroadcastReceiver.KEY_CONTACTS
+        const val KEY_CONTACTS = SecondActivity.BROADCAST_ACTION_CONTACTS
+        const val BROADCAST_ACTION_CONTACTS: String = "contacts"
+        const val BROADCAST_KEY_CONTACTS = "contacts"
+    }
+
+    private val localBroadcastReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            setResult(RESULT_OK, intent)
+            finish()
+        }
     }
 
     private lateinit var binding: ActivitySecondBinding
@@ -28,8 +39,6 @@ class SecondActivity : AppCompatActivity() {
             else
                 toRequestPermissionState()
         }
-
-    private val localBroadcastReceiver = SyncContactsBroadcastReceiver(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +55,7 @@ class SecondActivity : AppCompatActivity() {
         super.onResume()
 
         // #region Register Local Receiver
-        val intentFilter = IntentFilter(SyncContactsBroadcastReceiver.ACTION_CONTACTS)
+        val intentFilter = IntentFilter(BROADCAST_ACTION_CONTACTS)
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(localBroadcastReceiver, intentFilter)
         // #endregion
