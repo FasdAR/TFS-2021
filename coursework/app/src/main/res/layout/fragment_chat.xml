@@ -37,13 +37,14 @@
         app:layout_constraintRight_toLeftOf="@id/send_btn"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         style="@style/Widget.TFS.Button.UnelevatedButton.IconOnly.Circle"
         android:layout_width="39dp"
         android:layout_height="39dp"
         android:id="@+id/send_btn"
         android:layout_marginEnd="15dp"
-        app:icon="@drawable/ic_send"
+        app:iconSize="24dp"
+        app:icon="@drawable/ic_add"
         app:iconTint="?android:windowBackground"
         app:layout_constraintTop_toTopOf="@id/msg_text"
         app:layout_constraintBottom_toBottomOf="@id/msg_text"
