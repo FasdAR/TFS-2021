@@ -32,47 +32,44 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
         rvList.adapter = adapter
         rvList.addItemDecoration(VerticalSpaceItemDecoration(19.toDp))
 
-        adapter.items = listOf(
-                DateUi(0, "31 Dec"),
-                ExternalMessageUi(0, "Andrey Rednikov",
-                        R.drawable.ic_launcher_background.toString(),
-                        "Hello My First Message",
-                        listOf(
-                                MessageReactionUi("\uD83D\uDE30", 1, false),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true)
-                        )),
-                InternalMessageUi(0, "Hello My Internal Message",
-                        listOf(MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true),
-                                MessageReactionUi("\uD83E\uDD22", 5, true)))
-        ).reversed()
+        val list: List<MessageDomain> = listOf(
+            MessageDomain(0, 102,
+            "Andrey Rednikov","Hello", Date(), listOf())
+        )
+
+        adapter.items = flatMapMessageList(105, list).reversed()
     }
 
-    private fun flatMapMessageList(messages: List<MessageDomain>): List<ViewTyped> {
-        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-        val dateSF = SimpleDateFormat("dd MMM", Locale.getDefault())
+    private fun flatMapMessageList(internalUserId: Int = 0, messages: List<MessageDomain>): List<ViewTyped> {
+        val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
 
-        val mapMessages = messages.groupBy { dateFormat.format(it.date) }
+        val mapMessages = messages.groupBy { dateFormatKey.format(it.date) }
         val resultList: ArrayList<ViewTyped> = arrayListOf()
         mapMessages.keys
                 .sorted()
                 .forEach { key ->
-                    val date = dateFormat.parse(key)
+                    val date = dateFormatKey.parse(key)
                     val items = mapMessages[key]
 
-                    resultList.add(DateUi(0, date = dateSF.format(date!!)))
+                    date?.let { date ->
+                        resultList.add(DateUi(date.time.toInt(), date = dateFormatUi.format(date)))
+                    }
+
                     items?.forEach {
-                       // resultList.add()
+                        if (it.idSender == internalUserId) {
+                            resultList.add(
+                                InternalMessageUi(
+                                    it.id, it.message,
+                                    it.listReaction.map {
+                                        MessageReactionUi(it.emoji, it.countReaction, it.isSelected)
+                                    }))
+                        }
+                        else {
+                            resultList.add(ExternalMessageUi(it.id,
+                                it.nameSender, R.drawable.ic_launcher_background.toString(), it.message,
+                                it.listReaction.map { MessageReactionUi(it.emoji, it.countReaction, it.isSelected) }))
+                        }
                     }
                 }
 
@@ -82,5 +79,5 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
     data class MessageDomain(val id: Int, val idSender: Int,
                              val nameSender: String, val message: String, val date: Date,
                              val listReaction: List<ReactionDomain>)
-    data class ReactionDomain(val emoji: String, val countReaction: Int)
+    data class ReactionDomain(val emoji: String, val countReaction: Int, val isSelected: Boolean)
 }
