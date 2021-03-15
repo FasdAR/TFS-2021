@@ -9,7 +9,7 @@ import ru.fasdev.homeworkone.data.contacts.ContactsRepo
 import ru.fasdev.homeworkone.data.contacts.ContactsRepoImpl
 import ru.fasdev.homeworkone.ui.activity.SecondActivity
 
-class SyncContactsService(name: String =  SyncContactsService::class.java.simpleName) :
+class SyncContactsService(name: String = SyncContactsService::class.java.simpleName) :
     IntentService(name) {
     companion object {
         const val EMULATE_TIMEOUT = 1000L

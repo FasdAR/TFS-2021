@@ -32,7 +32,6 @@ class ContactsRvAdapter : RecyclerView.Adapter<ContactsRvAdapter.ContactsViewHol
         }
     }
 
-
     private val localData: MutableList<Contact> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
