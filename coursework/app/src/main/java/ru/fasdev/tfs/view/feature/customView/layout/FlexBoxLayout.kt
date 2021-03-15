@@ -115,6 +115,7 @@ constructor(
 
         var maxHeightRow = 0
 
+        //TODO: FIXED gravity draw
         children.forEach { child ->
             // #region Checking New Line
             val nextWidth = if (isLeft) cursorX + child.measuredWidth else cursorX - child.measuredWidth

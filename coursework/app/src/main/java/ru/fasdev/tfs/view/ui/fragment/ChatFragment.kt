@@ -15,6 +15,9 @@ import ru.fasdev.tfs.view.ui.fragment.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.DateUi
 import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.ExternalMessageUi
 import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.InternalMessageUi
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatFragment: Fragment(R.layout.fragment_chat)
 {
@@ -54,4 +57,30 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
                                 MessageReactionUi("\uD83E\uDD22", 5, true)))
         ).reversed()
     }
+
+    private fun flatMapMessageList(messages: List<MessageDomain>): List<ViewTyped> {
+        val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        val dateSF = SimpleDateFormat("dd MMM", Locale.getDefault())
+
+        val mapMessages = messages.groupBy { dateFormat.format(it.date) }
+        val resultList: ArrayList<ViewTyped> = arrayListOf()
+        mapMessages.keys
+                .sorted()
+                .forEach { key ->
+                    val date = dateFormat.parse(key)
+                    val items = mapMessages[key]
+
+                    resultList.add(DateUi(0, date = dateSF.format(date!!)))
+                    items?.forEach {
+                       // resultList.add()
+                    }
+                }
+
+        return resultList
+    }
+
+    data class MessageDomain(val id: Int, val idSender: Int,
+                             val nameSender: String, val message: String, val date: Date,
+                             val listReaction: List<ReactionDomain>)
+    data class ReactionDomain(val emoji: String, val countReaction: Int)
 }
