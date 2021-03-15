@@ -170,11 +170,13 @@ class ExternalMessageViewGroup
     }
 
     private fun updateAvatar() {
-        if (avatarSrc.isDigitsOnly()) {
-            avatarImageView.setImageResource(avatarSrc.toInt())
-        }
-        else {
-            //TODO: LOAD FROM OTHER METHOD
+        if (avatarSrc.isNotEmpty()) {
+            if (avatarSrc.isDigitsOnly()) {
+                avatarImageView.setImageResource(avatarSrc.toInt())
+            }
+            else {
+                //TODO: LOAD FROM OTHER METHOD
+            }
         }
     }
 
