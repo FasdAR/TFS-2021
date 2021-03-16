@@ -31,6 +31,7 @@ abstract class MessageViewGroupRoot
 
     //#region Listeners
     override var onClickReactionListener: MessageViewGroup.OnClickReactionListener? = null
+    override var onClickPlusReactionListener: MessageViewGroup.OnClickPlusReactionListener? = null
     //#endregion
 
     //#region Data
@@ -69,7 +70,7 @@ abstract class MessageViewGroupRoot
             reactionView.isSelectedReaction = reaction.isSelected
 
             reactionView.setOnClickListener {
-                onClickReactionListener?.onClick(it as ReactionView)
+                onClickReactionListener?.onClickReaction(it as ReactionView, reaction.emoji)
             }
 
             reactionsLayout.addView(reactionView)
@@ -82,6 +83,9 @@ abstract class MessageViewGroupRoot
             addImageView.setBackgroundResource(R.drawable.sh_reaction)
             addImageView.setImageResource(R.drawable.ic_plus)
 
+            addImageView.setOnClickListener {
+                onClickPlusReactionListener?.onClickPlusReaction()
+            }
             reactionsLayout.addView(addImageView)
         }
     }

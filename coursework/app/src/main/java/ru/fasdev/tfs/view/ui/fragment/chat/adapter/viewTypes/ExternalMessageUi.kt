@@ -5,5 +5,5 @@ import ru.fasdev.tfs.view.feature.customView.viewGroup.message.model.MessageReac
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 
 data class ExternalMessageUi(override val uId: Int, val nameSender: String, val avatarSrc: String,
-                        val message: String, val reactions: List<MessageReactionUi>,
-                        override val viewType: Int = R.layout.item_external_message): ViewTyped()
+                             override val message: String, override val reactions: List<MessageReactionUi>,
+                             override val viewType: Int = R.layout.item_external_message): MessageUi()

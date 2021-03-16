@@ -6,5 +6,6 @@ interface MessageInteractor
 {
     fun getMessageByChat(idChat: Int): List<Message>
     fun setSelectedReaction(idMessage: Int, emoji: String, isSelected: Boolean)
+    fun selectedReaction(idMessage: Int, emoji: String)
     fun sendMessage(text: String)
 }

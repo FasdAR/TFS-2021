@@ -12,6 +12,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
+import ru.fasdev.tfs.view.feature.customView.viewGroup.message.MessageViewGroup
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.recycler.Adapter
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
@@ -21,13 +22,20 @@ import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import java.util.*
 
-class ChatFragment: Fragment(R.layout.fragment_chat)
+class ChatFragment: Fragment(R.layout.fragment_chat),
+        ChatHolderFactory.OnLongClickMessageListener,
+        ChatHolderFactory.OnClickReactionListener,
+        MessageViewGroup.OnClickPlusReactionListener
 {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
     private val interactor: MessageInteractor = MessageInteractorImpl()
-    private val adapter by lazy { return@lazy Adapter<ViewTyped>(ChatHolderFactory()) }
+    private val adapter by lazy {
+        return@lazy Adapter<ViewTyped>(
+                ChatHolderFactory(this, this, this)
+        )
+    }
 
     private val currentChatId = 1
     private val currentUserId = 1
@@ -61,8 +69,6 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
 
                 binding.msgText.text?.clear()
             }
-
-            SelectEmojiBottomDialog.show(childFragmentManager)
         }
     }
 
@@ -73,5 +79,23 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
 
     private fun updateChatItems() {
         adapter.items = interactor.getMessageByChat(currentChatId).mapToUiList(currentUserId)
+    }
+
+    private fun showBottomEmojiDialog() {
+        SelectEmojiBottomDialog.show(childFragmentManager)
+    }
+
+    override fun onLongClickMessage(uIdMessage: Int) {
+        showBottomEmojiDialog()
+    }
+
+    override fun onClickPlusReaction() {
+        showBottomEmojiDialog()
+    }
+
+    override fun onClickReaction(uIdMessage: Int, emoji: String) {
+        //TODO: FIX ANIMATION
+        interactor.selectedReaction(uIdMessage, emoji)
+        updateChatItems()
     }
 }

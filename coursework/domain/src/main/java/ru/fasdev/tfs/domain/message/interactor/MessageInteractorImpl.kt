@@ -49,11 +49,18 @@ class MessageInteractorImpl : MessageInteractor
         }
         else {
             with(messageList[indexMessage].reactions[indexReaction]) {
-                val newCount = if (isSelected) this.countSelected - 1 else this.countSelected + 1
+                val newCount = if (isSelected) this.countSelected + 1 else this.countSelected - 1
                 val newReaction = this.copy(countSelected = newCount, isSelected = isSelected)
                 messageList[indexMessage].reactions[indexReaction] = newReaction
             }
         }
+    }
+
+    override fun selectedReaction(idMessage: Int, emoji: String) {
+        val indexMessage = messageList.indexOfFirst { it.id == idMessage }
+        val isSelected = messageList[indexMessage].reactions.find { it.emoji == emoji }?.isSelected ?: false
+
+        setSelectedReaction(idMessage, emoji, !isSelected)
     }
 
     override fun sendMessage(text: String) {
