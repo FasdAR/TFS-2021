@@ -7,4 +7,8 @@ open class ViewTyped
 
     open val uId: Int
         get() = error("Don't Provide uId: $this")
+
+    override fun equals(other: Any?): Boolean {
+        return uId == (other as ViewTyped).uId
+    }
 }

@@ -1,18 +1,18 @@
 package ru.fasdev.tfs.view.feature.recycler
 
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import ru.fasdev.tfs.view.feature.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.feature.recycler.base.HolderFactory
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 
-class Adapter<T: ViewTyped>(holderFactory: HolderFactory) : BaseAdapter<T>(holderFactory)
+class Adapter<T: ViewTyped>(holderFactory: HolderFactory,
+                            private val itemCallback: DiffUtil.ItemCallback<T> = BaseDiffUtil())
+    : BaseAdapter<T>(holderFactory)
 {
-    private val localItems: MutableList<T> = mutableListOf()
+    private val differ = AsyncListDiffer(this, itemCallback)
 
     override var items: List<T>
-        get() = localItems
-        set(value) {
-            localItems.clear()
-            localItems.addAll(value)
-            notifyDataSetChanged()
-        }
+        get() = differ.currentList
+        set(value) = differ.submitList(value)
 }

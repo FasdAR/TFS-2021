@@ -17,7 +17,6 @@ import ru.fasdev.tfs.view.feature.recycler.Adapter
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 import ru.fasdev.tfs.view.feature.recycler.itemDecoration.VerticalSpaceItemDecoration
 import ru.fasdev.tfs.view.feature.util.toDp
-import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import java.util.*
 
@@ -62,7 +61,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
                 binding.msgText.text?.clear()
             }
 
-            SelectEmojiBottomDialog.show(childFragmentManager)
+            //SelectEmojiBottomDialog.show(childFragmentManager)
         }
     }
 
