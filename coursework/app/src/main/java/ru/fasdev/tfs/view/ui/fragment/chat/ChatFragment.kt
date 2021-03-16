@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.fragment
+package ru.fasdev.tfs.view.ui.fragment.chat
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,20 +8,17 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
-import ru.fasdev.tfs.domain.model.Message
-import ru.fasdev.tfs.domain.model.Reaction
-import ru.fasdev.tfs.domain.model.User
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.recycler.Adapter
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 import ru.fasdev.tfs.view.feature.recycler.itemDecoration.VerticalSpaceItemDecoration
 import ru.fasdev.tfs.view.feature.util.toDp
-import ru.fasdev.tfs.view.ui.fragment.adapter.ChatHolderFactory
+import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import java.util.*
 
 class ChatFragment: Fragment(R.layout.fragment_chat)
@@ -37,15 +34,14 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.let {
-            _binding = FragmentChatBinding.bind(it)
-        }
+        view?.let { _binding = FragmentChatBinding.bind(it) }
         return view
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val rvList: RecyclerView = view.findViewById(R.id.rv_list)
+        val rvList: RecyclerView = binding.rvList
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
         rvList.addItemDecoration(VerticalSpaceItemDecoration(19.toDp))
@@ -53,12 +49,8 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
         updateChatItems()
 
         binding.msgText.addTextChangedListener {
-            if (it.isNullOrEmpty()) {
-                binding.sendBtn.setIconResource(R.drawable.ic_add)
-            }
-            else {
-                binding.sendBtn.setIconResource(R.drawable.ic_send)
-            }
+            if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
+            else binding.sendBtn.setIconResource(R.drawable.ic_send)
         }
 
         binding.sendBtn.setOnClickListener {
@@ -69,6 +61,8 @@ class ChatFragment: Fragment(R.layout.fragment_chat)
 
                 binding.msgText.text?.clear()
             }
+
+            SelectEmojiBottomDialog.show(childFragmentManager)
         }
     }
 

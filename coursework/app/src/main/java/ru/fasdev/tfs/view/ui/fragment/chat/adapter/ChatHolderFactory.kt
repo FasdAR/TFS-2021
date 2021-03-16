@@ -1,12 +1,12 @@
-package ru.fasdev.tfs.view.ui.fragment.adapter
+package ru.fasdev.tfs.view.ui.fragment.chat.adapter
 
 import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.recycler.base.BaseViewHolder
 import ru.fasdev.tfs.view.feature.recycler.base.HolderFactory
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewHolders.DateViewHolder
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewHolders.ExternalMessageViewHolder
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewHolders.InternalMessageViewHolder
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders.DateViewHolder
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders.ExternalMessageViewHolder
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders.InternalMessageViewHolder
 
 class ChatHolderFactory: HolderFactory()
 {

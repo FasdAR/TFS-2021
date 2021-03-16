@@ -10,6 +10,7 @@
     <color name="black_910">#121212</color>
     <color name="black_920">#070707</color>
     <color name="gray_300">#999999</color>
+    <color name="gray_500">#555555</color>
 
     <color name="white_900">#fff</color>
 </resources>

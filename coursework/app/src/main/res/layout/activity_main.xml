@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.activity.MainActivity">
+    tools:context=".view.ui.activity.main.MainActivity">
 
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="ru.fasdev.tfs.view.ui.fragment.ChatFragment"
+        android:name="ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment"
         android:id="@+id/chat_fragment"
         android:tag="asdasdasdasd"
         tools:layout="@layout/fragment_chat"/>

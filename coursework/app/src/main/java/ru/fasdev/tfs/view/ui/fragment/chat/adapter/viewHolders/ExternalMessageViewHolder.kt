@@ -1,10 +1,10 @@
-package ru.fasdev.tfs.view.ui.fragment.adapter.viewHolders
+package ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders
 
 import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.customView.viewGroup.message.ExternalMessageViewGroup
 import ru.fasdev.tfs.view.feature.recycler.base.BaseViewHolder
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.ExternalMessageUi
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.ExternalMessageUi
 
 class ExternalMessageViewHolder(view: View): BaseViewHolder<ExternalMessageUi>(view)
 {

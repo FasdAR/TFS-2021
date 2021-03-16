@@ -1,10 +1,10 @@
-package ru.fasdev.tfs.view.ui.fragment.adapter.viewHolders
+package ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders
 
 import android.view.View
 import android.widget.TextView
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.recycler.base.BaseViewHolder
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.DateUi
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.DateUi
 
 class DateViewHolder(view: View): BaseViewHolder<DateUi>(view)
 {

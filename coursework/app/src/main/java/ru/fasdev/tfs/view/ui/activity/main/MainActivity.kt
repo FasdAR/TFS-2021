@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.activity
+package ru.fasdev.tfs.view.ui.activity.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

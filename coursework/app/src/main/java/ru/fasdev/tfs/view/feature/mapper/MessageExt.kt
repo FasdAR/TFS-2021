@@ -2,8 +2,8 @@ package ru.fasdev.tfs.view.feature.mapper
 
 import ru.fasdev.tfs.domain.model.Message
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.ExternalMessageUi
-import ru.fasdev.tfs.view.ui.fragment.adapter.viewTypes.InternalMessageUi
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.ExternalMessageUi
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.InternalMessageUi
 import java.text.SimpleDateFormat
 import java.util.*
 
