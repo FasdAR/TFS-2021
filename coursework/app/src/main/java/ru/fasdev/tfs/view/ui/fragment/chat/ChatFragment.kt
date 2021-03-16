@@ -20,20 +20,19 @@ import ru.fasdev.tfs.view.feature.recycler.itemDecoration.VerticalSpaceItemDecor
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
-import java.util.*
 
-class ChatFragment: Fragment(R.layout.fragment_chat),
-        ChatHolderFactory.OnLongClickMessageListener,
-        ChatHolderFactory.OnClickReactionListener,
-        MessageViewGroup.OnClickPlusReactionListener
-{
+class ChatFragment :
+    Fragment(R.layout.fragment_chat),
+    ChatHolderFactory.OnLongClickMessageListener,
+    ChatHolderFactory.OnClickReactionListener,
+    MessageViewGroup.OnClickPlusReactionListener {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
     private val interactor: MessageInteractor = MessageInteractorImpl()
     private val adapter by lazy {
         return@lazy Adapter<ViewTyped>(
-                ChatHolderFactory(this, this, this)
+            ChatHolderFactory(this, this, this)
         )
     }
 
@@ -94,7 +93,7 @@ class ChatFragment: Fragment(R.layout.fragment_chat),
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        //TODO: FIX ANIMATION
+        // TODO: FIX ANIMATION
         interactor.selectedReaction(uIdMessage, emoji)
         updateChatItems()
     }

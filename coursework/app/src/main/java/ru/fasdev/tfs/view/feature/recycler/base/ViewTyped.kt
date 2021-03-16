@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.view.feature.recycler.base
 
-open class ViewTyped
-{
+open class ViewTyped {
     open val viewType: Int
         get() = error("Don't Provide ViewTyped: $this")
 

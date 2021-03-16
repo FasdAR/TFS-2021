@@ -9,8 +9,7 @@ import ru.fasdev.tfs.view.feature.recycler.base.BaseViewHolder
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.InternalMessageUi
 
-class InternalMessageViewHolder(view: View): BaseViewHolder<InternalMessageUi>(view)
-{
+class InternalMessageViewHolder(view: View) : BaseViewHolder<InternalMessageUi>(view) {
     val message: InternalMessageViewGroup = view.findViewById(R.id.message)
 
     var onLongClickMessageListener: ChatHolderFactory.OnLongClickMessageListener? = null

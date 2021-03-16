@@ -10,10 +10,10 @@ import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders.ExternalMessageVi
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolders.InternalMessageViewHolder
 
 class ChatHolderFactory(
-        private val onLongClickMessageListener: OnLongClickMessageListener,
-        private val onClickReactionListener: OnClickReactionListener,
-        private val onClickPlusReactionListener: MessageViewGroup.OnClickPlusReactionListener): HolderFactory()
-{
+    private val onLongClickMessageListener: OnLongClickMessageListener,
+    private val onClickReactionListener: OnClickReactionListener,
+    private val onClickPlusReactionListener: MessageViewGroup.OnClickPlusReactionListener
+) : HolderFactory() {
     interface OnClickReactionListener {
         fun onClickReaction(uIdMessage: Int, emoji: String)
     }
@@ -23,7 +23,7 @@ class ChatHolderFactory(
     }
 
     override fun createViewHolder(view: View, viewType: Int): BaseViewHolder<*>? {
-        return when(viewType) {
+        return when (viewType) {
             R.layout.item_date_separation -> DateViewHolder(view)
             R.layout.item_external_message -> ExternalMessageViewHolder(view).apply {
                 onClickReactionListener = this@ChatHolderFactory.onClickReactionListener

@@ -2,8 +2,7 @@ package ru.fasdev.tfs.domain.message.interactor
 
 import ru.fasdev.tfs.domain.model.Message
 
-interface MessageInteractor
-{
+interface MessageInteractor {
     fun getMessageByChat(idChat: Int): List<Message>
     fun setSelectedReaction(idMessage: Int, emoji: String, isSelected: Boolean)
     fun selectedReaction(idMessage: Int, emoji: String)

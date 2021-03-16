@@ -17,14 +17,13 @@ import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewTypes.EmojiUi
 import kotlin.concurrent.thread
 
-class SelectEmojiBottomDialog : BottomSheetDialogFragment()
-{
+class SelectEmojiBottomDialog : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "BS_SELECT_EMOJI"
 
         fun newInstance() = SelectEmojiBottomDialog()
         fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog =
-                newInstance().also { it.show(fragmentManager, TAG) }
+            newInstance().also { it.show(fragmentManager, TAG) }
     }
 
     private var _binding: BottomDialogSelectEmojiBinding? = null

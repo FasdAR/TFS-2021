@@ -9,7 +9,7 @@ abstract class HolderFactory : (ViewGroup, Int) -> BaseViewHolder<ViewTyped> {
 
     override fun invoke(viewGroup: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
         val view: View = LayoutInflater.from(viewGroup.context)
-                .inflate(viewType, viewGroup, false) as View
+            .inflate(viewType, viewGroup, false) as View
 
         return when (viewType) {
             else -> checkNotNull(createViewHolder(view, viewType)) {

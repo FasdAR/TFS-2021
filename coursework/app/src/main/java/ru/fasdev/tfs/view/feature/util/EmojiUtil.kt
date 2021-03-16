@@ -5,9 +5,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.regex.Pattern
 
-
-class EmojiUtil
-{
+class EmojiUtil {
     companion object {
         private const val EMOJI_ASSET_FILE = "emoji.txt"
 

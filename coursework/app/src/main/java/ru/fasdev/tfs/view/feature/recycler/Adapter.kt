@@ -6,10 +6,11 @@ import ru.fasdev.tfs.view.feature.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.feature.recycler.base.HolderFactory
 import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 
-class Adapter<T: ViewTyped>(holderFactory: HolderFactory,
-                            private val itemCallback: DiffUtil.ItemCallback<T> = BaseDiffUtil())
-    : BaseAdapter<T>(holderFactory)
-{
+class Adapter<T : ViewTyped>(
+    holderFactory: HolderFactory,
+    private val itemCallback: DiffUtil.ItemCallback<T> = BaseDiffUtil()
+) :
+    BaseAdapter<T>(holderFactory) {
     private val differ = AsyncListDiffer(this, itemCallback)
 
     override var items: List<T>

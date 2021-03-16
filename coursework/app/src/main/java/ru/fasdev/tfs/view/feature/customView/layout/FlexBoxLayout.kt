@@ -53,11 +53,13 @@ constructor(
         setWillNotDraw(false)
 
         context.obtainStyledAttributes(attrs, R.styleable.FlexBoxLayout).apply {
-            verticalSpace = getDimension(R.styleable.FlexBoxLayout_android_verticalSpacing,
+            verticalSpace = getDimension(
+                R.styleable.FlexBoxLayout_android_verticalSpacing,
                 DEFAULT_VERTICAL_SPACE.toFloat()
             ).toInt()
 
-            horizontalSpace = getDimension(R.styleable.FlexBoxLayout_android_horizontalSpacing,
+            horizontalSpace = getDimension(
+                R.styleable.FlexBoxLayout_android_horizontalSpacing,
                 DEFAULT_HORIZONTAL_SPACE.toFloat()
             ).toInt()
 
@@ -115,7 +117,7 @@ constructor(
 
         var maxHeightRow = 0
 
-        //TODO: FIXED gravity draw
+        // TODO: FIXED gravity draw
         children.forEach { child ->
             // #region Checking New Line
             val nextWidth = if (isLeft) cursorX + child.measuredWidth else cursorX - child.measuredWidth
@@ -138,8 +140,7 @@ constructor(
             if (isLeft) {
                 rectChild.left = cursorX
                 rectChild.right = rectChild.left + child.measuredWidth
-            }
-            else {
+            } else {
                 rectChild.right = cursorX
                 rectChild.left = rectChild.right - child.measuredWidth
             }

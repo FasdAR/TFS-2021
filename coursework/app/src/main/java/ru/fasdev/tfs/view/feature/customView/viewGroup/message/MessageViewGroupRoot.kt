@@ -6,35 +6,34 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
 import ru.fasdev.tfs.view.feature.customView.view.ReactionView
 import ru.fasdev.tfs.view.feature.customView.viewGroup.message.model.MessageReactionUi
+import ru.fasdev.tfs.view.feature.util.toDp
 
 abstract class MessageViewGroupRoot
-    @JvmOverloads constructor(
-            context: Context,
-            attributeSet: AttributeSet? = null,
-            defStyleAttr: Int = 0,
-            defStyleRes: Int = 0
-    ) : ViewGroup(context, attributeSet, defStyleAttr, defStyleRes), MessageViewGroup
-{
+@JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : ViewGroup(context, attributeSet, defStyleAttr, defStyleRes), MessageViewGroup {
     companion object {
         val MAX_MESSAGE_WIDTH = 267.toDp
         val SPACE_REACTIONS_EDGE = 88.toDp
     }
 
-    //#region View
+    // #region View
     abstract override val messageTextView: TextView
     abstract override val reactionsLayout: FlexBoxLayout
-    //#endregion
+    // #endregion
 
-    //#region Listeners
+    // #region Listeners
     override var onClickReactionListener: MessageViewGroup.OnClickReactionListener? = null
     override var onClickPlusReactionListener: MessageViewGroup.OnClickPlusReactionListener? = null
-    //#endregion
+    // #endregion
 
-    //#region Data
+    // #region Data
     var reactions: List<MessageReactionUi> = listOf()
         set(value) {
             if (field != value) {
@@ -53,7 +52,7 @@ abstract class MessageViewGroupRoot
                 requestLayout()
             }
         }
-    //#endregion
+    // #endregion
 
     override fun generateDefaultLayoutParams() = MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     override fun generateLayoutParams(attrs: AttributeSet) = MarginLayoutParams(context, attrs)

@@ -9,8 +9,7 @@ import ru.fasdev.tfs.view.feature.recycler.base.BaseViewHolder
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.ExternalMessageUi
 
-class ExternalMessageViewHolder(view: View, ): BaseViewHolder<ExternalMessageUi>(view)
-{
+class ExternalMessageViewHolder(view: View,) : BaseViewHolder<ExternalMessageUi>(view) {
     val message: ExternalMessageViewGroup = view.findViewById(R.id.message)
 
     var onLongClickMessageListener: ChatHolderFactory.OnLongClickMessageListener? = null

@@ -5,11 +5,13 @@ import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.ExternalMessageUi
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.InternalMessageUi
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 fun Message.toExternalMessageUi() =
-    ExternalMessageUi(id, sender.fullName, sender.avatarUrl, text,
-        this.reactions.mapToMessageReactionUi())
+    ExternalMessageUi(
+        id, sender.fullName, sender.avatarUrl, text,
+        this.reactions.mapToMessageReactionUi()
+    )
 
 fun Message.toInternalMessageUi() =
     InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())

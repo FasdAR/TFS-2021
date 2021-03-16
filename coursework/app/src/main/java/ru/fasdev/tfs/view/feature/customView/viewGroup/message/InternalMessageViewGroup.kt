@@ -1,43 +1,41 @@
 package ru.fasdev.tfs.view.feature.customView.viewGroup.message
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
-import ru.fasdev.tfs.view.feature.customView.layout.FlexBoxLayout
 
 class InternalMessageViewGroup
-    @JvmOverloads constructor(
-            context: Context,
-            attributeSet: AttributeSet? = null,
-            defStyleAttr: Int = 0,
-            defStyleRes: Int = 0
-    ) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes)
-{
-    //#region View
+@JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes) {
+    // #region View
     override val messageTextView: TextView
     override val reactionsLayout: FlexBoxLayout
-    //#endregion
+    // #endregion
 
-    //#region View Layout Params
+    // #region View Layout Params
     private val messageLayoutParams: MarginLayoutParams
         get() = messageTextView.layoutParams as MarginLayoutParams
 
     private val reactionsLayoutParams: MarginLayoutParams
         get() = reactionsLayout.layoutParams as MarginLayoutParams
-    //#endregion
+    // #endregion
 
-    //#region Rectangles Position View
+    // #region Rectangles Position View
     private val messageRect = Rect()
     private val reactionsRect = Rect()
-    //#endregion
+    // #endregion
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_internal_message, this, true)
@@ -57,32 +55,32 @@ class InternalMessageViewGroup
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val maxWidth = MeasureSpec.getSize(widthMeasureSpec)
 
-        //#region Measure Message Text Size
+        // #region Measure Message Text Size
         val occupiedWidthSpace = maxWidth - MAX_MESSAGE_WIDTH
         measureChildWithMargins(
-                messageTextView,
-                widthMeasureSpec, occupiedWidthSpace,
-                heightMeasureSpec, 0
+            messageTextView,
+            widthMeasureSpec, occupiedWidthSpace,
+            heightMeasureSpec, 0
         )
 
         val messageHeight = messageTextView.getHeightMeasuredMargin()
         val messageWidth = messageTextView.getWidthMeasuredMargin()
-        //#endregion
+        // #endregion
 
-        //#region Measure Reaction Layout Size
+        // #region Measure Reaction Layout Size
         measureChildWithMargins(
-                reactionsLayout,
-                widthMeasureSpec, SPACE_REACTIONS_EDGE,
-                heightMeasureSpec, messageHeight
+            reactionsLayout,
+            widthMeasureSpec, SPACE_REACTIONS_EDGE,
+            heightMeasureSpec, messageHeight
         )
         val reactionHeight = if (reactionsLayout.childCount == 0) 0
-            else reactionsLayout.getHeightMeasuredMargin()
-        //#endregion
+        else reactionsLayout.getHeightMeasuredMargin()
+        // #endregion
 
-        //#region Calculate Size
+        // #region Calculate Size
         val width = messageWidth
         val height = messageHeight + reactionHeight
-        //#endregion
+        // #endregion
 
         val resolveWidth = resolveSize(width, widthMeasureSpec)
         val resolveHeight = resolveSize(height, heightMeasureSpec)
