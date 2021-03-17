@@ -13,29 +13,26 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
-import ru.fasdev.tfs.view.feature.customView.viewGroup.message.MessageViewGroup
+import ru.fasdev.tfs.view.ui.global.view.viewGroup.message.MessageViewGroup
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
-import ru.fasdev.tfs.view.feature.recycler.Adapter
-import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
-import ru.fasdev.tfs.view.feature.recycler.itemDecoration.VerticalSpaceItemDecoration
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
+import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
+import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 
-class ChatFragment :
-    Fragment(R.layout.fragment_chat),
-    ChatHolderFactory.OnLongClickMessageListener,
-    ChatHolderFactory.OnClickReactionListener,
-    MessageViewGroup.OnClickPlusReactionListener {
+class ChatFragment : Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener {
+
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
     private val interactor: MessageInteractor = MessageInteractorImpl(TestMessageRepoImpl())
-    private val adapter by lazy {
-        return@lazy Adapter<ViewTyped>(
-            ChatHolderFactory(this, this, this)
-        )
-    }
+
+    private val holderFactory by lazy { ChatHolderFactory(this, this) }
+    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
     private val currentChatId = 1
     private val currentUserId = 1
@@ -46,6 +43,12 @@ class ChatFragment :
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentChatBinding.bind(it) }
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         childFragmentManager.setFragmentResultListener(SelectEmojiBottomDialog.TAG, viewLifecycleOwner) { requestKey, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
@@ -54,12 +57,6 @@ class ChatFragment :
                 updateChatItems()
             }
         }
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         val rvList: RecyclerView = binding.rvList
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
@@ -102,13 +99,12 @@ class ChatFragment :
         showBottomEmojiDialog()
     }
 
-    override fun onClickPlusReaction() {
+    override fun onClickAddNewReaction(uIdMessage: Int) {
+        selectedMessageId = uIdMessage
         showBottomEmojiDialog()
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        // TODO: FIX ANIMATION
         interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
-        updateChatItems()
     }
 }

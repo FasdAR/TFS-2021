@@ -1,9 +1,9 @@
 package ru.fasdev.tfs.view.feature.mapper
 
 import ru.fasdev.tfs.domain.model.Message
-import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
-import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.ExternalMessageUi
-import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewTypes.InternalMessageUi
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.ExternalMessageUi
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.InternalMessageUi
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -16,12 +16,12 @@ fun Message.toExternalMessageUi() =
 fun Message.toInternalMessageUi() =
     InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
 
-fun List<Message>.mapToUiList(internalUserId: Int): List<ViewTyped> {
+fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
     val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
     val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
 
     val mapMsgDate = groupBy { dateFormatKey.format(it.date) }
-    val resultList: MutableList<ViewTyped> = mutableListOf()
+    val resultList: MutableList<ViewType> = mutableListOf()
 
     mapMsgDate
         .keys

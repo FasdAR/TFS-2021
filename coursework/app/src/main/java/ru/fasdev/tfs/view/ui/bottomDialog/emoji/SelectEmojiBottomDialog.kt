@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
-import ru.fasdev.tfs.view.feature.recycler.Adapter
-import ru.fasdev.tfs.view.feature.recycler.base.ViewTyped
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.feature.util.EmojiUtil
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.EmojiHolderFactory
-import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolders.EmojiViewHolder
-import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewTypes.EmojiUi
+import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolder.EmojiViewHolder
+import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewType.EmojiUi
+import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import kotlin.concurrent.thread
 
 class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnSelectedListener {
@@ -34,7 +34,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
     private var _binding: BottomDialogSelectEmojiBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter by lazy { return@lazy Adapter<ViewTyped>(EmojiHolderFactory(this)) }
+    private val adapter by lazy { return@lazy BaseAdapter<ViewType>(EmojiHolderFactory(this)) }
 
     override fun getTheme(): Int = R.style.Theme_TFS_BottomSheetDialog
 
