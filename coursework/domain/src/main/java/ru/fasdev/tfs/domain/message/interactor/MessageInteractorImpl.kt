@@ -1,69 +1,38 @@
 package ru.fasdev.tfs.domain.message.interactor
 
+import ru.fasdev.tfs.domain.message.repo.MessageRepo
 import ru.fasdev.tfs.domain.model.Message
-import ru.fasdev.tfs.domain.model.Reaction
-import ru.fasdev.tfs.domain.model.User
-import java.util.Date
 
-class MessageInteractorImpl : MessageInteractor {
-    // Пока дата захардкорена, далее скорее всего уйдет в отдельный data модуль
-    // #region Test Data
-    private val currentUser: User = User(id = 1, "", "Self User")
-
-    private val messageList: MutableList<Message> = mutableListOf(
-        Message(
-            1,
-            currentUser,
-            "Hello Chat!", Date(1584278973),
-            mutableListOf(
-                Reaction("\uD83E\uDD24", 10, false)
-            )
-        ),
-        Message(
-            2,
-            User(2, "", "Test Test2"),
-            "Hello Test2", Date(),
-            mutableListOf(
-                Reaction("\uD83E\uDD74", 5, true)
-            )
-        ),
-        Message(
-            3,
-            currentUser,
-            "Hello Test1", Date(),
-            mutableListOf()
-        )
-    )
-    // #endregion
-
-    override fun getMessageByChat(idChat: Int): List<Message> {
-        return if (idChat == 1) messageList
-        else emptyList()
+class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor
+{
+    companion object {
+        private const val CURRENT_USER = 1
     }
 
-    override fun setSelectedReaction(idMessage: Int, emoji: String, isSelected: Boolean) {
-        val indexMessage = messageList.indexOfFirst { it.id == idMessage }
-        val indexReaction = messageList[indexMessage].reactions.indexOfFirst { it.emoji == emoji }
+    override fun getMessageByChat(idChat: Int): List<Message> = messageRepo.getMessageByChat(idChat)
 
-        if (indexReaction == -1 && isSelected) {
-            messageList[indexMessage].reactions.add(Reaction(emoji, 1, true))
-        } else {
-            with(messageList[indexMessage].reactions[indexReaction]) {
-                val newCount = if (isSelected) this.countSelected + 1 else this.countSelected - 1
-                val newReaction = this.copy(countSelected = newCount, isSelected = isSelected)
-                messageList[indexMessage].reactions[indexReaction] = newReaction
-            }
+    override fun setSelectedReaction(idChat: Int, idMessage: Int, emoji: String, isSelected: Boolean) {
+        if (isSelected) {
+            messageRepo.addReaction(idChat, idMessage, CURRENT_USER, emoji)
+        }
+        else {
+            messageRepo.removeReaction(idChat, idMessage, CURRENT_USER, emoji)
         }
     }
 
-    override fun selectedReaction(idMessage: Int, emoji: String) {
-        val indexMessage = messageList.indexOfFirst { it.id == idMessage }
-        val isSelected = messageList[indexMessage].reactions.find { it.emoji == emoji }?.isSelected ?: false
+    override fun changeSelectedReaction(idChat: Int, idMessage: Int, emoji: String) {
+        val index = getMessageByChat(idChat)
+            .find { it.id == idChat }
+            ?.reactions
+            ?.find { it.emoji == emoji }
+            ?.selectedUsersId
+            ?.indexOfFirst { it == CURRENT_USER }
 
-        setSelectedReaction(idMessage, emoji, !isSelected)
+        val isSelected = index != -1
+
+        setSelectedReaction(idChat, idMessage, emoji, !isSelected)
     }
 
-    override fun sendMessage(text: String) {
-        messageList.add(Message(messageList.last().id + 1, currentUser, text, Date(), mutableListOf()))
-    }
+    override fun sendMessage(idChat: Int, text: String) =
+        messageRepo.sendMessage(idChat, CURRENT_USER, text)
 }
