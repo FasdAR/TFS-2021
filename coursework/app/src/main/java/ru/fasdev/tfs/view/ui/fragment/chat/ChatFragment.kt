@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,10 @@ class ChatFragment :
     MessageViewHolder.OnClickReactionListener,
     AsyncListDiffer.ListListener<ViewType> {
 
+    companion object {
+        const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
+    }
+
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
@@ -43,6 +48,14 @@ class ChatFragment :
 
     private var selectedMessageId: Int = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        savedInstanceState?.let {
+            selectedMessageId = it.getInt(KEY_SELECTED_MESSAGE)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentChatBinding.bind(it) }
@@ -53,12 +66,28 @@ class ChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        childFragmentManager.setFragmentResultListener(SelectEmojiBottomDialog.TAG, viewLifecycleOwner) { requestKey, bundle ->
+        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
             selectedEmoji?.let {
                 interactor.changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
+                selectedMessageId = 0
                 updateChatItems()
+            }
+        }
+
+        binding.msgText.addTextChangedListener {
+            if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
+            else binding.sendBtn.setIconResource(R.drawable.ic_send)
+        }
+
+        binding.sendBtn.setOnClickListener {
+            val msgText = binding.msgText.text.toString().trim()
+            if (msgText.isNotEmpty()) {
+                interactor.sendMessage(currentChatId, msgText)
+                updateChatItems()
+
+                binding.msgText.text?.clear()
             }
         }
 
@@ -68,21 +97,11 @@ class ChatFragment :
         rvList.addItemDecoration(VerticalSpaceItemDecoration(19.toDp))
 
         updateChatItems()
+    }
 
-        binding.msgText.addTextChangedListener {
-            if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
-            else binding.sendBtn.setIconResource(R.drawable.ic_send)
-        }
-
-        binding.sendBtn.setOnClickListener {
-            val msgText = binding.msgText.text
-            if (!msgText.isNullOrEmpty()) {
-                interactor.sendMessage(currentChatId, msgText.toString())
-                updateChatItems()
-
-                binding.msgText.text?.clear()
-            }
-        }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_SELECTED_MESSAGE, selectedMessageId)
     }
 
     override fun onDestroy() {
@@ -95,7 +114,7 @@ class ChatFragment :
     }
 
     private fun showBottomEmojiDialog() {
-        SelectEmojiBottomDialog.show(childFragmentManager)
+        SelectEmojiBottomDialog.show(parentFragmentManager)
     }
 
     override fun onLongClickMessage(uIdMessage: Int) {
@@ -113,6 +132,6 @@ class ChatFragment :
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
-        binding.rvList.scrollToPosition(0)
+        if (selectedMessageId == 0) binding.rvList.scrollToPosition(0)
     }
 }
