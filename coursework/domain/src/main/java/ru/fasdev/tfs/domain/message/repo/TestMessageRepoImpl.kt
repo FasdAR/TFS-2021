@@ -3,6 +3,7 @@ package ru.fasdev.tfs.domain.message.repo
 import ru.fasdev.tfs.domain.model.Message
 import ru.fasdev.tfs.domain.model.Reaction
 import ru.fasdev.tfs.domain.model.User
+import java.util.*
 
 class TestMessageRepoImpl: MessageRepo
 {
@@ -30,29 +31,36 @@ class TestMessageRepoImpl: MessageRepo
         ))
     }
 
+    @ExperimentalStdlibApi
     override fun addReaction(idChat: Int, idMessage: Int, idUser: Int, emoji: String) {
         val messageIndex = messageList.indexOfFirst { it.id == idMessage }
         val message = messageList[messageIndex]
 
         val reactionIndex = message.reactions.indexOfFirst { it.emoji == emoji }
 
-        val newMessage = if (reactionIndex != -1) {
+        val newReaction = if (reactionIndex != -1) {
             val reaction = message.reactions[reactionIndex]
-            val newReactionsUser = arrayListOf(idUser).addAll(reaction.selectedUsersId) as List<Int>
-            val newReaction = reaction.copy(selectedUsersId = newReactionsUser)
-            val newReactions = arrayListOf(newReaction).addAll(message.reactions) as List<Reaction>
 
-            message.copy(reactions = newReactions)
+            reaction.copy(isSelected = true,
+                    countSelection = reaction.countSelection + 1)
         } else {
-            val newReaction = Reaction(emoji, listOf(idUser))
-            val newReactions = mutableListOf(newReaction).addAll(message.reactions) as List<Reaction>
-            message.copy(reactions = newReactions)
+            Reaction(emoji = emoji, countSelection = 1, isSelected = true)
         }
+
+        val newReactions = buildList<Reaction> {
+            addAll(message.reactions)
+            if (reactionIndex != -1)
+                removeAt(reactionIndex)
+            add(newReaction)
+        }
+
+        val newMessage = message.copy(reactions = newReactions)
 
         messageList.removeAt(messageIndex)
         messageList.add(newMessage)
     }
 
+    @ExperimentalStdlibApi
     override fun removeReaction(idChat: Int, idMessage: Int, idUser: Int, emoji: String) {
         val messageIndex = messageList.indexOfFirst { it.id == idMessage }
         val message = messageList[messageIndex]
@@ -62,15 +70,23 @@ class TestMessageRepoImpl: MessageRepo
         var newMessage: Message? = null
         if (reactionIndex != -1) {
             val reaction = message.reactions[reactionIndex]
-            val userIndex = reaction.selectedUsersId.indexOf(idUser)
-            val newReactionsUser = mutableListOf(reaction.selectedUsersId).removeAt(userIndex)
+            val newCount = reaction.countSelection - 1
 
-            newMessage = if (newReactionsUser.isEmpty()) {
-                val newReactions = mutableListOf(message.reactions).removeAt(reactionIndex)
+            newMessage = if (newCount <= 0) {
+                val newReactions = buildList<Reaction> {
+                    addAll(message.reactions)
+                    removeAt(reactionIndex)
+                }
+
                 message.copy(reactions = newReactions)
             } else {
-                val newReaction = reaction.copy(selectedUsersId = newReactionsUser)
-                val newReactions = mutableListOf(newReaction).addAll(message.reactions) as List<Reaction>
+                val newReaction = reaction.copy(isSelected = false, countSelection = reaction.countSelection - 1)
+                val newReactions = buildList<Reaction> {
+                    addAll(message.reactions)
+                    removeAt(reactionIndex)
+                    add(newReaction)
+                }
+
                 message.copy(reactions = newReactions)
             }
         }
@@ -86,14 +102,17 @@ class TestMessageRepoImpl: MessageRepo
             id = 1,
             sender = users[0],
             text = "Hello Chat!",
+            date = Date(1581952113),
             reactions = listOf(
                 Reaction(
                     emoji = "\uD83D\uDE04",
-                    selectedUsersId = listOf(users[1].id, users[2].id, users[3].id)
+                    countSelection = 4,
+                    isSelected = false
                 ),
                 Reaction(
                     emoji = "\uD83D\uDE0A",
-                    selectedUsersId = listOf(users[0].id)
+                    countSelection = 10,
+                    isSelected = true
                 )
             )
         ),
@@ -101,10 +120,12 @@ class TestMessageRepoImpl: MessageRepo
             id = 2,
             sender = users[1],
             text = "Hello ${users[0].fullName}!",
+            date = Date(1581952114),
             reactions = listOf(
                 Reaction(
                     emoji = "\uD83E\uDD19",
-                    selectedUsersId = listOf(users[0].id)
+                    countSelection = 15,
+                    isSelected = false
                 )
             )
         ),
@@ -120,7 +141,8 @@ class TestMessageRepoImpl: MessageRepo
             reactions = listOf(
                 Reaction(
                     emoji = "\uD83D\uDC4D",
-                    selectedUsersId = listOf(users[3].id)
+                    countSelection = 1,
+                    isSelected = true
                 )
             )
         ),
@@ -131,7 +153,8 @@ class TestMessageRepoImpl: MessageRepo
             reactions = listOf(
                 Reaction(
                     emoji = "\uD83D\uDC85",
-                    selectedUsersId = listOf(users[0].id, users[1].id)
+                    countSelection = 1,
+                    isSelected = false
                 )
             )
         )

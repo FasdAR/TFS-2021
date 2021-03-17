@@ -12,6 +12,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
+import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
 import ru.fasdev.tfs.view.feature.customView.viewGroup.message.MessageViewGroup
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.recycler.Adapter
@@ -29,7 +30,7 @@ class ChatFragment :
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val interactor: MessageInteractor = MessageInteractorImpl()
+    private val interactor: MessageInteractor = MessageInteractorImpl(TestMessageRepoImpl())
     private val adapter by lazy {
         return@lazy Adapter<ViewTyped>(
             ChatHolderFactory(this, this, this)
@@ -49,7 +50,7 @@ class ChatFragment :
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
             selectedEmoji?.let {
-                interactor.selectedReaction(selectedMessageId, selectedEmoji)
+                interactor.changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
                 updateChatItems()
             }
         }
@@ -75,7 +76,7 @@ class ChatFragment :
         binding.sendBtn.setOnClickListener {
             val msgText = binding.msgText.text
             if (!msgText.isNullOrEmpty()) {
-                interactor.sendMessage(msgText.toString())
+                interactor.sendMessage(currentChatId, msgText.toString())
                 updateChatItems()
 
                 binding.msgText.text?.clear()
@@ -107,7 +108,7 @@ class ChatFragment :
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
         // TODO: FIX ANIMATION
-        interactor.selectedReaction(uIdMessage, emoji)
+        interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
         updateChatItems()
     }
 }
