@@ -41,4 +41,5 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$androidXAppCompat"
     implementation "com.google.android.material:material:$androidMaterial"
     implementation "androidx.constraintlayout:constraintlayout:$androidXConstraint"
+    implementation "androidx.fragment:fragment-ktx:1.3.1"
 }

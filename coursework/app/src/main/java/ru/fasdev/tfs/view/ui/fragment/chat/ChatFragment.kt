@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.tfs.R
@@ -39,9 +40,21 @@ class ChatFragment :
     private val currentChatId = 1
     private val currentUserId = 1
 
+    private var selectedMessageId: Int = 0
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentChatBinding.bind(it) }
+
+        childFragmentManager.setFragmentResultListener(SelectEmojiBottomDialog.TAG, viewLifecycleOwner) { requestKey, bundle ->
+            val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
+
+            selectedEmoji?.let {
+                interactor.selectedReaction(selectedMessageId, selectedEmoji)
+                updateChatItems()
+            }
+        }
+
         return view
     }
 
@@ -85,6 +98,7 @@ class ChatFragment :
     }
 
     override fun onLongClickMessage(uIdMessage: Int) {
+        selectedMessageId = uIdMessage
         showBottomEmojiDialog()
     }
 
