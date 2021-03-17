@@ -2,12 +2,12 @@ package ru.fasdev.tfs.view.ui.fragment.chat.adapter
 
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
-import ru.fasdev.tfs.view.ui.global.recycler.base.HolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.DateViewHolder
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.ExternalMessageViewHolder
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.InternalMessageViewHolder
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
+import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
+import ru.fasdev.tfs.view.ui.global.recycler.base.HolderFactory
 
 class ChatHolderFactory(
     private val reactionListener: MessageViewHolder.OnClickReactionListener,

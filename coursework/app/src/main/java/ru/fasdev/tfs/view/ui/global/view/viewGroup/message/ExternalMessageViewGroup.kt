@@ -9,18 +9,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.global.view.layout.FlexBoxLayout
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
+import ru.fasdev.tfs.view.ui.global.view.layout.FlexBoxLayout
 
 class ExternalMessageViewGroup
-    @JvmOverloads constructor(
-        context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
-    ) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes) {
+@JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes) {
     // #region View
     private val avatarImageView: ImageView
     private val nameTextView: TextView

@@ -7,18 +7,18 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.global.view.layout.FlexBoxLayout
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
+import ru.fasdev.tfs.view.ui.global.view.layout.FlexBoxLayout
 
 class InternalMessageViewGroup
-    @JvmOverloads constructor(
-        context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
-    ) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes) {
+@JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : MessageViewGroupRoot(context, attributeSet, defStyleAttr, defStyleRes) {
     // #region View
     override val messageTextView: TextView
     override val reactionsLayout: FlexBoxLayout

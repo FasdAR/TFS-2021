@@ -1,9 +1,9 @@
 package ru.fasdev.tfs.view.feature.mapper
 
 import ru.fasdev.tfs.domain.model.Message
-import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.ExternalMessageUi
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.InternalMessageUi
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import java.text.SimpleDateFormat
 import java.util.Locale
 

@@ -3,8 +3,7 @@ package ru.fasdev.tfs.domain.message.interactor
 import ru.fasdev.tfs.domain.message.repo.MessageRepo
 import ru.fasdev.tfs.domain.model.Message
 
-class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor
-{
+class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor {
     companion object {
         private const val CURRENT_USER = 1
     }
@@ -14,8 +13,7 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
     override fun setSelectedReaction(idChat: Int, idMessage: Int, emoji: String, isSelected: Boolean) {
         if (isSelected) {
             messageRepo.addReaction(idChat, idMessage, CURRENT_USER, emoji)
-        }
-        else {
+        } else {
             messageRepo.removeReaction(idChat, idMessage, CURRENT_USER, emoji)
         }
     }

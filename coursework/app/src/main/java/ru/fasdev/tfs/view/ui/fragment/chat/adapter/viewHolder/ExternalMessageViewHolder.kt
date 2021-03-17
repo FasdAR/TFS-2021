@@ -2,13 +2,15 @@ package ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder
 
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.global.view.viewGroup.message.ExternalMessageViewGroup
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.ExternalMessageUi
+import ru.fasdev.tfs.view.ui.global.view.viewGroup.message.ExternalMessageViewGroup
 
-class ExternalMessageViewHolder(view: View,
-                                private val reactionListener: OnClickReactionListener,
-                                private val messageLongListener: OnLongClickMessageListener)
-    : MessageViewHolder<ExternalMessageUi>(view, reactionListener, messageLongListener) {
+class ExternalMessageViewHolder(
+    view: View,
+    private val reactionListener: OnClickReactionListener,
+    private val messageLongListener: OnLongClickMessageListener
+) :
+    MessageViewHolder<ExternalMessageUi>(view, reactionListener, messageLongListener) {
 
     val message: ExternalMessageViewGroup = view.findViewById(R.id.message)
 

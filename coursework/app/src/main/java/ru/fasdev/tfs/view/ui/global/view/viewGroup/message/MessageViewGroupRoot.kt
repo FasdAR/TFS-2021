@@ -6,18 +6,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.global.view.layout.FlexBoxLayout
 import ru.fasdev.tfs.view.ui.global.view.view.ReactionView
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.message.model.MessageReactionUi
-import ru.fasdev.tfs.view.feature.util.toDp
 
 abstract class MessageViewGroupRoot
-    @JvmOverloads constructor(
-        context: Context,
-        attributeSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
-    ) : ViewGroup(context, attributeSet, defStyleAttr, defStyleRes), MessageViewGroup {
+@JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : ViewGroup(context, attributeSet, defStyleAttr, defStyleRes), MessageViewGroup {
     companion object {
         val MAX_MESSAGE_WIDTH = 267.toDp
         val SPACE_REACTIONS_EDGE = 88.toDp
@@ -67,8 +67,7 @@ abstract class MessageViewGroupRoot
             if (newCount == 0) {
                 _reactions.removeAt(index)
                 updateReactions()
-            }
-            else {
+            } else {
                 val newReaction = reaction.copy(isSelected = newSelected, reactionCount = newCount)
                 _reactions.removeAt(index)
                 _reactions.add(index, newReaction)

@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.view.ui.fragment.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +14,19 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
-import ru.fasdev.tfs.view.ui.global.view.viewGroup.message.MessageViewGroup
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
-import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
-import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
-import ru.fasdev.tfs.view.ui.global.recycler.base.BaseDiffUtilCallback
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
+import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
 
-class ChatFragment : Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
+class ChatFragment :
+    Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener,
+    MessageViewHolder.OnClickReactionListener,
     AsyncListDiffer.ListListener<ViewType> {
 
     private var _binding: FragmentChatBinding? = null

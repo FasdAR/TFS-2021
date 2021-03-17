@@ -3,12 +3,11 @@ package ru.fasdev.tfs.domain.message.repo
 import ru.fasdev.tfs.domain.model.Message
 import ru.fasdev.tfs.domain.model.Reaction
 import ru.fasdev.tfs.domain.model.User
-import java.util.*
+import java.util.Date
 
-class TestMessageRepoImpl: MessageRepo
-{
+class TestMessageRepoImpl : MessageRepo {
     // Пока дата захардкорена
-    //#region Test Data
+    // #region Test Data
     private val users: List<User> = listOf(
         User(1, "", "Andrey Rednikov"),
         User(2, "", "Reagan Emery"),
@@ -17,7 +16,7 @@ class TestMessageRepoImpl: MessageRepo
     )
 
     private val messageList: MutableList<Message> = generateInitialData()
-    //#endregion
+    // #endregion
 
     override fun getMessageByChat(idChat: Int): List<Message> =
         if (idChat == 1) messageList else emptyList()
@@ -28,7 +27,8 @@ class TestMessageRepoImpl: MessageRepo
                 id = messageList.size + 1,
                 sender = users.find { idUser == it.id }!!,
                 text = messageText
-        ))
+            )
+        )
     }
 
     @ExperimentalStdlibApi
@@ -41,9 +41,12 @@ class TestMessageRepoImpl: MessageRepo
         val newReaction = if (reactionIndex != -1) {
             val reaction = message.reactions[reactionIndex]
 
-            reaction.copy(isSelected = true,
-                    countSelection = reaction.countSelection + 1)
-        } else {
+            reaction.copy(
+                isSelected = true,
+                countSelection = reaction.countSelection + 1
+            )
+        }
+        else {
             Reaction(emoji = emoji, countSelection = 1, isSelected = true)
         }
 

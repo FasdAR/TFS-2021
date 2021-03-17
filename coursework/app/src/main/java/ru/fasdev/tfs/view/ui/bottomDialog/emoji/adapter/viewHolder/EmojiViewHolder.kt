@@ -3,12 +3,14 @@ package ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolder
 import android.view.View
 import android.widget.TextView
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewType.EmojiUi
+import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
 
-class EmojiViewHolder(private val view: View,
-                      private val onSelectedListener: OnSelectedListener?)
-    : BaseViewHolder<EmojiUi>(view) {
+class EmojiViewHolder(
+    private val view: View,
+    private val onSelectedListener: OnSelectedListener?
+) :
+    BaseViewHolder<EmojiUi>(view) {
     interface OnSelectedListener {
         fun onSelectedEmoji(emoji: String)
     }

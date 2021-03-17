@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
-import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.feature.util.EmojiUtil
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolder.EmojiViewHolder
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewType.EmojiUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
+import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
 class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnSelectedListener {
     companion object {
