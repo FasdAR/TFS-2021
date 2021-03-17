@@ -14,12 +14,10 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.feature.util.EmojiUtil
-import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolder.EmojiViewHolder
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewType.EmojiUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
-import kotlin.concurrent.thread
 
 class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnSelectedListener {
     companion object {
@@ -34,11 +32,12 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
     private var _binding: BottomDialogSelectEmojiBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter by lazy { return@lazy BaseAdapter<ViewType>(EmojiHolderFactory(this)) }
+    private val holderFactory by lazy { EmojiHolderFactory(this) }
+    private val adapter by lazy { return@lazy BaseAdapter<ViewType>(holderFactory) }
 
     override fun getTheme(): Int = R.style.Theme_TFS_BottomSheetDialog
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomDialogSelectEmojiBinding.inflate(inflater)
         return binding.root
     }
@@ -49,17 +48,13 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val rvList: RecyclerView = binding.rvEmojiList
         rvList.adapter = adapter
 
-        thread {
-            val listEmoji = EmojiUtil.getListEmoji(requireContext())
-            val resultEmoji = listEmoji.map { EmojiUi(listEmoji.indexOf(it), it) }
+        val listEmoji = EmojiUtil.getListEmoji(requireContext())
+        val resultEmoji = listEmoji.map { EmojiUi(listEmoji.indexOf(it), it) }
 
-            rvList.post {
-                adapter.items = resultEmoji
-            }
-        }
+        adapter.items = resultEmoji
 
         rvList.post {
-            val sizeColumn = rvList.width / 55.toDp // Calculate column size
+            val sizeColumn = rvList.width / EmojiUi.COLUMN_WIDTH // Calculate column size
             rvList.layoutManager = GridLayoutManager(context, sizeColumn)
         }
     }

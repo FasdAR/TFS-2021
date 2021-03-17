@@ -1,11 +1,13 @@
 package ru.fasdev.tfs.view.ui.fragment.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.tfs.R
@@ -22,17 +24,20 @@ import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
+import ru.fasdev.tfs.view.ui.global.recycler.base.BaseDiffUtilCallback
 
 class ChatFragment : Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener {
+    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
+    AsyncListDiffer.ListListener<ViewType> {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val interactor: MessageInteractor = MessageInteractorImpl(TestMessageRepoImpl())
+    private val testMessageRepoImpl = TestMessageRepoImpl()
+    private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
+    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory, asyncListDiffer = this) }
 
     private val currentChatId = 1
     private val currentUserId = 1
@@ -106,5 +111,9 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
         interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
+    }
+
+    override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
+        binding.rvList.scrollToPosition(0)
     }
 }

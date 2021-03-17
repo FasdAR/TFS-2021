@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.view.ui.global.recycler.base
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -7,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class BaseAdapter<T : ViewType>(
         internal val holderFactory: HolderFactory,
-        private val itemCallback: DiffUtil.ItemCallback<T> = BaseDiffUtilCallback()
+        private val itemCallback: DiffUtil.ItemCallback<T> = BaseDiffUtilCallback(),
+        private val asyncListDiffer: AsyncListDiffer.ListListener<T>? = null
     ) : RecyclerView.Adapter<BaseViewHolder<ViewType>>() {
 
     private val differ = AsyncListDiffer(this, itemCallback)
@@ -15,6 +17,12 @@ class BaseAdapter<T : ViewType>(
     var items: List<T>
         get() = differ.currentList
         set(value) = differ.submitList(value)
+
+    init {
+        asyncListDiffer?.let {
+            differ.addListListener(asyncListDiffer)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewType> =
         holderFactory(parent, viewType)
