@@ -22,7 +22,7 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun changeSelectedReaction(idChat: Int, idMessage: Int, emoji: String) {
         val isSelected = getMessageByChat(idChat)
-            .find { it.id == idChat }
+            .find { it.id == idMessage }
             ?.reactions
             ?.find { it.emoji == emoji }
             ?.isSelected ?: false
