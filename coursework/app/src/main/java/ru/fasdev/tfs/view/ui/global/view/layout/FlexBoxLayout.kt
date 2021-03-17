@@ -113,18 +113,16 @@ constructor(
         val isLeft = gravity == Gravity.LEFT
 
         var cursorY = 0
-        var cursorX = if (isLeft) 0 else measuredWidth
+        var cursorX = 0
 
         var maxHeightRow = 0
-
-        // TODO: FIXED gravity draw
         children.forEach { child ->
             // #region Checking New Line
-            val nextWidth = if (isLeft) cursorX + child.measuredWidth else cursorX - child.measuredWidth
-            val isNextWidth = if (isLeft) nextWidth > maxXPos else nextWidth < 0
+            val nextWidth = cursorX + child.measuredWidth
+            val isNextWidth = nextWidth > maxXPos
 
             if (isNextWidth) {
-                cursorX = if (isLeft) 0 else measuredWidth
+                cursorX = 0
 
                 cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
@@ -140,8 +138,9 @@ constructor(
             if (isLeft) {
                 rectChild.left = cursorX
                 rectChild.right = rectChild.left + child.measuredWidth
-            } else {
-                rectChild.right = cursorX
+            }
+            else {
+                rectChild.right = measuredWidth - cursorX
                 rectChild.left = rectChild.right - child.measuredWidth
             }
 
@@ -149,8 +148,7 @@ constructor(
             // #endregion
 
             // #region Calculate Next Position
-            if (isLeft) cursorX += child.measuredWidth + horizontalSpace
-            else cursorX -= child.measuredWidth + horizontalSpace
+            cursorX += child.measuredWidth + horizontalSpace
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             // #endregion
         }

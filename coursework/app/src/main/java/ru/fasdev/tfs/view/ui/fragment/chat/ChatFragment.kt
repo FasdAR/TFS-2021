@@ -132,6 +132,6 @@ class ChatFragment :
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
-        if (selectedMessageId == 0) binding.rvList.scrollToPosition(0)
+        if (selectedMessageId != 0) binding.rvList.scrollToPosition(0)
     }
 }
