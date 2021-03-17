@@ -51,13 +51,15 @@ class TestMessageRepoImpl: MessageRepo
             addAll(message.reactions)
             if (reactionIndex != -1)
                 removeAt(reactionIndex)
-            add(newReaction)
+
+            if (reactionIndex != -1) add(reactionIndex, newReaction)
+            else add(newReaction)
         }
 
         val newMessage = message.copy(reactions = newReactions)
 
         messageList.removeAt(messageIndex)
-        messageList.add(newMessage)
+        messageList.add(messageIndex, newMessage)
     }
 
     @ExperimentalStdlibApi
@@ -84,7 +86,7 @@ class TestMessageRepoImpl: MessageRepo
                 val newReactions = buildList<Reaction> {
                     addAll(message.reactions)
                     removeAt(reactionIndex)
-                    add(newReaction)
+                    add(reactionIndex, newReaction)
                 }
 
                 message.copy(reactions = newReactions)
@@ -93,7 +95,7 @@ class TestMessageRepoImpl: MessageRepo
 
         newMessage?.let {
             messageList.removeAt(messageIndex)
-            messageList.add(newMessage)
+            messageList.add(messageIndex, newMessage)
         }
     }
 
@@ -147,7 +149,7 @@ class TestMessageRepoImpl: MessageRepo
             )
         ),
         Message(
-            id = 4,
+            id = 5,
             sender = users[3],
             text = "Nogotochki",
             reactions = listOf(
