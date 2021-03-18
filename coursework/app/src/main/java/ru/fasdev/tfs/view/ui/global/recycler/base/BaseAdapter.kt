@@ -23,8 +23,8 @@ class BaseAdapter<T : ViewType>(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewType>
-        = holderFactory(parent, viewType)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewType> =
+        holderFactory(parent, viewType)
 
     override fun getItemCount(): Int = items.size
 
@@ -32,8 +32,11 @@ class BaseAdapter<T : ViewType>(
         holder.bind(items[position])
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<ViewType>, position: Int,
-                                  payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: BaseViewHolder<ViewType>,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         if (payloads.isNotEmpty()) holder.bind(items[position], payloads)
         else onBindViewHolder(holder, position)
     }

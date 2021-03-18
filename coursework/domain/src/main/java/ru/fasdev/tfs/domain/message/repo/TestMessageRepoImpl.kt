@@ -45,8 +45,7 @@ class TestMessageRepoImpl : MessageRepo {
                 isSelected = true,
                 countSelection = reaction.countSelection + 1
             )
-        }
-        else {
+        } else {
             Reaction(emoji = emoji, countSelection = 1, isSelected = true)
         }
 

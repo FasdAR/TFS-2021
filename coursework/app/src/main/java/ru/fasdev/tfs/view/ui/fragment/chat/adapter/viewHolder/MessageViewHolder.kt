@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.MessageUi
@@ -31,8 +30,7 @@ abstract class MessageViewHolder<T : MessageUi>(
         message.setOnLongClickListener(this)
     }
 
-    override fun bind(item: T, payloads: List<Any>)
-    {
+    override fun bind(item: T, payloads: List<Any>) {
         val bundle = payloads[0] as Bundle
         val newReactions = bundle.getParcelableArrayList<MessageReactionUi>(KEY_REACTION_PAYLOADS)
 

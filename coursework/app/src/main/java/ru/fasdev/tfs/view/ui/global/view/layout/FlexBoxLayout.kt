@@ -144,8 +144,7 @@ constructor(
                     rectChild.right = rectChild.left + child.measuredWidth
 
                     cursorX += child.measuredWidth + horizontalSpace
-                }
-                else {
+                } else {
                     rectChild.right = cursorX
                     rectChild.left = rectChild.right - child.measuredWidth
 
