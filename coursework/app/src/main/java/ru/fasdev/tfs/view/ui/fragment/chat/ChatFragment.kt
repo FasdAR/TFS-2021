@@ -19,6 +19,7 @@ import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
@@ -41,7 +42,7 @@ class ChatFragment :
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory, asyncListDiffer = this) }
+    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory, ChatDiffUtilCallback(), asyncListDiffer = this) }
 
     private val currentChatId = 1
     private val currentUserId = 1
@@ -129,6 +130,7 @@ class ChatFragment :
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
         interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
+        updateChatItems()
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {

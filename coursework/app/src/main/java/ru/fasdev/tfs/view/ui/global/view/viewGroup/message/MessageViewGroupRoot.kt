@@ -59,23 +59,6 @@ abstract class MessageViewGroupRoot
     override fun generateLayoutParams(attrs: AttributeSet) = MarginLayoutParams(context, attrs)
     override fun generateLayoutParams(p: LayoutParams) = MarginLayoutParams(p)
 
-    private fun selectedReaction(reactionView: ReactionView, emoji: String) {
-        _reactions.find { it.emoji == emoji }?.let { reaction ->
-            val index = _reactions.indexOf(reaction)
-            val newSelected = !reaction.isSelected
-            val newCount = if (newSelected) reaction.reactionCount + 1 else reaction.reactionCount - 1
-            if (newCount == 0) {
-                _reactions.removeAt(index)
-                updateReactions()
-            } else {
-                val newReaction = reaction.copy(isSelected = newSelected, reactionCount = newCount)
-                _reactions.removeAt(index)
-                _reactions.add(index, newReaction)
-                reactionView.selectedReaction()
-            }
-        }
-    }
-
     private fun updateReactions() {
         reactionsLayout.removeAllViews()
 
@@ -88,7 +71,6 @@ abstract class MessageViewGroupRoot
 
             reactionView.setOnClickListener {
                 val reactionFindView = it as ReactionView
-                selectedReaction(reactionFindView, reaction.emoji)
                 onClickReactionListener?.onClickReaction(reactionFindView, reaction.emoji)
             }
 

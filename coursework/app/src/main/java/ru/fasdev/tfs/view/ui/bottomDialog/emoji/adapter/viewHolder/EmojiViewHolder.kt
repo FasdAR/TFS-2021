@@ -11,6 +11,7 @@ class EmojiViewHolder(
     private val onSelectedListener: OnSelectedListener?
 ) :
     BaseViewHolder<EmojiUi>(view) {
+
     interface OnSelectedListener {
         fun onSelectedEmoji(emoji: String)
     }
