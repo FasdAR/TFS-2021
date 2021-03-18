@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
 import ru.fasdev.tfs.R
@@ -49,6 +50,8 @@ constructor(
             }
         }
 
+    private val childrenRows: MutableList<List<View>> = mutableListOf()
+
     init {
         setWillNotDraw(false)
 
@@ -69,7 +72,9 @@ constructor(
         }
     }
 
+    @ExperimentalStdlibApi
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        childrenRows.clear()
         val maxWidth = MeasureSpec.getSize(widthMeasureSpec)
 
         var cursorY = 0
@@ -78,12 +83,16 @@ constructor(
         var maxHeightRow = 0
         var maxWidthRow = 0
 
+        val childrenRow: MutableList<View> = mutableListOf()
+
         children.forEach { child ->
             measureChild(child, widthMeasureSpec, heightMeasureSpec)
 
             // #region Checking New Line
             val nexWidth = cursorX + child.measuredWidth
             if (nexWidth > maxWidth) {
+                childrenRows.add(buildList { addAll(childrenRow) })
+                childrenRow.clear()
                 cursorX = 0
                 cursorY += maxHeightRow + verticalSpace
                 maxHeightRow = 0
@@ -96,7 +105,12 @@ constructor(
             if (nexWidth > maxWidthRow) maxWidthRow = nexWidth
             if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             // #endregion
+
+            childrenRow.add(child)
         }
+
+        if (childrenRow.isNotEmpty())
+            childrenRows.add(childrenRow)
 
         val calculateWidth = maxWidthRow
         val calculateHeight = cursorY + maxHeightRow
@@ -113,44 +127,39 @@ constructor(
         val isLeft = gravity == Gravity.LEFT
 
         var cursorY = 0
-        var cursorX = 0
+        var cursorX = if (isLeft) 0 else maxXPos
 
         var maxHeightRow = 0
-        children.forEach { child ->
-            // #region Checking New Line
-            val nextWidth = cursorX + child.measuredWidth
-            val isNextWidth = nextWidth > maxXPos
 
-            if (isNextWidth) {
-                cursorX = 0
+        childrenRows.forEach { childRow ->
+            val newRows = if (isLeft) childRow else childRow.reversed()
+            newRows.forEach { child ->
+                val rectChild = Rect()
 
-                cursorY += maxHeightRow + verticalSpace
-                maxHeightRow = 0
+                rectChild.top = cursorY
+                rectChild.bottom = rectChild.top + child.measuredHeight
+
+                if (isLeft) {
+                    rectChild.left = cursorX
+                    rectChild.right = rectChild.left + child.measuredWidth
+
+                    cursorX += child.measuredWidth + horizontalSpace
+                }
+                else {
+                    rectChild.right = cursorX
+                    rectChild.left = rectChild.right - child.measuredWidth
+
+                    cursorX -= child.measuredWidth + horizontalSpace
+                }
+
+                child.layout(rectChild)
+
+                if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             }
-            // #endregion
 
-            // #region Draw Child
-            val rectChild = Rect()
-
-            rectChild.top = cursorY
-            rectChild.bottom = rectChild.top + child.measuredHeight
-
-            if (isLeft) {
-                rectChild.left = cursorX
-                rectChild.right = rectChild.left + child.measuredWidth
-            }
-            else {
-                rectChild.right = measuredWidth - cursorX
-                rectChild.left = rectChild.right - child.measuredWidth
-            }
-
-            child.layout(rectChild)
-            // #endregion
-
-            // #region Calculate Next Position
-            cursorX += child.measuredWidth + horizontalSpace
-            if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
-            // #endregion
+            cursorX = if (isLeft) 0 else maxXPos
+            cursorY += maxHeightRow + verticalSpace
+            maxHeightRow = 0
         }
     }
 }
