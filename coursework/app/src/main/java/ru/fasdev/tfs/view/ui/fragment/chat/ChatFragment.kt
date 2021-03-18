@@ -72,7 +72,6 @@ class ChatFragment :
 
             selectedEmoji?.let {
                 interactor.changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
-                selectedMessageId = 0
                 updateChatItems()
             }
         }
@@ -112,6 +111,7 @@ class ChatFragment :
 
     private fun updateChatItems() {
         adapter.items = interactor.getMessageByChat(currentChatId).mapToUiList(currentUserId)
+        selectedMessageId = 0
     }
 
     private fun showBottomEmojiDialog() {
@@ -134,6 +134,7 @@ class ChatFragment :
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
-        if (selectedMessageId != 0) binding.rvList.scrollToPosition(0)
+        if (!binding.rvList.canScrollVertically(1))
+            binding.rvList.scrollToPosition(0)
     }
 }
