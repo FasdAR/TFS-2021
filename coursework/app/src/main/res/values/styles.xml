@@ -28,6 +28,13 @@
         <item name="behavior_peekHeight">500dp</item>
     </style>
 
+    <style name="Widget.TFS.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemIconTint">@color/tfs_bottom_nav_color_item</item>
+        <item name="itemTextColor">@color/tfs_bottom_nav_color_item</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.TFS.BottomNavigationView</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.TFS.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

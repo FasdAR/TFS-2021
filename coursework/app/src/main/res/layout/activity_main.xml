@@ -6,12 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".view.ui.activity.main.MainActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment"
-        android:id="@+id/chat_fragment"
-        android:tag="asdasdasdasd"
-        tools:layout="@layout/fragment_chat"/>
+        android:id="@+id/main_container"
+        class="ru.fasdev.tfs.view.ui.fragment.main.MainFragment"/>
 
 </FrameLayout>

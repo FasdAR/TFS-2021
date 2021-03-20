@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">TFS</string>
     <string name="to_write">Написать...</string>
+    <string name="channels">Channels</string>
+    <string name="people">People</string>
+    <string name="profile">Profile</string>
 </resources>
