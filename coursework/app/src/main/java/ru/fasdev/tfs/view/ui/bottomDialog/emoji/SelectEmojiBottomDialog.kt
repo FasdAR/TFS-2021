@@ -16,12 +16,13 @@ import ru.fasdev.tfs.view.feature.util.EmojiUtil
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewHolder.EmojiViewHolder
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.adapter.viewType.EmojiUi
+import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
 class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnSelectedListener {
     companion object {
-        const val TAG = "BS_SELECT_EMOJI"
+        val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
         const val KEY_SELECTED_EMOJI = "SELECTED_EMOJI"
 
         fun newInstance() = SelectEmojiBottomDialog()
