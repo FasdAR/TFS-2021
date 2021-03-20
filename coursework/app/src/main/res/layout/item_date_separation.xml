@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/gray_300"
+        android:textColor="@color/grey_500"
         android:textSize="14sp"
         android:background="@drawable/sh_date"
         android:paddingTop="3dp"

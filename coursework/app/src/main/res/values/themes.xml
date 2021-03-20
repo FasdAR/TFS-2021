@@ -1,14 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.TFS" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/cyan_500</item>
-        <item name="colorPrimaryVariant">@color/cyan_500</item>
-        <item name="colorOnPrimary">@color/white_900</item>
+        <item name="colorPrimary">@color/teal_500</item>
+        <item name="colorPrimaryVariant">@color/teal_500</item>
+        <item name="colorOnPrimary">@color/white</item>
 
-        <item name="colorSecondary">@color/black_900</item>
-        <item name="colorSecondaryVariant">@color/black_910</item>
-        <item name="colorOnSecondary">@color/black_400</item>
+        <item name="colorSecondary">@color/grey_920</item>
+        <item name="colorSecondaryVariant">@color/black_850</item>
+        <item name="colorOnSecondary">@color/grey_400</item>
 
-        <item name="android:windowBackground">@color/black_910</item>
+        <item name="android:windowBackground">@color/black_850</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="bottomNavigationStyle">@style/Widget.TFS.BottomNavigationView</item>
     </style>
@@ -18,9 +18,9 @@
     </style>
 
     <style name="ThemeOverlay.TFS.BottomNavigationView" parent="">
-        <item name="colorPrimary">@color/black_820</item>
-        <item name="colorOnPrimary">@color/gray_310</item>
-        <item name="colorOnPrimarySurface">@color/white_800</item>
+        <item name="colorPrimary">@color/grey_910</item>
+        <item name="colorOnPrimary">@color/grey_510</item>
+        <item name="colorOnPrimarySurface">@color/white_50</item>
     </style>
 
 </resources>

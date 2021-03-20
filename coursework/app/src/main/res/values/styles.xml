@@ -24,7 +24,7 @@
 
     <style name="Widget.TFS.MaterialComponents.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.TFS.BottomSheet.Modal</item>
-        <item name="backgroundTint">@color/black_900</item>
+        <item name="backgroundTint">@color/grey_920</item>
         <item name="behavior_peekHeight">500dp</item>
     </style>
 

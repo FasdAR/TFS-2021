@@ -95,11 +95,11 @@ constructor(
             reactionCount = getInt(R.styleable.ReactionView_rvCountReaction, 0)
             selectedTextColor = getColor(
                 R.styleable.ReactionView_rvSelectedTextColor,
-                ContextCompat.getColor(context, R.color.black_200)
+                ContextCompat.getColor(context, R.color.white_200)
             )
             unSelectedTextColor = getColor(
                 R.styleable.ReactionView_rvUnselectedTextColor,
-                ContextCompat.getColor(context, R.color.black_400)
+                ContextCompat.getColor(context, R.color.grey_400)
             )
 
             recycle()
