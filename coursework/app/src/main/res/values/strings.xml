@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">TFS</string>
-    <string name="to_write">Написать...</string>
+    <string name="to_write">Write…</string>
     <string name="channels">Channels</string>
     <string name="people">People</string>
     <string name="profile">Profile</string>
+    <string name="log_out">Log out</string>
+    <string name="online">online</string>
+    <string name="status_meeting">In a meeting</string>
 </resources>
