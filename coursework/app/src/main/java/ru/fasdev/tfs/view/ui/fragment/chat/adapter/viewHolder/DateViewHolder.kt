@@ -1,15 +1,14 @@
 package ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder
 
 import android.view.View
-import android.widget.TextView
-import ru.fasdev.tfs.R
+import ru.fasdev.tfs.databinding.ItemDateSeparationBinding
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewType.DateUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
 
 class DateViewHolder(view: View) : BaseViewHolder<DateUi>(view) {
-    val dateText: TextView = view.findViewById(R.id.date)
+    private val binding = ItemDateSeparationBinding.bind(view)
 
     override fun bind(item: DateUi) {
-        dateText.text = item.date
+        binding.date.text = item.date
     }
 }

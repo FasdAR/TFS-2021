@@ -42,7 +42,7 @@ class ChatFragment :
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory, ChatDiffUtilCallback(), asyncListDiffer = this) }
+    private val adapter by lazy { BaseAdapter(holderFactory, ChatDiffUtilCallback(), this) }
 
     private val currentChatId = 1
     private val currentUserId = 1
