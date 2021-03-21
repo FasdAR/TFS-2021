@@ -9,9 +9,12 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
         android:background="@color/grey_910"
         app:title="@string/users"
-        app:titleTextColor="@color/white" />
+        app:titleTextColor="@color/white"
+        app:collapseIcon="@drawable/ic_back"
+        tools:menu="@menu/toolbar_people_menu"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

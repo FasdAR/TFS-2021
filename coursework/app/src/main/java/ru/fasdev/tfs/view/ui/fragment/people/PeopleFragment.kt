@@ -1,9 +1,9 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -37,20 +37,40 @@ class PeopleFragment : Fragment(R.layout.fragment_people)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentPeopleBinding.bind(it) }
+        setHasOptionsMenu(true)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.addItemDecoration(VerticalSpaceItemDecoration(17.toDp))
         binding.rvUsers.adapter = adapter
         adapter.items = usersInteractor.getAllUsers().mapToUserUi()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.toolbar_people_menu, menu)
+
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.maxWidth = Int.MAX_VALUE
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean { return false }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.items = usersInteractor.searchUser(newText.toString()).mapToUserUi()
+
+                return true
+            }
+        })
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        (requireActivity() as AppCompatActivity).setSupportActionBar(null)
         _binding = null
     }
 }

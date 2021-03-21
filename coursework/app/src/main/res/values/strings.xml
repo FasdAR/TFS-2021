@@ -8,4 +8,6 @@
     <string name="online">online</string>
     <string name="status_meeting">In a meeting</string>
     <string name="users">Users</string>
+    <string name="search">Search</string>
+    <string name="search_user_hint">Search by name or email</string>
 </resources>
