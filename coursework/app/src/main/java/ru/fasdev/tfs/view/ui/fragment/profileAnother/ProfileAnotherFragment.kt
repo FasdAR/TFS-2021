@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.model.User
-import ru.fasdev.tfs.domain.users.interactor.UsersInteractor
-import ru.fasdev.tfs.domain.users.interactor.UsersInteractorImpl
-import ru.fasdev.tfs.domain.users.repo.TestUsersRepoImpl
+import ru.fasdev.tfs.domain.user.interactor.UserInteractor
+import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
+import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
@@ -35,8 +35,8 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
     private val rootRouter: FragmentRouter
         get() = requireActivity() as FragmentRouter
 
-    private val testUserRepo = TestUsersRepoImpl()
-    private val userInteractor: UsersInteractor = UsersInteractorImpl(testUserRepo)
+    private val testUserRepo = TestUserRepoImpl()
+    private val userInteractor: UserInteractor = UserInteractorImpl(testUserRepo)
 
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER,NULL_USER) ?: NULL_USER
 

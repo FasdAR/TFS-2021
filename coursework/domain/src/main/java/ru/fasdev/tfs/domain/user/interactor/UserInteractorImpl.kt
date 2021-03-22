@@ -1,9 +1,9 @@
-package ru.fasdev.tfs.domain.users.interactor
+package ru.fasdev.tfs.domain.user.interactor
 
 import ru.fasdev.tfs.domain.model.User
-import ru.fasdev.tfs.domain.users.repo.UsersRepo
+import ru.fasdev.tfs.domain.user.repo.UserRepo
 
-class UsersInteractorImpl(private val usersRepo: UsersRepo) : UsersInteractor
+class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor
 {
     override fun getAllUsers(): List<User> = usersRepo.getAllUsers()
     override fun getUserById(id: Int): User? = usersRepo.getUserById(id)

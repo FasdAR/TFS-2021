@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
-import ru.fasdev.tfs.domain.users.interactor.UsersInteractor
-import ru.fasdev.tfs.domain.users.interactor.UsersInteractorImpl
-import ru.fasdev.tfs.domain.users.repo.TestUsersRepoImpl
+import ru.fasdev.tfs.domain.user.interactor.UserInteractor
+import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
+import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
@@ -34,8 +34,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val rootRouter: FragmentRouter
         get() = requireActivity() as FragmentRouter
 
-    private val testUsersRepo = TestUsersRepoImpl()
-    private val usersInteractor: UsersInteractor = UsersInteractorImpl(testUsersRepo)
+    private val testUsersRepo = TestUserRepoImpl()
+    private val usersInteractor: UserInteractor = UserInteractorImpl(testUsersRepo)
 
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }

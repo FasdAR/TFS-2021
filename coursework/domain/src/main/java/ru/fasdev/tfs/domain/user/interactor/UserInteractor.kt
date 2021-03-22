@@ -1,8 +1,8 @@
-package ru.fasdev.tfs.domain.users.interactor
+package ru.fasdev.tfs.domain.user.interactor
 
 import ru.fasdev.tfs.domain.model.User
 
-interface UsersInteractor
+interface UserInteractor
 {
     fun getAllUsers(): List<User>
     fun getUserById(id: Int): User?
