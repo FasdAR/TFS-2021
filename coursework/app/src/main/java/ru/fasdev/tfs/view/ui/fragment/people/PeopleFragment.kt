@@ -64,6 +64,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
         searchView.maxWidth = Int.MAX_VALUE
+        searchView.queryHint = resources.getString(R.string.search_user_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean { return false }
 
@@ -78,7 +79,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
     override fun onDestroy() {
         super.onDestroy()
-        (requireActivity() as AppCompatActivity).setSupportActionBar(null)
         _binding = null
     }
 

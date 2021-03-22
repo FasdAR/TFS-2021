@@ -36,7 +36,6 @@
     </style>
 
     <style name="Widget.TFS.SearchView" parent="Widget.AppCompat.SearchView.ActionBar">
-        <item name="defaultQueryHint">@string/search_user_hint</item>
     </style>
 
     <style name="Widget.TFS.Toolbar.Black" parent="Widget.MaterialComponents.Toolbar.Primary">
