@@ -5,9 +5,9 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
-import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
@@ -21,7 +21,8 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     private var _binding: FragmentChannelsBinding? = null
     private val binding get() = _binding!!
 
-    private val vpAdapter by lazy { ViewPagerFragmentAdapter(this, TopicFragmentFactory()) }
+    private val vpFactoryFragment = TopicFragmentFactory()
+    private val vpAdapter by lazy { ViewPagerFragmentAdapter(this, vpFactoryFragment) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
@@ -37,6 +38,10 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
         super.onViewCreated(view, savedInstanceState)
 
         binding.viewPager.adapter = vpAdapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = vpFactoryFragment.getTitle(requireContext(), position)
+        }.attach()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
