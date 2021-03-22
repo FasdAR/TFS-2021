@@ -2,11 +2,14 @@
 <resources>
     <color name="teal_500">#2A9D8F</color>
 
+    <color name="yellow_200">#E9C46A</color>
+
     <color name="green_500">#4AB54D</color>
     <color name="red_500">#B54A4A</color>
 
     <color name="white">#FFFFFF</color>
     <color name="white_50">#FAFAFA</color>
+    <color name="white_100">#F5F5F5</color>
     <color name="white_200">#EAEAEA</color>
 
     <color name="grey_400">#CCCCCC</color>

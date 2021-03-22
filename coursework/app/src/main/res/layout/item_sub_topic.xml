@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingStart="41dp"
+    android:paddingEnd="16dp"
+    android:orientation="horizontal"
+    tools:background="@color/teal_500">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/white_50"
+        android:id="@+id/name_topic"
+        tools:text="bruh"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/white_100"
+        android:id="@+id/msg_count"
+        android:layout_marginStart="25dp"
+        tools:text="25 mes"/>
+
+</LinearLayout>
