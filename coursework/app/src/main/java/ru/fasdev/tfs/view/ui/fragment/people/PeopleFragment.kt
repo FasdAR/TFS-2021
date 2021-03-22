@@ -14,11 +14,14 @@ import ru.fasdev.tfs.domain.users.repo.TestUsersRepoImpl
 import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
+import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
+import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
 
-class PeopleFragment : Fragment(R.layout.fragment_people)
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener
 {
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
@@ -28,10 +31,13 @@ class PeopleFragment : Fragment(R.layout.fragment_people)
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
 
+    private val rootRouter: FragmentRouter
+        get() = requireActivity() as FragmentRouter
+
     private val testUsersRepo = TestUsersRepoImpl()
     private val usersInteractor: UsersInteractor = UsersInteractorImpl(testUsersRepo)
 
-    private val holderFactory by lazy { PeopleHolderFactory() }
+    private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,7 +54,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people)
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.addItemDecoration(VerticalSpaceItemDecoration(17.toDp))
         binding.rvUsers.adapter = adapter
-        adapter.items = usersInteractor.getAllUsers().mapToUserUi()
+        adapter.items = usersInteractor.getAllUsers()
+                .mapToUserUi { usersInteractor.isOnlineUser(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -61,7 +68,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people)
             override fun onQueryTextSubmit(query: String?): Boolean { return false }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.items = usersInteractor.searchUser(newText.toString()).mapToUserUi()
+                adapter.items = usersInteractor.searchUser(newText.toString())
+                        .mapToUserUi { usersInteractor.isOnlineUser(it) }
 
                 return true
             }
@@ -72,5 +80,10 @@ class PeopleFragment : Fragment(R.layout.fragment_people)
         super.onDestroy()
         (requireActivity() as AppCompatActivity).setSupportActionBar(null)
         _binding = null
+    }
+
+    override fun onClickUser(idUser: Int) {
+        val profileFragment = ProfileAnotherFragment.newInstance(idUser)
+        rootRouter.navigateTo(profileFragment, ProfileAnotherFragment.TAG)
     }
 }

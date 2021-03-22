@@ -19,6 +19,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/online_status"
             android:layout_gravity="bottom|right"
             android:src="@drawable/sh_indicator_online"
             android:layout_marginEnd="2dp"

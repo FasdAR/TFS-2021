@@ -20,4 +20,13 @@ class TestUsersRepoImpl : UsersRepo
         User(14, "", "Cindy Watkins", "cindy@company.com"),
         User(15, "", "Manveer Robson", "manveer@company.com")
     )
+
+    override fun getUserById(id: Int): User? = getAllUsers().find { it.id == id }
+
+    override fun getStatusUser(id: Int): Int {
+        return if ((id % 2) == 0) User.USER_IN_MEETING
+        else User.USER_IS_FREE
+    }
+
+    override fun isOnlineUser(id: Int): Boolean = (id % 2) == 0
 }

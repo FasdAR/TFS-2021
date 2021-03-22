@@ -6,7 +6,9 @@
     <string name="profile">Profile</string>
     <string name="log_out">Log out</string>
     <string name="online">online</string>
+    <string name="offline">offline</string>
     <string name="status_meeting">In a meeting</string>
+    <string name="status_free">Free</string>
     <string name="users">Users</string>
     <string name="search">Search</string>
     <string name="search_user_hint">Search by name or email</string>

@@ -8,5 +8,6 @@ data class UserUi(
     val avatarSrc: String,
     val fullName: String,
     val email: String,
+    val isOnline: Boolean,
     override val viewType: Int = R.layout.item_user
 ) : ViewType()

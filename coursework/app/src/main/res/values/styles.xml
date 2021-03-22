@@ -39,6 +39,12 @@
         <item name="defaultQueryHint">@string/search_user_hint</item>
     </style>
 
+    <style name="Widget.TFS.Toolbar.Black" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/grey_910</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="collapseIcon">@drawable/ic_back</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay.TFS.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

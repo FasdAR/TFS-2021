@@ -7,7 +7,11 @@ import ru.fasdev.tfs.databinding.ItemUserBinding
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewType.UserUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
 
-class UserViewHolder(val view: View) : BaseViewHolder<UserUi>(view) {
+class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : BaseViewHolder<UserUi>(view) {
+    interface OnClickUserListener {
+        fun onClickUser(idUser: Int)
+    }
+
     private val binding = ItemUserBinding.bind(view)
 
     override fun bind(item: UserUi) {
@@ -20,5 +24,14 @@ class UserViewHolder(val view: View) : BaseViewHolder<UserUi>(view) {
         if (avatarRes.isDigitsOnly()) {
             binding.avatar.setImageResource(avatarRes.toInt())
         }
+
+        binding.root.setOnClickListener {
+            clickUser.onClickUser(item.uId)
+        }
+
+        if (item.isOnline)
+            binding.onlineStatus.setImageResource(R.drawable.sh_indicator_online)
+        else
+            binding.onlineStatus.setImageResource(R.drawable.sh_indicator_offline)
     }
 }
