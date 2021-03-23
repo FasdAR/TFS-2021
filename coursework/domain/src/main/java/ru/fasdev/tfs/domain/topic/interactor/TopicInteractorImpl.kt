@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.domain.topic.interactor
 
+import ru.fasdev.tfs.domain.model.SubTopic
 import ru.fasdev.tfs.domain.model.Topic
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 
@@ -9,4 +10,8 @@ class TopicInteractorImpl(private val topicRepo: TopicRepo): TopicInteractor
     override fun getSubscribedTopics(): List<Topic> = topicRepo.getSubscribedTopics()
     override fun searchByAllTopics(query: String): List<Topic> = topicRepo.searchByAllTopics(query)
     override fun searchBySubscribedTopics(query: String): List<Topic> = topicRepo.searchBySubscribedTopics(query)
+
+    override fun getAllSubTopicInTopic(idTopic: Int): List<SubTopic> {
+        return getAllTopics().findLast { it.id == idTopic }?.subTopics ?: emptyList()
+    }
 }

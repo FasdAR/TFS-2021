@@ -10,12 +10,16 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestTopicRepoImpl
+import ru.fasdev.tfs.view.feature.mapper.mapToSubTopicUi
 import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicDiffUtilCallback
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class TopicListFragment : Fragment(R.layout.fragment_topic_list)
+class TopicListFragment : Fragment(R.layout.fragment_topic_list), TopicViewHolder.OnClickTopicListener
 {
     companion object {
         const val ALL_MODE = 1
@@ -33,8 +37,8 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list)
     private val testTopicRepo = TestTopicRepoImpl()
     private val topicInteractor: TopicInteractor = TopicInteractorImpl(testTopicRepo)
 
-    private val holderFactory by lazy { TopicHolderFactory() }
-    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
+    private val holderFactory by lazy { TopicHolderFactory(this) }
+    private val adapter by lazy { BaseAdapter(holderFactory, TopicDiffUtilCallback()) }
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
@@ -52,5 +56,24 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list)
                 adapter.items = topicInteractor.getSubscribedTopics().mapToTopicUi()
             }
         }
+    }
+
+    override fun onClickTopic(idTopic: Int, opened: Boolean) {
+        val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
+        val subTopics = topicInteractor.getAllSubTopicInTopic(idTopic).mapToSubTopicUi()
+
+        val topicIndex = uiModels.filterIsInstance<TopicUi>().indexOfFirst { it.uId == idTopic }
+        val topic = uiModels[topicIndex] as TopicUi
+
+        uiModels[topicIndex] = topic.copy(isOpen = opened)
+
+        if (opened) {
+            uiModels.addAll(topicIndex+1, subTopics)
+        }
+        else {
+            uiModels.removeAll(subTopics)
+        }
+
+        adapter.items = uiModels
     }
 }

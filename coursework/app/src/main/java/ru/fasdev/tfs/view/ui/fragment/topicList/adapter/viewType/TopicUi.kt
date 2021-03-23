@@ -6,6 +6,6 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 data class TopicUi(
     override val uId: Int,
     val nameTopic: String,
-    val isOpen: Boolean = false,
+    var isOpen: Boolean = false,
     override val viewType: Int = R.layout.item_topic
 ): ViewType()
