@@ -2,6 +2,7 @@ package ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.ItemTopicBinding
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
@@ -12,7 +13,6 @@ class TopicViewHolder(val view: View, val topicListener: OnClickTopicListener) :
     companion object {
         const val KEY_IS_OPEN_PAYLOADS = "IDOPEN"
     }
-
 
     interface OnClickTopicListener {
         fun onClickTopic(idTopic: Int, opened: Boolean)
@@ -43,8 +43,13 @@ class TopicViewHolder(val view: View, val topicListener: OnClickTopicListener) :
     }
 
     private fun setOpenArrow(isOpen: Boolean) {
-        if (isOpen) binding.arrowOpenClose.setImageResource(R.drawable.ic_arrow_up)
-        else binding.arrowOpenClose.setImageResource(R.drawable.ic_arrow_down)
-
+        if (isOpen) {
+            binding.arrowOpenClose.setImageResource(R.drawable.ic_arrow_up)
+            binding.root.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.grey_920))
+        }
+        else {
+            binding.arrowOpenClose.setImageResource(R.drawable.ic_arrow_down)
+            binding.root.setBackgroundColor(0)
+        }
     }
 }

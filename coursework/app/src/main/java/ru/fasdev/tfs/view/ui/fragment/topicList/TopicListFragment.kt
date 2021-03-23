@@ -62,7 +62,7 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list), TopicViewHolde
         val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
         val subTopics = topicInteractor.getAllSubTopicInTopic(idTopic).mapToSubTopicUi()
 
-        val topicIndex = uiModels.filterIsInstance<TopicUi>().indexOfFirst { it.uId == idTopic }
+        val topicIndex = uiModels.indexOfFirst { it.uId == idTopic && it is TopicUi}
         val topic = uiModels[topicIndex] as TopicUi
 
         uiModels[topicIndex] = topic.copy(isOpen = opened)
