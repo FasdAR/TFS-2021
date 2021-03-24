@@ -7,14 +7,20 @@ import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 class TopicInteractorImpl(private val topicRepo: TopicRepo): TopicInteractor
 {
     override fun getAllTopics(): List<Topic> = topicRepo.getAllTopics()
-    override fun getSubscribedTopics(): List<Topic> = topicRepo.getSubscribedTopics()
-    override fun getTopicFromSubTopic(idSubTopic: Int): Topic? {
-        return getAllTopics().find { it.subTopics.indexOfFirst { it.id == idSubTopic } != -1 }
-    }
-    override fun getAllSubTopicInTopic(idTopic: Int): List<SubTopic> {
-        return getAllTopics().findLast { it.id == idTopic }?.subTopics ?: emptyList()
+
+    override fun getAllSubTopics(): List<SubTopic> = topicRepo.getAllSubTopics()
+
+    override fun getMainTopicInSubTopic(subTopicId: Int): Topic? {
+        val idTopic = getAllSubTopics().find { it.id == subTopicId }?.rootIdTopic
+        return getAllTopics().find { it.id == idTopic }
     }
 
-    override fun searchByAllTopics(query: String): List<Topic> = topicRepo.searchByAllTopics(query)
-    override fun searchBySubscribedTopics(query: String): List<Topic> = topicRepo.searchBySubscribedTopics(query)
+    override fun getSubTopicsInMainTopic(rootId: Int) = getAllSubTopics().filter { it.rootIdTopic == rootId }
+
+    override fun searchTopics(query: String): List<Topic> {
+        return if (query.isNotEmpty())
+            getAllTopics().filter { it.name.toLowerCase().contains(query.trim().toLowerCase()) }
+        else
+            getAllTopics()
+    }
 }

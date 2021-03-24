@@ -6,9 +6,9 @@ import ru.fasdev.tfs.domain.model.Topic
 interface TopicInteractor
 {
     fun getAllTopics(): List<Topic>
-    fun getSubscribedTopics(): List<Topic>
-    fun getTopicFromSubTopic(idSubTopic: Int): Topic?
-    fun getAllSubTopicInTopic(idTopic: Int): List<SubTopic>
-    fun searchByAllTopics(query: String): List<Topic>
-    fun searchBySubscribedTopics(query: String): List<Topic>
+    fun getAllSubTopics(): List<SubTopic>
+
+    fun getMainTopicInSubTopic(subTopicId: Int): Topic?
+    fun getSubTopicsInMainTopic(rootId: Int): List<SubTopic>
+    fun searchTopics(query: String): List<Topic>
 }
