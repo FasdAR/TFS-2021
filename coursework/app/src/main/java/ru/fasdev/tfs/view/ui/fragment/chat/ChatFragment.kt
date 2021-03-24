@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -32,7 +33,15 @@ class ChatFragment :
     AsyncListDiffer.ListListener<ViewType> {
 
     companion object {
+        val TAG: String = ChatFragment::class.java.simpleName
+
         const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
+        private const val KEY_ID_MAIN_TOPIC = "ID_MAIN_TOPIC"
+        private const val KEY_ID_SUB_TOPIC = "ID_SUB_TOPIC"
+
+        fun newInstance(idMainTopic: Int, idSubTopic: Int) = ChatFragment().apply {
+            arguments = bundleOf(KEY_ID_MAIN_TOPIC to idMainTopic, KEY_ID_SUB_TOPIC to idSubTopic)
+        }
     }
 
     private var _binding: FragmentChatBinding? = null
@@ -46,6 +55,11 @@ class ChatFragment :
 
     private val currentChatId = 1
     private val currentUserId = 1
+
+    private val idMainTopic
+        get() = arguments?.getInt(KEY_ID_MAIN_TOPIC)
+    private val idSubTopic
+        get() = arguments?.getInt(KEY_ID_SUB_TOPIC)
 
     private var selectedMessageId: Int = 0
 

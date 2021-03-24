@@ -12,14 +12,18 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestTopicRepoImpl
 import ru.fasdev.tfs.view.feature.mapper.mapToSubTopicUi
 import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
+import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicDiffUtilCallback
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.SubTopicViewHolder
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class TopicListFragment : Fragment(R.layout.fragment_topic_list), TopicViewHolder.OnClickTopicListener
+class TopicListFragment : Fragment(R.layout.fragment_topic_list),
+        TopicViewHolder.OnClickTopicListener, SubTopicViewHolder.OnClickSubTopicListener
 {
     companion object {
         const val ALL_MODE = 1
@@ -37,10 +41,13 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list), TopicViewHolde
     private val testTopicRepo = TestTopicRepoImpl()
     private val topicInteractor: TopicInteractor = TopicInteractorImpl(testTopicRepo)
 
-    private val holderFactory by lazy { TopicHolderFactory(this) }
+    private val holderFactory by lazy { TopicHolderFactory(this, this) }
     private val adapter by lazy { BaseAdapter(holderFactory, TopicDiffUtilCallback()) }
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
+
+    private val fragmentRouter: FragmentRouter
+        get() = requireActivity() as FragmentRouter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,5 +82,12 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list), TopicViewHolde
         }
 
         adapter.items = uiModels
+    }
+
+    override fun onClickSubTopic(idSubTopic: Int) {
+        val parentTopic = topicInteractor.getTopicFromSubTopic(idSubTopic)
+        parentTopic?.let {
+            fragmentRouter.navigateTo(ChatFragment.newInstance(it.id, idSubTopic), ChatFragment.TAG)
+        }
     }
 }

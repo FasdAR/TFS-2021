@@ -7,6 +7,7 @@ interface TopicInteractor
 {
     fun getAllTopics(): List<Topic>
     fun getSubscribedTopics(): List<Topic>
+    fun getTopicFromSubTopic(idSubTopic: Int): Topic?
     fun getAllSubTopicInTopic(idTopic: Int): List<SubTopic>
     fun searchByAllTopics(query: String): List<Topic>
     fun searchBySubscribedTopics(query: String): List<Topic>
