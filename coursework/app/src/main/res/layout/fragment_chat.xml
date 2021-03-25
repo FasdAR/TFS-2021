@@ -6,6 +6,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_bar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            style="@style/Widget.TFS.Toolbar.Black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar"
+            android:elevation="0dp"
+            android:background="@color/teal_500"
+            app:navigationIcon="@drawable/ic_back"
+            tools:title="#general" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@color/grey_920"
+            android:textColor="@color/grey_400"
+            android:paddingTop="11dp"
+            android:paddingBottom="11dp"
+            android:textSize="20sp"
+            android:id="@+id/sub_topic"
+            tools:text="Topic: #testing"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -16,7 +47,7 @@
         android:paddingRight="12dp"
         android:clipToPadding="false"
         tools:listitem="@layout/item_external_message"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/msg_text"/>
 
     <androidx.appcompat.widget.AppCompatEditText

@@ -94,11 +94,9 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     }
 
     override fun onClickSubTopic(idSubTopic: Int) {
-        /*
         val parentTopic = topicInteractor.getMainTopicInSubTopic(idSubTopic)
         parentTopic?.let {
             fragmentRouter.navigateTo(ChatFragment.newInstance(it.id, idSubTopic), ChatFragment.TAG)
         }
-        */
     }
 }

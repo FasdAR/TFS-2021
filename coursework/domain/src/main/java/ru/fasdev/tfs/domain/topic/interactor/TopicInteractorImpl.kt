@@ -10,6 +10,9 @@ class TopicInteractorImpl(private val topicRepo: TopicRepo): TopicInteractor
 
     override fun getAllSubTopics(): List<SubTopic> = topicRepo.getAllSubTopics()
 
+    override fun getMainTopic(idTopic: Int): Topic? = getAllTopics().find { it.id == idTopic }
+    override fun getSubTopic(subTopicId: Int): SubTopic? = getAllSubTopics().find { it.id == subTopicId }
+
     override fun getMainTopicInSubTopic(subTopicId: Int): Topic? {
         val idTopic = getAllSubTopics().find { it.id == subTopicId }?.rootIdTopic
         return getAllTopics().find { it.id == idTopic }

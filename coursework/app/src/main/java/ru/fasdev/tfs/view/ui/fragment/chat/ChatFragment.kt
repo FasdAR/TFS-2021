@@ -16,6 +16,10 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
+import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
+import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
+import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
+import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
@@ -35,7 +39,8 @@ class ChatFragment :
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
 
-        const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
+        private const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
+
         private const val KEY_ID_MAIN_TOPIC = "ID_MAIN_TOPIC"
         private const val KEY_ID_SUB_TOPIC = "ID_SUB_TOPIC"
 
@@ -49,6 +54,9 @@ class ChatFragment :
 
     private val testMessageRepoImpl = TestMessageRepoImpl()
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
+
+    private val topicRepo: TopicRepo = TestAllTopicRepoImpl()
+    private val topicInteractor: TopicInteractor = TopicInteractorImpl(topicRepo)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
     private val adapter by lazy { BaseAdapter(holderFactory, ChatDiffUtilCallback(), this) }
@@ -80,6 +88,13 @@ class ChatFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val currentTopic = topicInteractor.getMainTopic(idMainTopic!!)
+        val subTopic = topicInteractor.getSubTopic(idSubTopic!!)
+
+        //TODO: CHANGE TO RES TEMPALTE
+        binding.toolbar.title = "#${currentTopic!!.name}"
+        binding.subTopic.text = "Topic: ${subTopic!!.name}"
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
