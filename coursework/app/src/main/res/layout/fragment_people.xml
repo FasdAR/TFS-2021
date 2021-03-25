@@ -53,10 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rv_users"
-        android:paddingTop="23dp"
-        android:paddingBottom="23dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp"
         android:clipToPadding="false"
         tools:listitem="@layout/item_user"
         tools:itemCount="20"/>

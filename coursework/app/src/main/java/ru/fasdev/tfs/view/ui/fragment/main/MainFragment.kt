@@ -12,7 +12,6 @@ import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.BaseFragmentRouter
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 
 class MainFragment : Fragment(R.layout.fragment_main)
 {

@@ -50,7 +50,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvUsers.addItemDecoration(VerticalSpaceItemDecoration(17.toDp))
         binding.rvUsers.adapter = adapter
         adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
 
