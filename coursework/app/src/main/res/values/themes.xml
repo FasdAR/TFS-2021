@@ -13,6 +13,8 @@
 
         <item name="bottomNavigationStyle">@style/Widget.TFS.BottomNavigationView</item>
         <item name="searchViewStyle">@style/Widget.TFS.SearchView</item>
+
+        <item name="fontFamily">@font/inter</item>
     </style>
 
     <style name="Theme.TFS.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
