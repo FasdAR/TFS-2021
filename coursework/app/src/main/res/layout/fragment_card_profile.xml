@@ -9,19 +9,20 @@
     android:gravity="center">
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/avatar"
         android:layout_width="185dp"
         android:layout_height="185dp"
-        android:id="@+id/avatar"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TFS.Rectangle"
         tools:src="@tools:sample/avatars" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/full_name"
         android:layout_marginTop="16dp"
         android:textSize="32sp"
         android:textColor="@color/white"
+        app:fontFamily="@font/inter_medium"
         tools:text="Darrell Steward"/>
 
     <LinearLayout
@@ -30,18 +31,18 @@
         android:orientation="horizontal"
         android:gravity="center">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/status"
             android:textColor="@color/grey_410"
             android:textSize="20sp"
             tools:text="In a meeting"/>
 
         <TextView
+            android:id="@+id/online_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/online_status"
             android:textColor="@color/green_500"
             android:textSize="16sp"
             android:layout_marginStart="21dp"

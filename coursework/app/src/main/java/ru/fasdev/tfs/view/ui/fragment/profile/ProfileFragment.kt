@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentProfileBinding
+import ru.fasdev.tfs.domain.model.UserStatus
+import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 
 class ProfileFragment : Fragment(R.layout.fragment_profile)
 {
@@ -26,10 +28,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.layoutInfo.avatar.setImageResource(R.drawable.ic_launcher_background)
-        binding.layoutInfo.fullName.text = "Andrey Rednikov"
-        binding.layoutInfo.status.text = resources.getString(R.string.status_meeting)
-        binding.layoutInfo.onlineStatus.text = resources.getString(R.string.online)
+
+        val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+        cardProfile.isOnline = true
+        cardProfile.status = UserStatus.MEETING
+        cardProfile.fullName = "Test User"
+
+        binding.logoutBtn.setOnClickListener {
+            //TODO: ADD logout
+        }
     }
 
     override fun onDestroy() {

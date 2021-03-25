@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.domain.user.repo
 
 import ru.fasdev.tfs.domain.model.User
+import ru.fasdev.tfs.domain.model.UserStatus
 
 class TestUserRepoImpl : UserRepo
 {
@@ -23,9 +24,9 @@ class TestUserRepoImpl : UserRepo
 
     override fun getUserById(id: Int): User? = getAllUsers().find { it.id == id }
 
-    override fun getStatusUser(id: Int): Int {
-        return if ((id % 2) == 0) User.USER_IN_MEETING
-        else User.USER_IS_FREE
+    override fun getStatusUser(id: Int): UserStatus {
+        return if ((id % 2) == 0) UserStatus.MEETING
+        else UserStatus.FREE
     }
 
     override fun isOnlineUser(id: Int): Boolean = (id % 2) == 0

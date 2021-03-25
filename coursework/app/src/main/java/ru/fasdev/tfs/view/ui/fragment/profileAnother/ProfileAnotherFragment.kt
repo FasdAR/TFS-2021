@@ -50,6 +50,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /*
         userInteractor.getUserById(idUser)?.let { user ->
             binding.layoutInfo.avatar.setImageResource(R.drawable.ic_launcher_background)
             binding.layoutInfo.fullName.text = user.fullName
@@ -80,7 +81,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
         binding.toolbar.setNavigationIcon(R.drawable.ic_back)
         binding.toolbar.setNavigationOnClickListener {
             rootRouter.back()
-        }
+        }*/
     }
 
     override fun onDestroy() {
