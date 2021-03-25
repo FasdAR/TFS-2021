@@ -14,6 +14,7 @@
         <item name="bottomNavigationStyle">@style/Widget.TFS.BottomNavigationView</item>
 
         <item name="fontFamily">@font/inter</item>
+        <item name="tabStyle">@style/Widget.TFS.TabLayout</item>
     </style>
 
     <style name="Theme.TFS.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
@@ -25,5 +26,4 @@
         <item name="colorOnPrimary">@color/grey_510</item>
         <item name="colorOnPrimarySurface">@color/white_50</item>
     </style>
-
 </resources>

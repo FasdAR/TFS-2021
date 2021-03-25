@@ -67,6 +67,22 @@
         <item name="android:background">@color/teal_500</item>
     </style>
 
+    <style name="Widget.TFS.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">@color/white</item>
+        <item name="tabTextAppearance">@style/TextAppearance.TFS.TabLayout</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabPaddingBottom">8dp</item>
+        <item name="tabIndicatorColor">@color/green_700</item>
+        <item name="tabIndicator">@drawable/sh_tab_indicator</item>
+        <item name="tabRippleColor">@null</item>
+    </style>
+
+    <style name="TextAppearance.TFS.TabLayout" parent="TextAppearance.MaterialComponents.Button">
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
     <style name="TextAppearance.TFS.Toolbar.Title" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">24sp</item>
         <item name="fontFamily">@font/inter_regular</item>
