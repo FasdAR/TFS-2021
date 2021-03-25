@@ -11,8 +11,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/toolbar"
         app:navigationIcon="@drawable/ic_back"
-        app:title="@string/profile"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textColor="#fff"
+        android:text="@string/profile"
+        android:textAppearance="@style/TextAppearance.TFS.Toolbar.Title"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"/>
 
     <fragment
         android:id="@+id/card_profile"

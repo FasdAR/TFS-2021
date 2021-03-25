@@ -47,9 +47,6 @@
         <item name="itemTextAppearanceInactive">@style/TextAppearance.TFS.BottomNavigation</item>
     </style>
 
-    <style name="Widget.TFS.SearchView" parent="Widget.AppCompat.SearchView.ActionBar">
-    </style>
-
     <style name="Widget.TFS.Toolbar.Primary" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="titleTextColor">@color/white</item>
         <item name="collapseIcon">@drawable/ic_back</item>
@@ -58,6 +55,8 @@
         <item name="contentInsetStart">30dp</item>
         <item name="contentInsetStartWithNavigation">87dp</item>
         <item name="titleTextAppearance">@style/TextAppearance.TFS.Toolbar.Title</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
     </style>
 
     <style name="Widget.TFS.Toolbar.Primary.Black" parent="Widget.TFS.Toolbar.Primary">

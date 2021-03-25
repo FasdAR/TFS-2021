@@ -12,7 +12,6 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 
         <item name="bottomNavigationStyle">@style/Widget.TFS.BottomNavigationView</item>
-        <item name="searchViewStyle">@style/Widget.TFS.SearchView</item>
 
         <item name="fontFamily">@font/inter</item>
     </style>

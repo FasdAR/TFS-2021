@@ -1,7 +1,9 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -50,28 +52,36 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.addItemDecoration(VerticalSpaceItemDecoration(17.toDp))
         binding.rvUsers.adapter = adapter
         adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
-    }
 
-    /*
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.toolbar_people_menu, menu)
-
-        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        searchView.maxWidth = Int.MAX_VALUE
-        searchView.queryHint = resources.getString(R.string.search_user_hint)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean { return false }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.items = usersInteractor.searchUser(newText.toString())
-                        .mapToUserUi { usersInteractor.isOnlineUser(it) }
-
-                return true
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_search -> {
+                    stateSearchLayout(true)
+                    true
+                }
+                else -> false
             }
-        })
+        }
+
+        binding.backBtnSearch.setOnClickListener {
+            stateSearchLayout(false)
+        }
     }
-    */
+
+    private fun stateSearchLayout(isSearch: Boolean) {
+        if (isSearch) {
+            binding.searchLayout.visibility = View.VISIBLE
+            binding.toolbar.visibility = View.INVISIBLE
+
+            binding.edtSearch.isFocusable = true
+        }
+        else {
+            binding.searchLayout.visibility = View.GONE
+            binding.toolbar.visibility = View.VISIBLE
+
+            binding.edtSearch.clearFocus()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -6,13 +6,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        style="@style/Widget.TFS.Toolbar.Primary.Black"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/toolbar"
-        app:menu="@menu/toolbar_people_menu"
-        app:title="@string/users" />
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            style="@style/Widget.TFS.Toolbar.Primary.Black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar"
+            app:menu="@menu/toolbar_people_menu"
+            app:title="@string/users" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:id="@+id/search_layout"
+            android:visibility="gone"
+            android:background="@color/grey_910">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/back_btn_search"
+                android:padding="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back"
+                android:layout_marginStart="22dp"
+                android:backgroundTint="@android:color/transparent"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="24sp"
+                android:singleLine="true"
+                android:background="@null"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
