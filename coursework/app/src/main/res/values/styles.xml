@@ -50,10 +50,27 @@
     <style name="Widget.TFS.SearchView" parent="Widget.AppCompat.SearchView.ActionBar">
     </style>
 
-    <style name="Widget.TFS.Toolbar.Black" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background">@color/grey_910</item>
+    <style name="Widget.TFS.Toolbar.Primary" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="titleTextColor">@color/white</item>
         <item name="collapseIcon">@drawable/ic_back</item>
+        <item name="android:minHeight">66dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="contentInsetStart">30dp</item>
+        <item name="contentInsetStartWithNavigation">87dp</item>
+        <item name="titleTextAppearance">@style/TextAppearance.TFS.Toolbar.Title</item>
+    </style>
+
+    <style name="Widget.TFS.Toolbar.Primary.Black" parent="Widget.TFS.Toolbar.Primary">
+        <item name="android:background">@color/grey_910</item>
+    </style>
+
+    <style name="Widget.TFS.Toolbar.Primary.Teal" parent="Widget.TFS.Toolbar.Primary">
+        <item name="android:background">@color/teal_500</item>
+    </style>
+
+    <style name="TextAppearance.TFS.Toolbar.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">24sp</item>
+        <item name="fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="TextAppearance.TFS.BottomNavigation" parent="TextAppearance.AppCompat.Caption">

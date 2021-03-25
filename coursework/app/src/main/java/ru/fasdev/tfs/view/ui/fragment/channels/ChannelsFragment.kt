@@ -35,10 +35,6 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentChannelsBinding.bind(it) }
-
-        setHasOptionsMenu(true)
-        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
-
         return view
     }
 
@@ -62,6 +58,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
         }.attach()
     }
 
+    /*
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.toolbar_people_menu, menu)
@@ -80,7 +77,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
                 return true
             }
         })
-    }
+    }*/
 
     private fun searchCurrentFragment(query: String) {
         val myFragment = childFragmentManager.findFragmentByTag("f" + binding.viewPager.currentItem)

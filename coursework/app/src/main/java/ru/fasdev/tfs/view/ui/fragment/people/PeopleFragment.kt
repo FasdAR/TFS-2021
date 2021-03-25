@@ -2,8 +2,6 @@ package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -43,9 +41,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentPeopleBinding.bind(it) }
-        setHasOptionsMenu(true)
-        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
-
         return view
     }
 
@@ -54,10 +49,10 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.addItemDecoration(VerticalSpaceItemDecoration(17.toDp))
         binding.rvUsers.adapter = adapter
-        adapter.items = usersInteractor.getAllUsers()
-                .mapToUserUi { usersInteractor.isOnlineUser(it) }
+        adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
     }
 
+    /*
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.toolbar_people_menu, menu)
@@ -76,6 +71,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
             }
         })
     }
+    */
 
     override fun onDestroy() {
         super.onDestroy()
