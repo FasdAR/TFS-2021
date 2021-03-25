@@ -1,18 +1,13 @@
 package ru.fasdev.tfs.view.ui.fragment.channels
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
-import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
 import ru.fasdev.tfs.view.ui.fragment.topicList.TopicListFragment
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter

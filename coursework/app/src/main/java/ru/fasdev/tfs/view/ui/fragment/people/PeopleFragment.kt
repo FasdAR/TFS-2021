@@ -1,9 +1,7 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
