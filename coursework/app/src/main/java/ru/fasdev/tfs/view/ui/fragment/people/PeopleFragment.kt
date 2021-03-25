@@ -15,6 +15,7 @@ import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
@@ -25,6 +26,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
+        fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
     private var _binding: FragmentPeopleBinding? = null

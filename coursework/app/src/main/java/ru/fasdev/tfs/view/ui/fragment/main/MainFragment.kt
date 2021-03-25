@@ -8,10 +8,11 @@ import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
 import ru.fasdev.tfs.view.feature.util.getCurrentFragment
-import ru.fasdev.tfs.view.feature.util.replaceCommit
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.BaseFragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 
 class MainFragment : Fragment(R.layout.fragment_main)
 {
@@ -21,6 +22,8 @@ class MainFragment : Fragment(R.layout.fragment_main)
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    private val fragmentRouter by lazy { BaseFragmentRouter(childFragmentManager, R.id.child_container) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
@@ -50,25 +53,13 @@ class MainFragment : Fragment(R.layout.fragment_main)
     private fun updateFragment(actionId: Int) {
         when (actionId) {
             R.id.action_channels -> {
-                childFragmentManager.replaceCommit(
-                        R.id.child_container,
-                        ChannelsFragment.newInstance(),
-                        ChannelsFragment.TAG
-                )
+                fragmentRouter.replaceTo(ChannelsFragment.getScreen())
             }
             R.id.action_people -> {
-                childFragmentManager.replaceCommit(
-                        R.id.child_container,
-                        PeopleFragment.newInstance(),
-                        PeopleFragment.TAG
-                )
+                fragmentRouter.replaceTo(PeopleFragment.getScreen())
             }
             R.id.action_profile -> {
-                childFragmentManager.replaceCommit(
-                        R.id.child_container,
-                        ProfileFragment.newInstance(),
-                        ProfileFragment.TAG
-                )
+                fragmentRouter.replaceTo(ProfileFragment.getScreen())
             }
         }
     }

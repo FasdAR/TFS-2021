@@ -14,6 +14,7 @@ import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
 {
@@ -34,7 +35,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
     private val binding get() = _binding!!
 
     private val rootRouter: FragmentRouter
-        get() = requireActivity() as FragmentRouter
+        get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
     private val testUserRepo = TestUserRepoImpl()
     private val userInteractor: UserInteractor = UserInteractorImpl(testUserRepo)

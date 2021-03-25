@@ -9,12 +9,14 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentProfileBinding
 import ru.fasdev.tfs.domain.model.UserStatus
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class ProfileFragment : Fragment(R.layout.fragment_profile)
 {
     companion object {
         val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
+        fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
     private var _binding: FragmentProfileBinding? = null

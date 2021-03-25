@@ -7,6 +7,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels)
@@ -14,6 +15,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     companion object {
         val TAG: String = ChannelsFragment::class.java.simpleName
         fun newInstance(): ChannelsFragment = ChannelsFragment()
+        fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
     private var _binding: FragmentChannelsBinding? = null
