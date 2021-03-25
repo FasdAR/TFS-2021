@@ -23,7 +23,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     private val binding get() = _binding!!
 
     private val vpFactoryFragment = TopicFragmentFactory()
-    private val vpAdapter by lazy { ViewPagerFragmentAdapter(this, vpFactoryFragment) }
+    private lateinit var vpAdapter: ViewPagerFragmentAdapter
 
     private var searchView: SearchView? = null
 
@@ -35,6 +35,8 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        vpAdapter = ViewPagerFragmentAdapter(this, vpFactoryFragment)
 
         binding.viewPager.adapter = vpAdapter
 
