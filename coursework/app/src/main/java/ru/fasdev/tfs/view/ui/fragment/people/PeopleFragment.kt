@@ -15,6 +15,7 @@ import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
@@ -30,7 +31,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val binding get() = _binding!!
 
     private val rootRouter: FragmentRouter
-        get() = requireActivity() as FragmentRouter
+        get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
     private val testUsersRepo = TestUserRepoImpl()
     private val usersInteractor: UserInteractor = UserInteractorImpl(testUsersRepo)
@@ -87,7 +88,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     }
 
     override fun onClickUser(idUser: Int) {
-        val profileFragment = ProfileAnotherFragment.newInstance(idUser)
-        rootRouter.navigateTo(profileFragment, ProfileAnotherFragment.TAG)
+        rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser))
     }
 }

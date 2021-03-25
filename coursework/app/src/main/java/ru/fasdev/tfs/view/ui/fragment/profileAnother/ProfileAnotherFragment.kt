@@ -13,6 +13,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
 {
@@ -25,6 +26,8 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
         fun newInstance(idUser: Int): ProfileAnotherFragment = ProfileAnotherFragment().apply {
             arguments = bundleOf(KEY_ID_USER to idUser)
         }
+
+        fun getScreen(idUser: Int) = FragmentScreen(TAG, newInstance(idUser))
     }
 
     private var _binding: FragmentAnotherProfileBinding? = null

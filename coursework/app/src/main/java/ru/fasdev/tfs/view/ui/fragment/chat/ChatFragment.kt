@@ -27,6 +27,8 @@ import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
@@ -47,10 +49,15 @@ class ChatFragment :
         fun newInstance(idSubTopic: Int) = ChatFragment().apply {
             arguments = bundleOf(KEY_ID_SUB_TOPIC to idSubTopic)
         }
+
+        fun getScreen(idSubTopic: Int) = FragmentScreen(TAG, newInstance(idSubTopic))
     }
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
+
+    private val fragmentRouter: FragmentRouter
+        get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
     private val testMessageRepoImpl = TestMessageRepoImpl()
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
@@ -95,7 +102,7 @@ class ChatFragment :
         binding.subTopic.text = "Topic: ${subTopic?.name?.toString()}"
 
         binding.toolbar.setNavigationOnClickListener {
-            (requireActivity() as FragmentRouter).back()
+            fragmentRouter.back()
         }
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->

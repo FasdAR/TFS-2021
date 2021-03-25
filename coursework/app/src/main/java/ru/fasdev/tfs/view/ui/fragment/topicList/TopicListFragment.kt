@@ -1,11 +1,9 @@
 package ru.fasdev.tfs.view.ui.fragment.topicList
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.tfs.R
@@ -16,7 +14,6 @@ import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.feature.mapper.mapToSubTopicUi
 import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
-import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicDiffUtilCallback
@@ -24,6 +21,7 @@ import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.SubTopicViewH
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
@@ -57,8 +55,7 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     private val holderFactory by lazy { TopicHolderFactory(this, this) }
     private val adapter by lazy { BaseAdapter(holderFactory, TopicDiffUtilCallback()) }
 
-    private val fragmentRouter: FragmentRouter
-        get() = requireActivity() as FragmentRouter
+    private val fragmentRouter: FragmentRouter get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,6 +87,6 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     }
 
     override fun onClickSubTopic(idSubTopic: Int) {
-        fragmentRouter.navigateTo(ChatFragment.newInstance(idSubTopic), ChatFragment.TAG)
+        fragmentRouter.navigateTo(ChatFragment.getScreen(idSubTopic))
     }
 }
