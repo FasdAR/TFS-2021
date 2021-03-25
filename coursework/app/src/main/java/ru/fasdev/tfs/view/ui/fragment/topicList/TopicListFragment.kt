@@ -60,10 +60,6 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     private val fragmentRouter: FragmentRouter
         get() = requireActivity() as FragmentRouter
 
-    fun search(query: String) {
-        adapter.items = topicInteractor.searchTopics(query).mapToTopicUi()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -94,9 +90,6 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     }
 
     override fun onClickSubTopic(idSubTopic: Int) {
-        val parentTopic = topicInteractor.getMainTopicInSubTopic(idSubTopic)
-        parentTopic?.let {
-            fragmentRouter.navigateTo(ChatFragment.newInstance(it.id, idSubTopic), ChatFragment.TAG)
-        }
+        fragmentRouter.navigateTo(ChatFragment.newInstance(idSubTopic), ChatFragment.TAG)
     }
 }

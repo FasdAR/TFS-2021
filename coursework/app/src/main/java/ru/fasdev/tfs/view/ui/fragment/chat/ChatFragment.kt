@@ -26,6 +26,7 @@ import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
@@ -41,11 +42,10 @@ class ChatFragment :
 
         private const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
 
-        private const val KEY_ID_MAIN_TOPIC = "ID_MAIN_TOPIC"
         private const val KEY_ID_SUB_TOPIC = "ID_SUB_TOPIC"
 
-        fun newInstance(idMainTopic: Int, idSubTopic: Int) = ChatFragment().apply {
-            arguments = bundleOf(KEY_ID_MAIN_TOPIC to idMainTopic, KEY_ID_SUB_TOPIC to idSubTopic)
+        fun newInstance(idSubTopic: Int) = ChatFragment().apply {
+            arguments = bundleOf(KEY_ID_SUB_TOPIC to idSubTopic)
         }
     }
 
@@ -64,10 +64,8 @@ class ChatFragment :
     private val currentChatId = 1
     private val currentUserId = 1
 
-    private val idMainTopic
-        get() = arguments?.getInt(KEY_ID_MAIN_TOPIC)
-    private val idSubTopic
-        get() = arguments?.getInt(KEY_ID_SUB_TOPIC)
+    private val idSubTopic: Int
+        get() = requireArguments().getInt(KEY_ID_SUB_TOPIC)
 
     private var selectedMessageId: Int = 0
 
@@ -89,12 +87,16 @@ class ChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentTopic = topicInteractor.getMainTopic(idMainTopic!!)
-        val subTopic = topicInteractor.getSubTopic(idSubTopic!!)
+        val subTopic = topicInteractor.getSubTopic(idSubTopic)
+        val mainTopic = topicInteractor.getMainTopic(subTopic?.rootIdTopic ?: 0)
 
         //TODO: CHANGE TO RES TEMPALTE
-        binding.toolbar.title = "#${currentTopic!!.name}"
-        binding.subTopic.text = "Topic: ${subTopic!!.name}"
+        binding.toolbar.title = "#${mainTopic?.name?.toString()}"
+        binding.subTopic.text = "Topic: ${subTopic?.name?.toString()}"
+
+        binding.toolbar.setNavigationOnClickListener {
+            (requireActivity() as FragmentRouter).back()
+        }
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)

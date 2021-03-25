@@ -2,14 +2,11 @@ package ru.fasdev.tfs.view.ui.fragment.channels
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
-import ru.fasdev.tfs.view.ui.fragment.topicList.TopicListFragment
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels)
@@ -25,8 +22,6 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     private val vpFactoryFragment = TopicFragmentFactory()
     private lateinit var vpAdapter: ViewPagerFragmentAdapter
 
-    private var searchView: SearchView? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentChannelsBinding.bind(it) }
@@ -39,16 +34,6 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
         vpAdapter = ViewPagerFragmentAdapter(this, vpFactoryFragment)
 
         binding.viewPager.adapter = vpAdapter
-
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-
-                searchView?.query?.let {
-                    searchCurrentFragment(it.toString())
-                }
-            }
-        })
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = vpFactoryFragment.getTitle(requireContext(), position)
@@ -75,13 +60,6 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
             }
         })
     }*/
-
-    private fun searchCurrentFragment(query: String) {
-        val myFragment = childFragmentManager.findFragmentByTag("f" + binding.viewPager.currentItem)
-        myFragment?.let {
-            (it as TopicListFragment).search(query)
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
