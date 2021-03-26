@@ -10,17 +10,15 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.layout
 import ru.fasdev.tfs.view.feature.util.toDp
 
-class FlexboxLayout
-@JvmOverloads
-constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+class FlexboxLayout @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
-    companion object {
-        private val DEFAULT_VERTICAL_SPACE = 7.toDp
-        private val DEFAULT_HORIZONTAL_SPACE = 10.toDp
+    private companion object {
+        val DEFAULT_VERTICAL_SPACE = 7.toDp
+        val DEFAULT_HORIZONTAL_SPACE = 10.toDp
     }
 
     var verticalSpace = DEFAULT_VERTICAL_SPACE
@@ -28,6 +26,7 @@ constructor(
             if (field != value) {
                 field = value
                 requestLayout()
+                invalidate()
             }
         }
 
@@ -36,6 +35,7 @@ constructor(
             if (field != value) {
                 field = value
                 requestLayout()
+                invalidate()
             }
         }
 
@@ -44,12 +44,12 @@ constructor(
 
         context.obtainStyledAttributes(attrs, R.styleable.FlexboxLayout).apply {
             verticalSpace = getDimension(
-                R.styleable.FlexboxLayout_android_verticalSpacing,
-                DEFAULT_VERTICAL_SPACE.toFloat()
+                    R.styleable.FlexboxLayout_android_verticalSpacing,
+                    DEFAULT_VERTICAL_SPACE.toFloat()
             ).toInt()
             horizontalSpace = getDimension(
-                R.styleable.FlexboxLayout_android_horizontalSpacing,
-                DEFAULT_HORIZONTAL_SPACE.toFloat()
+                    R.styleable.FlexboxLayout_android_horizontalSpacing,
+                    DEFAULT_HORIZONTAL_SPACE.toFloat()
             ).toInt()
             recycle()
         }

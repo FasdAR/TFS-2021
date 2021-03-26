@@ -13,17 +13,15 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.feature.util.toSp
 
-class ReactionView
-@JvmOverloads
-constructor(
-    context: Context,
-    attributeSet: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = R.style.ReactionView
+class ReactionView @JvmOverloads constructor(
+        context: Context,
+        attributeSet: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        defStyleRes: Int = R.style.ReactionView
 ) : View(context, attributeSet, defStyleAttr, defStyleRes) {
     companion object {
-        internal val MIN_HEIGHT = 30.toDp
-        internal val MIN_WIDTH = 45.toDp
+        val MIN_HEIGHT = 30.toDp
+        val MIN_WIDTH = 45.toDp
 
         private const val DEFAULT_EMOJI = "\uD83D\uDE02"
         private val DEFAULT_TEXT_SIZE: Float = 14f.toSp
@@ -53,6 +51,7 @@ constructor(
             if (field != value) {
                 field = value
                 requestLayout()
+                invalidate()
             }
         }
 
@@ -61,6 +60,7 @@ constructor(
             if (field != value) {
                 field = value
                 requestLayout()
+                invalidate()
             }
         }
 
@@ -94,12 +94,12 @@ constructor(
             emoji = getString(R.styleable.ReactionView_rvEmoji) ?: DEFAULT_EMOJI
             reactionCount = getInt(R.styleable.ReactionView_rvCountReaction, 0)
             selectedTextColor = getColor(
-                R.styleable.ReactionView_rvSelectedTextColor,
-                ContextCompat.getColor(context, R.color.black_200)
+                    R.styleable.ReactionView_rvSelectedTextColor,
+                    ContextCompat.getColor(context, R.color.black_200)
             )
             unSelectedTextColor = getColor(
-                R.styleable.ReactionView_rvUnselectedTextColor,
-                ContextCompat.getColor(context, R.color.black_400)
+                    R.styleable.ReactionView_rvUnselectedTextColor,
+                    ContextCompat.getColor(context, R.color.black_400)
             )
 
             recycle()
@@ -137,14 +137,21 @@ constructor(
     }
 
     private fun updateSelectedState() {
-        if (isSelected) textPaint.color = selectedTextColor
-        else textPaint.color = unSelectedTextColor
+        if (isSelected) {
+            textPaint.color = selectedTextColor
+        } else {
+            textPaint.color = unSelectedTextColor
+        }
 
         invalidate()
     }
 
     fun selectedReaction() {
         isSelectedReaction = !isSelectedReaction
-        if (isSelected) reactionCount += 1 else reactionCount -= 1
+        if (isSelected) {
+            reactionCount += 1
+        } else {
+            reactionCount -= 1
+        }
     }
 }

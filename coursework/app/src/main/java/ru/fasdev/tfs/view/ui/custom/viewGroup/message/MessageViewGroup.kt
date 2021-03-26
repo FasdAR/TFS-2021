@@ -20,15 +20,13 @@ import ru.fasdev.tfs.view.ui.custom.layout.FlexboxLayout
 import ru.fasdev.tfs.view.ui.custom.view.ReactionView
 import ru.fasdev.tfs.view.ui.custom.viewGroup.message.model.MessageReactionUi
 
-class MessageViewGroup
-@JvmOverloads
-constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+class MessageViewGroup @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
-    interface OnClickReactionListener {
+    fun interface OnClickReactionListener {
         fun onClick(reactionView: ReactionView)
     }
 
@@ -70,7 +68,6 @@ constructor(
                 field.addAll(value)
 
                 updateReactionLayout()
-                requestLayout()
             }
         }
 
@@ -80,7 +77,6 @@ constructor(
                 field = value
 
                 updateMsgText()
-                requestLayout()
             }
         }
 
@@ -90,7 +86,6 @@ constructor(
                 field = value
 
                 updateNameText()
-                requestLayout()
             }
         }
 
@@ -128,8 +123,8 @@ constructor(
 
         context.obtainStyledAttributes(attrs, R.styleable.MessageViewGroup).apply {
             avatarSrc = getResourceId(
-                R.styleable.MessageViewGroup_srcAvatar,
-                R.drawable.ic_launcher_background
+                    R.styleable.MessageViewGroup_srcAvatar,
+                    R.drawable.ic_launcher_background
             ).toString()
             msgText = getString(R.styleable.MessageViewGroup_msgText) ?: ""
             name = getString(R.styleable.MessageViewGroup_nameText) ?: ""
@@ -139,8 +134,8 @@ constructor(
             when {
                 type == TypedValue.TYPE_DIMENSION -> {
                     msgViewMaxSize = getDimensionPixelSize(
-                        R.styleable.MessageViewGroup_msgViewMaxSize,
-                        MAX_MSG_VIEW_SIZE
+                            R.styleable.MessageViewGroup_msgViewMaxSize,
+                            MAX_MSG_VIEW_SIZE
                     )
                 }
                 type >= TypedValue.TYPE_FIRST_INT && type <= TypedValue.TYPE_LAST_INT -> {
@@ -197,8 +192,8 @@ constructor(
 
         // #region Avatar Size
         measureChildWithMargins(
-            avatarImageView, widthMeasureSpec, 0,
-            heightMeasureSpec, 0
+                avatarImageView, widthMeasureSpec, 0,
+                heightMeasureSpec, 0
         )
 
         val avatarWidth = avatarImageView.getWidthMeasuredMargin()
@@ -212,8 +207,8 @@ constructor(
         }
 
         measureChildWithMargins(
-            msgLayout, widthMeasureSpec, occupiedSpace,
-            heightMeasureSpec, 0
+                msgLayout, widthMeasureSpec, occupiedSpace,
+                heightMeasureSpec, 0
         )
 
         val msgHeight = msgLayout.getHeightMeasuredMargin()
@@ -222,8 +217,8 @@ constructor(
 
         // #region ReactionLayout Size
         measureChildWithMargins(
-            reactionLayout, widthMeasureSpec, avatarWidth,
-            heightMeasureSpec, msgHeight
+                reactionLayout, widthMeasureSpec, avatarWidth,
+                heightMeasureSpec, msgHeight
         )
 
         val reactionHeight = if (reactionLayout.childCount == 0) 0
