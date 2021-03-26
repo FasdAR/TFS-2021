@@ -72,7 +72,9 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
             }
 
             searchEdt.addTextChangedListener {
-                if (!it.isNullOrEmpty()) searchUser(it.toString())
+                it?.let {
+                    searchUser(it.toString())
+                }
             }
         }
 
