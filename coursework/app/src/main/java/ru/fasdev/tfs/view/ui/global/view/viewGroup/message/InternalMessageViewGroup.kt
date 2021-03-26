@@ -83,15 +83,15 @@ class InternalMessageViewGroup
         // #endregion
 
         val resolveWidth = resolveSize(width, widthMeasureSpec)
-        val resolveHeight = resolveSize(height, heightMeasureSpec)
+        val resolveHeight = resolveSize(height, heightMeasureSpec) + paddingTop + paddingBottom
 
         setMeasuredDimension(resolveWidth, resolveHeight)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        messageRect.top = messageLayoutParams.topMargin
+        messageRect.top = messageLayoutParams.topMargin + paddingTop
         messageRect.bottom = messageRect.top + messageTextView.measuredHeight
-        messageRect.right = measuredWidth
+        messageRect.right = measuredWidth - paddingRight
         messageRect.left = messageRect.right - messageTextView.measuredWidth
 
         reactionsRect.top = messageRect.bottom + reactionsLayoutParams.topMargin

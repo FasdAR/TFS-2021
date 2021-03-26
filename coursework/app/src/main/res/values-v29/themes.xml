@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.TFS.Base.V29" parent="Theme.TFS.Base">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/black_860</item>
     </style>
 
     <style name="Theme.TFS.Main" parent="Theme.TFS.Base.V29"/>

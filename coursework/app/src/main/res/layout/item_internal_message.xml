@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ru.fasdev.tfs.view.ui.global.view.viewGroup.message.InternalMessageViewGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingRight="12dp"
+    android:paddingLeft="12dp"
+    android:paddingTop="9dp"
+    android:paddingBottom="9dp"
+    android:background="@drawable/sh_full_item_bg"
     android:id="@+id/message"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>

@@ -136,23 +136,23 @@ class ExternalMessageViewGroup
         val height = maxOf(avatarHeight, messageHeight) + reactionHeight
         // #endregion
 
-        val resolveWidth = resolveSize(width, widthMeasureSpec)
-        val resolveHeight = resolveSize(height, heightMeasureSpec)
+        val resolveWidth = resolveSize(width, widthMeasureSpec) + paddingLeft + paddingRight
+        val resolveHeight = resolveSize(height, heightMeasureSpec) + paddingTop + paddingBottom
 
         setMeasuredDimension(resolveWidth, resolveHeight)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         // #region Calculate Avatar Position
-        avatarRect.left = avatarLayoutParams.leftMargin
-        avatarRect.top = avatarLayoutParams.topMargin
+        avatarRect.left = avatarLayoutParams.leftMargin + paddingLeft
+        avatarRect.top = avatarLayoutParams.topMargin + paddingTop
         avatarRect.right = avatarRect.left + avatarImageView.measuredWidth
         avatarRect.bottom = avatarRect.top + avatarImageView.measuredHeight
         // #endregion
 
         // #region Calculate Message Position
-        messageRect.left = avatarImageView.getWidthMeasuredMargin() + messageLayoutParams.leftMargin
-        messageRect.top = messageLayoutParams.topMargin
+        messageRect.left = avatarImageView.getWidthMeasuredMargin() + messageLayoutParams.leftMargin + paddingLeft
+        messageRect.top = messageLayoutParams.topMargin + paddingTop
         messageRect.right = messageRect.left + messageLayout.measuredWidth
         messageRect.bottom = messageRect.top + messageLayout.measuredHeight
         // #endregion

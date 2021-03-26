@@ -148,7 +148,6 @@ class ChatFragment :
         val rvList: RecyclerView = binding.rvList
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
-        rvList.addItemDecoration(VerticalSpaceItemDecoration(19.toDp))
 
         updateChatItems()
     }
