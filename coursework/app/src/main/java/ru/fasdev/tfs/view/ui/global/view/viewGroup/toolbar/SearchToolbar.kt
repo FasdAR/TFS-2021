@@ -14,17 +14,17 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.hideKeyboard
-import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.feature.util.showKeyboard
 import ru.fasdev.tfs.view.feature.util.toDp
 
 class SearchToolbar @JvmOverloads
-    constructor(context: Context,
-                attributeSet: AttributeSet? = null,
-                defStyleAttr: Int = 0,
-                defStyleRes: Int = 0)
-    : LinearLayout(context, attributeSet, defStyleAttr, defStyleRes)
-{
+constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) :
+    LinearLayout(context, attributeSet, defStyleAttr, defStyleRes) {
     interface TextChangeListener {
         fun newText(query: String)
     }
@@ -38,8 +38,10 @@ class SearchToolbar @JvmOverloads
     var textChangeListener: TextChangeListener? = null
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.layout_toolbar_search,
-                this, true)
+        LayoutInflater.from(context).inflate(
+            R.layout.layout_toolbar_search,
+            this, true
+        )
 
         backBtn = findViewById(R.id.btn_back_search)
         editText = findViewById(R.id.search_edt)

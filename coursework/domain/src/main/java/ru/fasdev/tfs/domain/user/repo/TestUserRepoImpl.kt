@@ -3,8 +3,7 @@ package ru.fasdev.tfs.domain.user.repo
 import ru.fasdev.tfs.domain.model.User
 import ru.fasdev.tfs.domain.model.UserStatus
 
-class TestUserRepoImpl : UserRepo
-{
+class TestUserRepoImpl : UserRepo {
     override fun getAllUsers(): List<User> = listOf(
         User(1, "", "Darrell Steward", "darrel@company.com"),
         User(2, "", "Reagan Emery", "reagan@company.com"),

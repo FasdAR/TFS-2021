@@ -4,16 +4,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ViewPagerFragmentAdapter: FragmentStateAdapter
-{
+class ViewPagerFragmentAdapter : FragmentStateAdapter {
     constructor(fragment: Fragment, fragmentFactory: ViewPagerFragmentFactory) : super(fragment) {
         this.fragmentFactory = fragmentFactory
     }
 
-    constructor(fragmentActivity: FragmentActivity, fragmentFactory: ViewPagerFragmentFactory)
-            : super(fragmentActivity) {
-        this.fragmentFactory = fragmentFactory
-    }
+    constructor(fragmentActivity: FragmentActivity, fragmentFactory: ViewPagerFragmentFactory) :
+        super(fragmentActivity) {
+            this.fragmentFactory = fragmentFactory
+        }
 
     private var fragmentFactory: ViewPagerFragmentFactory
 

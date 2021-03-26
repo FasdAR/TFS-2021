@@ -12,15 +12,13 @@ import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
-import ru.fasdev.tfs.view.feature.util.setSystemInsets
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 
-class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
-{
+class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
         val TAG: String = ProfileAnotherFragment::class.java.simpleName
 

@@ -8,15 +8,13 @@ import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
 import ru.fasdev.tfs.view.feature.util.getCurrentFragment
-import ru.fasdev.tfs.view.feature.util.setSystemInsets
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.BaseFragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
 
-class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed
-{
+class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed {
     companion object {
         fun newInstance(): MainFragment = MainFragment()
     }
@@ -40,7 +38,7 @@ class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed
         }
 
         binding.bottomNav.setOnNavigationItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 binding.bottomNav.selectedItemId -> false
                 R.id.action_channels, R.id.action_people, R.id.action_profile -> {
                     updateFragment(item.itemId)

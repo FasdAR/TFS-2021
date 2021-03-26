@@ -11,8 +11,7 @@ import ru.fasdev.tfs.domain.model.UserStatus
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
-class ProfileFragment : Fragment(R.layout.fragment_profile)
-{
+class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
         val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
@@ -37,7 +36,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile)
         cardProfile.fullName = "Test User"
 
         binding.logoutBtn.setOnClickListener {
-            //TODO: ADD logout
+            // TODO: ADD logout
         }
     }
 

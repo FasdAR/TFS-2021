@@ -24,8 +24,9 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
-import ru.fasdev.tfs.view.feature.util.*
-import ru.fasdev.tfs.view.feature.util.setSystemInsets
+import ru.fasdev.tfs.view.feature.util.doOnApplyWindowsInsets
+import ru.fasdev.tfs.view.feature.util.getSystemInsets
+import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
@@ -35,7 +36,6 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
-import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
 
 class ChatFragment :
     Fragment(R.layout.fragment_chat),

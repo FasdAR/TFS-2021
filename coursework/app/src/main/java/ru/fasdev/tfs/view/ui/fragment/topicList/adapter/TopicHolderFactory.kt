@@ -8,11 +8,11 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.BaseViewHolder
 import ru.fasdev.tfs.view.ui.global.recycler.base.HolderFactory
 
 class TopicHolderFactory(
-        private val topicListener: TopicViewHolder.OnClickTopicListener,
-        private val subTopicListener: SubTopicViewHolder.OnClickSubTopicListener) : HolderFactory()
-{
+    private val topicListener: TopicViewHolder.OnClickTopicListener,
+    private val subTopicListener: SubTopicViewHolder.OnClickSubTopicListener
+) : HolderFactory() {
     override fun createViewHolder(view: View, viewType: Int): BaseViewHolder<*>? {
-        return when(viewType) {
+        return when (viewType) {
             R.layout.item_topic -> TopicViewHolder(view, topicListener)
             R.layout.item_sub_topic -> SubTopicViewHolder(view, subTopicListener)
             else -> null

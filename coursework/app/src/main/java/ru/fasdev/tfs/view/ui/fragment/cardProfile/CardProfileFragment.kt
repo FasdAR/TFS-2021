@@ -11,8 +11,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
 import ru.fasdev.tfs.domain.model.UserStatus
 
-class CardProfileFragment : Fragment(R.layout.fragment_card_profile)
-{
+class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {
         private const val KEY_AVATAR_SRC = "avatarSrc"
         private const val KEY_FULL_NAME = "fullName"
@@ -25,13 +24,15 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile)
         private const val DEFAULT_IMAGE = R.drawable.ic_launcher_background
 
         fun newInstance(
-                avatarSrc: String,
-                fullName: String,
-                status: String,
-                isOnline: Boolean
-        ) : CardProfileFragment = CardProfileFragment().apply {
-            arguments = bundleOf(KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
-                    KEY_STATUS to status, KEY_IS_ONLINE to isOnline)
+            avatarSrc: String,
+            fullName: String,
+            status: String,
+            isOnline: Boolean
+        ): CardProfileFragment = CardProfileFragment().apply {
+            arguments = bundleOf(
+                KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
+                KEY_STATUS to status, KEY_IS_ONLINE to isOnline
+            )
         }
     }
 
@@ -79,7 +80,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile)
 
     private fun updateAvatarSrc(avatarSrc: String?) {
         avatarSrc?.let {
-            //TODO: LOAD OTHER IMAGE
+            // TODO: LOAD OTHER IMAGE
         } ?: kotlin.run {
             binding.avatar.setImageResource(DEFAULT_IMAGE)
         }
@@ -108,8 +109,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile)
         if (isOnline) {
             binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), ONLINE_COLOR))
             binding.onlineStatus.text = resources.getString(R.string.online)
-        }
-        else {
+        } else {
             binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), OFFLINE_COLOR))
             binding.onlineStatus.text = resources.getString(R.string.offline)
         }

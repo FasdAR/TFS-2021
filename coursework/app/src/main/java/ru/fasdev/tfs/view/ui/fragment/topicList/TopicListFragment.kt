@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.tfs.R
@@ -28,9 +27,11 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class TopicListFragment : Fragment(R.layout.fragment_topic_list),
-        TopicViewHolder.OnClickTopicListener, SubTopicViewHolder.OnClickSubTopicListener, ProvideSearchTopic
-{
+class TopicListFragment :
+    Fragment(R.layout.fragment_topic_list),
+    TopicViewHolder.OnClickTopicListener,
+    SubTopicViewHolder.OnClickSubTopicListener,
+    ProvideSearchTopic {
     companion object {
         const val ALL_MODE = 1
         const val SUBSCRIBED_MODE = 2
@@ -47,7 +48,7 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
     private val topicRepo: TopicRepo by lazy {
-        when(mode) {
+        when (mode) {
             ALL_MODE -> TestAllTopicRepoImpl()
             SUBSCRIBED_MODE -> TestSubscribedTopicRepoImpl()
             else -> error("Don't support this type mode $mode")
@@ -78,15 +79,14 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
         val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
         val subTopics = topicInteractor.getSubTopicsInMainTopic(idTopic).mapToSubTopicUi()
 
-        val topicIndex = uiModels.indexOfFirst { it.uId == idTopic && it is TopicUi}
+        val topicIndex = uiModels.indexOfFirst { it.uId == idTopic && it is TopicUi }
         val topic = uiModels[topicIndex] as TopicUi
 
         uiModels[topicIndex] = topic.copy(isOpen = opened)
 
         if (opened) {
-            uiModels.addAll(topicIndex+1, subTopics)
-        }
-        else {
+            uiModels.addAll(topicIndex + 1, subTopics)
+        } else {
             uiModels.removeAll(subTopics)
         }
 

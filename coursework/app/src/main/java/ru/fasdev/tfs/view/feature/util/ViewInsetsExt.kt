@@ -4,7 +4,6 @@ import android.graphics.Insets
 import android.os.Build
 import android.view.View
 import android.view.WindowInsets
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentActivity
@@ -29,10 +28,10 @@ fun View.setSystemInsets() {
     rootView.doOnApplyWindowsInsets { view, windowInsets, _ ->
         val systemInsets = windowInsets.getSystemInsets()
         view.updatePadding(
-                top = systemInsets.top,
-                left = systemInsets.left,
-                right = systemInsets.right,
-                bottom = systemInsets.bottom
+            top = systemInsets.top,
+            left = systemInsets.left,
+            right = systemInsets.right,
+            bottom = systemInsets.bottom
         )
     }
 }
@@ -67,7 +66,7 @@ fun WindowInsets.getSystemInsets(): Insets {
 data class InitialPadding(val left: Int, val top: Int, val right: Int, val bottom: Int)
 
 private fun View.recordPadding(): InitialPadding =
-        InitialPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    InitialPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
 
 fun View.requestApplyInsetsWhenAttached() {
     if (isAttachedToWindow) {

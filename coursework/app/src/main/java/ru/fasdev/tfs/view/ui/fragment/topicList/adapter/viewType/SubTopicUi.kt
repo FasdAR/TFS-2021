@@ -8,4 +8,4 @@ data class SubTopicUi(
     val nameTopic: String,
     val messageCount: Int,
     override val viewType: Int = R.layout.item_sub_topic
-): ViewType()
+) : ViewType()

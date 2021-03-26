@@ -4,8 +4,7 @@ import ru.fasdev.tfs.domain.model.SubTopic
 import ru.fasdev.tfs.domain.model.Topic
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 
-class TopicInteractorImpl(private val topicRepo: TopicRepo): TopicInteractor
-{
+class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
     override fun getAllTopics(): List<Topic> = topicRepo.getAllTopics()
 
     override fun getAllSubTopics(): List<SubTopic> = topicRepo.getAllSubTopics()

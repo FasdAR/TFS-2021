@@ -2,8 +2,7 @@ package ru.fasdev.tfs.view.ui.global.fragmentRouter
 
 import androidx.fragment.app.Fragment
 
-interface FragmentRouter
-{
+interface FragmentRouter {
     fun navigateTo(fragmentScreen: FragmentScreen)
     fun replaceTo(fragmentScreen: FragmentScreen)
     fun getCurrentFragment(): Fragment?

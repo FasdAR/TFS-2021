@@ -28,8 +28,7 @@ class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
 
         if (fragment is ProvideBackPressed) {
             if (!fragment.onBackPressed()) super.onBackPressed()
-        }
-        else {
+        } else {
             super.onBackPressed()
         }
     }

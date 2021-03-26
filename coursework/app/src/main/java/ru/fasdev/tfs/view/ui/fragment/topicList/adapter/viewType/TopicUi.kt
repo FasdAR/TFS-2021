@@ -8,4 +8,4 @@ data class TopicUi(
     val nameTopic: String,
     var isOpen: Boolean = false,
     override val viewType: Int = R.layout.item_topic
-): ViewType()
+) : ViewType()

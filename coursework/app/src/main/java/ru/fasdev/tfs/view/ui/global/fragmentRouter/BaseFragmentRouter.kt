@@ -7,9 +7,9 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.getCurrentFragment
 
 class BaseFragmentRouter(
-        private val fragmentManager: FragmentManager,
-        private val idContainer: Int): FragmentRouter
-{
+    private val fragmentManager: FragmentManager,
+    private val idContainer: Int
+) : FragmentRouter {
     override fun navigateTo(fragmentScreen: FragmentScreen) {
         fragmentManager.commit {
             setCustomAnimations(R.anim.fade_out, R.anim.fade_in, R.anim.fade_out, R.anim.fade_in)

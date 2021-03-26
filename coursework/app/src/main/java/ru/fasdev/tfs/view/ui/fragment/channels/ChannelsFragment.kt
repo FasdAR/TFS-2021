@@ -1,10 +1,11 @@
 package ru.fasdev.tfs.view.ui.fragment.channels
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
@@ -16,8 +17,7 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
-class ChannelsFragment : Fragment(R.layout.fragment_channels), ProvideBackPressed
-{
+class ChannelsFragment : Fragment(R.layout.fragment_channels), ProvideBackPressed {
     companion object {
         val TAG: String = ChannelsFragment::class.java.simpleName
         fun newInstance(): ChannelsFragment = ChannelsFragment()
