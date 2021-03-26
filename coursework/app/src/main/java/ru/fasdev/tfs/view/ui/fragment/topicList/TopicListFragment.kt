@@ -12,38 +12,36 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
-import ru.fasdev.tfs.view.feature.mapper.mapToSubTopicUi
-import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
-import ru.fasdev.tfs.view.ui.fragment.people.ProvideSearchTopic
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
-import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicDiffUtilCallback
-import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.SubTopicViewHolder
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicItemCallback
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
-import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.StreamViewHolder
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.StreamUi
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
+import ru.fasdev.tfs.view.feature.mapper.mapToStreamUi
+import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class TopicListFragment :
-    Fragment(R.layout.fragment_topic_list),
-    TopicViewHolder.OnClickTopicListener,
-    SubTopicViewHolder.OnClickSubTopicListener,
-    ProvideSearchTopic {
+class TopicListFragment : Fragment(R.layout.fragment_topic_list),
+        StreamViewHolder.OnClickStreamListener, TopicViewHolder.OnClickTopicListener {
     companion object {
         const val ALL_MODE = 1
         const val SUBSCRIBED_MODE = 2
 
         private const val MODE_KEY = "mode"
 
-        fun newInstance(mode: Int): TopicListFragment = TopicListFragment().apply {
-            arguments = bundleOf(MODE_KEY to mode)
+        fun newInstance(mode: Int): TopicListFragment {
+            return TopicListFragment().apply {
+                arguments = bundleOf(MODE_KEY to mode)
+            }
         }
     }
 
-    lateinit var recycler: RecyclerView
+    lateinit var rvTopics: RecyclerView
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
@@ -57,47 +55,45 @@ class TopicListFragment :
     private val topicInteractor: TopicInteractor by lazy { TopicInteractorImpl(topicRepo) }
 
     private val holderFactory by lazy { TopicHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter(holderFactory, TopicDiffUtilCallback()) }
+    private val adapter by lazy { BaseAdapter(holderFactory, TopicItemCallback()) }
 
-    private val fragmentRouter: FragmentRouter get() = (requireActivity() as ProvideFragmentRouter).getRouter()
+    private val fragmentRouter: FragmentRouter
+        get() = (requireActivity() as ProvideFragmentRouter).getRouter()
+
+    private val searchObservable get() = (parentFragment as ChannelsFragment).provideSearch
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (parentFragment as ChannelsFragment).provideSearchLiveData.observe(viewLifecycleOwner) {
-            onSearch(it)
-        }
+        searchObservable.observe(viewLifecycleOwner) { searchStream(it) }
 
-        recycler = view as RecyclerView
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = adapter
+        rvTopics = view as RecyclerView
+        rvTopics.layoutManager = LinearLayoutManager(requireContext())
+        rvTopics.adapter = adapter
 
-        adapter.items = topicInteractor.getAllTopics().mapToTopicUi()
+        adapter.items = topicInteractor.getAllStreams().mapToStreamUi()
     }
 
-    override fun onClickTopic(idTopic: Int, opened: Boolean) {
+    override fun onClickStream(idStream: Int, opened: Boolean) {
         val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
-        val subTopics = topicInteractor.getSubTopicsInMainTopic(idTopic).mapToSubTopicUi()
 
-        val topicIndex = uiModels.indexOfFirst { it.uId == idTopic && it is TopicUi }
-        val topic = uiModels[topicIndex] as TopicUi
+        val topics = topicInteractor.getTopicsInStream(idStream).mapToTopicUi()
 
-        uiModels[topicIndex] = topic.copy(isOpen = opened)
+        val streamIndex = uiModels.indexOfFirst { it.uId == idStream && it is StreamUi }
+        val stream = uiModels[streamIndex] as StreamUi
+        uiModels[streamIndex] = stream.copy(isOpen = opened)
 
-        if (opened) {
-            uiModels.addAll(topicIndex + 1, subTopics)
-        } else {
-            uiModels.removeAll(subTopics)
-        }
+        if (opened) uiModels.addAll(streamIndex + 1, topics)
+        else uiModels.removeAll(topics)
 
         adapter.items = uiModels
     }
 
-    override fun onClickSubTopic(idSubTopic: Int) {
-        fragmentRouter.navigateTo(ChatFragment.getScreen(idSubTopic))
+    override fun onClickTopic(idTopic: Int) {
+        fragmentRouter.navigateTo(ChatFragment.getScreen(idTopic))
     }
 
-    override fun onSearch(query: String) {
-        adapter.items = topicInteractor.searchTopics(query).mapToTopicUi()
+    private fun searchStream(query: String) {
+        adapter.items = topicInteractor.searchStream(query).mapToStreamUi()
     }
 }

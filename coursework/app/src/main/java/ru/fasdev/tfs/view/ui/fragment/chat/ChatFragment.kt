@@ -29,31 +29,31 @@ import ru.fasdev.tfs.view.feature.util.getSystemInsets
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
-import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
+import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatItemCallback
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
+import ru.fasdev.tfs.view.feature.util.getColorCompat
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class ChatFragment :
-    Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener,
-    MessageViewHolder.OnClickReactionListener,
+class ChatFragment : Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
     AsyncListDiffer.ListListener<ViewType> {
-
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
 
+        private const val COLOR_TOOLBAR = R.color.teal_500
+
         private const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
+        private const val KEY_ID_TOPIC = "ID_TOPIC"
 
-        private const val KEY_ID_SUB_TOPIC = "ID_SUB_TOPIC"
-
-        fun newInstance(idSubTopic: Int) = ChatFragment().apply {
-            arguments = bundleOf(KEY_ID_SUB_TOPIC to idSubTopic)
+        fun newInstance(idSubTopic: Int): ChatFragment {
+            return ChatFragment().apply {
+                arguments = bundleOf(KEY_ID_TOPIC to idSubTopic)
+            }
         }
-
         fun getScreen(idSubTopic: Int) = FragmentScreen(TAG, newInstance(idSubTopic))
     }
 
@@ -70,13 +70,12 @@ class ChatFragment :
     private val topicInteractor: TopicInteractor = TopicInteractorImpl(topicRepo)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter(holderFactory, ChatDiffUtilCallback(), this) }
+    private val adapter by lazy { BaseAdapter(holderFactory, ChatItemCallback(), this) }
 
     private val currentChatId = 1
     private val currentUserId = 1
 
-    private val idSubTopic: Int
-        get() = requireArguments().getInt(KEY_ID_SUB_TOPIC)
+    private val idSubTopic: Int get() = requireArguments().getInt(KEY_ID_TOPIC)
 
     private var selectedMessageId: Int = 0
 
@@ -88,29 +87,27 @@ class ChatFragment :
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.let { _binding = FragmentChatBinding.bind(it) }
-
-        return view
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)?.apply {
+            _binding = FragmentChatBinding.bind(this)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbarLayout.root.setSystemInsetsInTop()
-
-        view.doOnApplyWindowsInsets { view, windowInsets, initialPadding ->
+        view.doOnApplyWindowsInsets { insetView, windowInsets, initialPadding ->
             val systemInsets = windowInsets.getSystemInsets()
-            view.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
+            insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        val subTopic = topicInteractor.getSubTopic(idSubTopic)
-        val mainTopic = topicInteractor.getMainTopic(subTopic?.rootIdTopic ?: 0)
+        val subTopic = topicInteractor.getTopic(idSubTopic)
+        val mainTopic = topicInteractor.getStream(subTopic?.idStream ?: -1)
 
-        binding.toolbarLayout.apply {
-            toolbarRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_500))
-
+        with(binding.toolbarLayout) {
+            toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
             title.text = resources.getString(R.string.main_topic_title, mainTopic?.name)
 
             btnNav.isVisible = true
@@ -119,16 +116,7 @@ class ChatFragment :
             }
         }
 
-        binding.subTopic.text = resources.getString(R.string.sub_topic_title, subTopic?.name)
-
-        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
-            val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
-
-            selectedEmoji?.let {
-                interactor.changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
-                updateChatItems()
-            }
-        }
+        binding.topic.text = resources.getString(R.string.sub_topic_title, subTopic?.name)
 
         binding.msgText.addTextChangedListener {
             if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
@@ -187,7 +175,6 @@ class ChatFragment :
     }
 
     override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
-        if (!binding.rvList.canScrollVertically(1))
-            binding.rvList.scrollToPosition(0)
+        if (!binding.rvList.canScrollVertically(1)) binding.rvList.scrollToPosition(0)
     }
 }

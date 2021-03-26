@@ -22,9 +22,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.let { _binding = FragmentProfileBinding.bind(it) }
-        return view
+        return super.onCreateView(inflater, container, savedInstanceState)?.apply {
+            _binding = FragmentProfileBinding.bind(this)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

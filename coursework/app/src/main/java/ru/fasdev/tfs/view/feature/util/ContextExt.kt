@@ -1,6 +1,9 @@
 package ru.fasdev.tfs.view.feature.util
 
+import android.content.Context
 import android.content.res.Resources
+import androidx.annotation.Dimension
+import androidx.core.content.ContextCompat
 import kotlin.math.roundToInt
 
 val Int.toDp: Int
@@ -14,3 +17,5 @@ val Float.toDp: Float
 
 val Float.toSp: Float
     get() = (this * Resources.getSystem().displayMetrics.scaledDensity)
+
+fun Context.getColorCompat(resId: Int) = ContextCompat.getColor(this, resId)

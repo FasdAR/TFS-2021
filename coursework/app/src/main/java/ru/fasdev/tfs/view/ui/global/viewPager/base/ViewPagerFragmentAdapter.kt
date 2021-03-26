@@ -9,10 +9,9 @@ class ViewPagerFragmentAdapter : FragmentStateAdapter {
         this.fragmentFactory = fragmentFactory
     }
 
-    constructor(fragmentActivity: FragmentActivity, fragmentFactory: ViewPagerFragmentFactory) :
-        super(fragmentActivity) {
-            this.fragmentFactory = fragmentFactory
-        }
+    constructor(fragmentActivity: FragmentActivity, fragmentFactory: ViewPagerFragmentFactory) : super(fragmentActivity) {
+        this.fragmentFactory = fragmentFactory
+    }
 
     private var fragmentFactory: ViewPagerFragmentFactory
 
@@ -21,6 +20,6 @@ class ViewPagerFragmentAdapter : FragmentStateAdapter {
     override fun createFragment(position: Int): Fragment {
         val newFragment = fragmentFactory.createFragment(position)
 
-        return newFragment ?: Fragment()
+        return newFragment ?: error("Fragment position don't support $position")
     }
 }

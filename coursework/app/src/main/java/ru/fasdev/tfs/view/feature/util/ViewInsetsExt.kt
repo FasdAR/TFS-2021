@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.view.feature.util
 
 import android.graphics.Insets
+import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import android.view.WindowInsets
@@ -8,6 +9,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentActivity
 
+// Включает full screen
 fun FragmentActivity.initEdgeToEdge(insetsView: (() -> Unit)? = null) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         window?.run {
@@ -17,6 +19,7 @@ fun FragmentActivity.initEdgeToEdge(insetsView: (() -> Unit)? = null) {
     }
 }
 
+// Устанавливает padding для View под System bar
 fun View.setSystemInsetsInTop() {
     doOnApplyWindowsInsets { view, windowInsets, initialPadding ->
         val systemInsets = windowInsets.getSystemInsets()
@@ -24,19 +27,9 @@ fun View.setSystemInsetsInTop() {
     }
 }
 
-fun View.setSystemInsets() {
-    rootView.doOnApplyWindowsInsets { view, windowInsets, _ ->
-        val systemInsets = windowInsets.getSystemInsets()
-        view.updatePadding(
-            top = systemInsets.top,
-            left = systemInsets.left,
-            right = systemInsets.right,
-            bottom = systemInsets.bottom
-        )
-    }
-}
-
-fun View.doOnApplyWindowsInsets(block: (View, WindowInsets, InitialPadding) -> Unit) {
+// Обработчик для удобной работы с отступами,
+// сохраняет актуальные паддинги и отдает необходимую view
+fun View.doOnApplyWindowsInsets(block: (View, WindowInsets, Rect) -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         val padding = recordPadding()
 
@@ -49,6 +42,7 @@ fun View.doOnApplyWindowsInsets(block: (View, WindowInsets, InitialPadding) -> U
     }
 }
 
+//Отдает системные отступы
 fun WindowInsets.getSystemInsets(): Insets {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
@@ -63,12 +57,13 @@ fun WindowInsets.getSystemInsets(): Insets {
     }
 }
 
-data class InitialPadding(val left: Int, val top: Int, val right: Int, val bottom: Int)
+//Записывает отступы
+private fun View.recordPadding(): Rect {
+    return Rect(paddingLeft, paddingTop, paddingRight, paddingBottom)
+}
 
-private fun View.recordPadding(): InitialPadding =
-    InitialPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-
-fun View.requestApplyInsetsWhenAttached() {
+//Запрашивает повторные отсупы
+private fun View.requestApplyInsetsWhenAttached() {
     if (isAttachedToWindow) {
         requestApplyInsets()
     } else {

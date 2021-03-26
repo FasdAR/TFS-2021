@@ -25,7 +25,7 @@ constructor(
     defStyleRes: Int = 0
 ) :
     LinearLayout(context, attributeSet, defStyleAttr, defStyleRes) {
-    interface TextChangeListener {
+    fun interface TextChangeListener {
         fun newText(query: String)
     }
 

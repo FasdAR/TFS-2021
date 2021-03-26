@@ -28,7 +28,7 @@
             android:paddingTop="11dp"
             android:paddingBottom="11dp"
             android:textSize="20sp"
-            android:id="@+id/sub_topic"
+            android:id="@+id/topic"
             tools:text="Topic: #testing"/>
 
     </LinearLayout>

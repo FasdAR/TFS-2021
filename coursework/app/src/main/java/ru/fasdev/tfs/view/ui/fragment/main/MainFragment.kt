@@ -11,10 +11,10 @@ import ru.fasdev.tfs.view.feature.util.getCurrentFragment
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.BaseFragmentRouter
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
 
-class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed {
+class MainFragment : Fragment(R.layout.fragment_main), ImplBackPressed {
     companion object {
         fun newInstance(): MainFragment = MainFragment()
     }
@@ -22,18 +22,20 @@ class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private val fragmentRouter by lazy { BaseFragmentRouter(childFragmentManager, R.id.child_container) }
+    private val fragmentRouter by lazy {
+        BaseFragmentRouter(childFragmentManager, R.id.child_container)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.let { _binding = FragmentMainBinding.bind(it) }
-        return view
+        return super.onCreateView(inflater, container, savedInstanceState)?.apply {
+            _binding = FragmentMainBinding.bind(this)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (childFragmentManager.getCurrentFragment(R.id.child_container) == null) {
+        if (fragmentRouter.getCurrentFragment() == null) {
             updateFragment(binding.bottomNav.selectedItemId)
         }
 
@@ -70,8 +72,6 @@ class MainFragment : Fragment(R.layout.fragment_main), ProvideBackPressed {
 
     override fun onBackPressed(): Boolean {
         val fragment = fragmentRouter.getCurrentFragment()
-
-        return if (fragment is ProvideBackPressed) fragment.onBackPressed()
-        else false
+        return if (fragment is ImplBackPressed) fragment.onBackPressed() else false
     }
 }

@@ -16,7 +16,7 @@ import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
@@ -25,10 +25,11 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
         private const val NULL_USER = -1
         private const val KEY_ID_USER = "id_user"
 
-        fun newInstance(idUser: Int): ProfileAnotherFragment = ProfileAnotherFragment().apply {
-            arguments = bundleOf(KEY_ID_USER to idUser)
+        fun newInstance(idUser: Int): ProfileAnotherFragment {
+            return ProfileAnotherFragment().apply {
+                arguments = bundleOf(KEY_ID_USER to idUser)
+            }
         }
-
         fun getScreen(idUser: Int) = FragmentScreen(TAG, newInstance(idUser))
     }
 
@@ -44,9 +45,9 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.let { _binding = FragmentAnotherProfileBinding.bind(it) }
-        return view
+        return super.onCreateView(inflater, container, savedInstanceState)?.apply {
+            _binding = FragmentAnotherProfileBinding.bind(this)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,16 +57,14 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             root.setSystemInsetsInTop()
             title.text = resources.getString(R.string.profile)
             btnNav.isVisible = true
-            btnNav.setOnClickListener {
-                rootRouter.back()
-            }
+            btnNav.setOnClickListener { rootRouter.back() }
         }
 
         userInteractor.getUserById(idUser)?.let { user ->
             val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
             cardProfile.fullName = user.fullName
             cardProfile.status = userInteractor.getStatusUser(user.id)
-            cardProfile.isOnline = userInteractor.isOnlineUser(user.id)
+            cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
         }
     }
 

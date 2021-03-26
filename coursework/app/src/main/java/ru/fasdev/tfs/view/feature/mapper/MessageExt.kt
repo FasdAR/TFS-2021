@@ -7,14 +7,15 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-fun Message.toExternalMessageUi() =
-    ExternalMessageUi(
-        id, sender.fullName, sender.avatarUrl, text,
-        this.reactions.mapToMessageReactionUi()
+fun Message.toExternalMessageUi(): ExternalMessageUi {
+    return ExternalMessageUi(
+        id, sender.fullName, sender.avatarUrl, text, this.reactions.mapToMessageReactionUi()
     )
+}
 
-fun Message.toInternalMessageUi() =
-    InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
+fun Message.toInternalMessageUi(): InternalMessageUi {
+    return InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
+}
 
 fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
     val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())

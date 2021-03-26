@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.initEdgeToEdge
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.BaseFragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 
 class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
     private val fragmentRouter: FragmentRouter by lazy {
@@ -26,10 +26,10 @@ class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
     override fun onBackPressed() {
         val fragment = fragmentRouter.getCurrentFragment()
 
-        if (fragment is ProvideBackPressed) {
-            if (!fragment.onBackPressed()) super.onBackPressed()
-        } else {
-            super.onBackPressed()
+        if (fragment is ImplBackPressed) {
+            if (fragment.onBackPressed()) return
         }
+
+        super.onBackPressed()
     }
 }

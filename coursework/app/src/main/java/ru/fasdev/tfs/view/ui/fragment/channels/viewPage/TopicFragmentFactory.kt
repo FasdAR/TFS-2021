@@ -10,7 +10,7 @@ class TopicFragmentFactory : ViewPagerFragmentFactory {
     companion object {
         private const val SUBSCRIBED_POS = 0
         private const val ALL_POS = 1
-        private const val MAX_SIZE = 2
+        private const val PAGE_SIZE = 2
     }
 
     override fun createFragment(position: Int): Fragment? {
@@ -29,5 +29,5 @@ class TopicFragmentFactory : ViewPagerFragmentFactory {
         }
     }
 
-    override fun getSize(): Int = MAX_SIZE
+    override fun getSize(): Int = PAGE_SIZE
 }

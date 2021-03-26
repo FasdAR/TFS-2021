@@ -47,26 +47,6 @@
         <item name="itemTextAppearanceInactive">@style/TextAppearance.TFS.BottomNavigation</item>
     </style>
 
-    <style name="Widget.TFS.Toolbar.Primary" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="titleTextColor">@color/white</item>
-        <item name="collapseIcon">@drawable/ic_back</item>
-        <item name="android:minHeight">66dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="contentInsetStart">30dp</item>
-        <item name="contentInsetStartWithNavigation">87dp</item>
-        <item name="titleTextAppearance">@style/TextAppearance.TFS.Toolbar.Title</item>
-        <item name="elevation">0dp</item>
-        <item name="android:elevation">0dp</item>
-    </style>
-
-    <style name="Widget.TFS.Toolbar.Primary.Black" parent="Widget.TFS.Toolbar.Primary">
-        <item name="android:background">@color/grey_910</item>
-    </style>
-
-    <style name="Widget.TFS.Toolbar.Primary.Teal" parent="Widget.TFS.Toolbar.Primary">
-        <item name="android:background">@color/teal_500</item>
-    </style>
-
     <style name="Widget.TFS.TabLayout" parent="Widget.MaterialComponents.TabLayout">
         <item name="tabTextColor">@color/white</item>
         <item name="tabTextAppearance">@style/TextAppearance.TFS.TabLayout</item>

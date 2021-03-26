@@ -9,9 +9,7 @@ class InternalMessageViewHolder(
     view: View,
     private val reactionListener: OnClickReactionListener,
     private val messageLongListener: OnLongClickMessageListener
-) :
-    MessageViewHolder<InternalMessageUi>(view, reactionListener, messageLongListener) {
-
+) : MessageViewHolder<InternalMessageUi>(view, reactionListener, messageLongListener) {
     private val message: InternalMessageViewGroup = view.findViewById(R.id.message)
 
     override fun bind(item: InternalMessageUi) {

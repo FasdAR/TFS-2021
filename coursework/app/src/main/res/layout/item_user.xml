@@ -9,7 +9,7 @@
     android:paddingRight="16dp"
     android:paddingTop="11dp"
     android:paddingBottom="11dp"
-    android:background="@drawable/sh_full_item_bg">
+    android:background="?attr/selectableItemBackground">
 
     <FrameLayout
         android:layout_width="64dp"

@@ -2,10 +2,11 @@ package ru.fasdev.tfs.view.ui.global.recycler.base
 
 import androidx.recyclerview.widget.DiffUtil
 
-open class BaseDiffUtilCallback<T : ViewType> : DiffUtil.ItemCallback<T>() {
+open class BaseItemCallback<T : ViewType> : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
-        if (oldItem::class.simpleName == newItem::class.simpleName)
+        if (oldItem::class.simpleName == newItem::class.simpleName) {
             return oldItem.uId == newItem.uId
+        }
 
         return false
     }

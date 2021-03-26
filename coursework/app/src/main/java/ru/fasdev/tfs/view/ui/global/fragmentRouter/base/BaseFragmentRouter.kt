@@ -1,10 +1,12 @@
-package ru.fasdev.tfs.view.ui.global.fragmentRouter
+package ru.fasdev.tfs.view.ui.global.fragmentRouter.base
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.getCurrentFragment
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class BaseFragmentRouter(
     private val fragmentManager: FragmentManager,

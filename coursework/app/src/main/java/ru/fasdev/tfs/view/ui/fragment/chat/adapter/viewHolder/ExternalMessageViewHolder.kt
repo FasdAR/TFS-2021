@@ -9,8 +9,7 @@ class ExternalMessageViewHolder(
     view: View,
     private val reactionListener: OnClickReactionListener,
     private val messageLongListener: OnLongClickMessageListener
-) :
-    MessageViewHolder<ExternalMessageUi>(view, reactionListener, messageLongListener) {
+) : MessageViewHolder<ExternalMessageUi>(view, reactionListener, messageLongListener) {
 
     val message: ExternalMessageViewGroup = view.findViewById(R.id.message)
 
