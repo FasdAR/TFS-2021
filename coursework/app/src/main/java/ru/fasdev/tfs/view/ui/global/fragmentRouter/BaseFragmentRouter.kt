@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.view.ui.global.fragmentRouter
 
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import ru.fasdev.tfs.R
@@ -24,6 +25,8 @@ class BaseFragmentRouter(
             replace(idContainer, fragmentScreen.fragment, fragmentScreen.tag)
         }
     }
+
+    override fun getCurrentFragment(): Fragment? = fragmentManager.getCurrentFragment(idContainer)
 
     override fun back() {
         fragmentManager.popBackStack()

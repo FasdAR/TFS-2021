@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.fasdev.tfs.R
@@ -14,7 +15,9 @@ import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.feature.mapper.mapToSubTopicUi
 import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
+import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
+import ru.fasdev.tfs.view.ui.fragment.people.ProvideSearchTopic
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicDiffUtilCallback
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.SubTopicViewHolder
@@ -26,7 +29,7 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
 class TopicListFragment : Fragment(R.layout.fragment_topic_list),
-        TopicViewHolder.OnClickTopicListener, SubTopicViewHolder.OnClickSubTopicListener
+        TopicViewHolder.OnClickTopicListener, SubTopicViewHolder.OnClickSubTopicListener, ProvideSearchTopic
 {
     companion object {
         const val ALL_MODE = 1
@@ -60,6 +63,10 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (parentFragment as ChannelsFragment).provideSearchLiveData.observe(viewLifecycleOwner) {
+            onSearch(it)
+        }
+
         recycler = view as RecyclerView
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
@@ -88,5 +95,9 @@ class TopicListFragment : Fragment(R.layout.fragment_topic_list),
 
     override fun onClickSubTopic(idSubTopic: Int) {
         fragmentRouter.navigateTo(ChatFragment.getScreen(idSubTopic))
+    }
+
+    override fun onSearch(query: String) {
+        adapter.items = topicInteractor.searchTopics(query).mapToTopicUi()
     }
 }

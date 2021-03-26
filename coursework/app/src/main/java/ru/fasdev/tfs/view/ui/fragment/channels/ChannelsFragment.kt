@@ -4,15 +4,19 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
+import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
-class ChannelsFragment : Fragment(R.layout.fragment_channels)
+class ChannelsFragment : Fragment(R.layout.fragment_channels), ProvideBackPressed
 {
     companion object {
         val TAG: String = ChannelsFragment::class.java.simpleName
@@ -22,6 +26,8 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
 
     private var _binding: FragmentChannelsBinding? = null
     private val binding get() = _binding!!
+
+    val provideSearchLiveData: MutableLiveData<String> = MutableLiveData<String>()
 
     private val vpFactoryFragment = TopicFragmentFactory()
     private lateinit var vpAdapter: ViewPagerFragmentAdapter
@@ -35,12 +41,23 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarLayout.apply {
+        with(binding.toolbarLayout) {
             root.setSystemInsetsInTop()
             title.text = resources.getString(R.string.channels)
             btnSearch.isVisible = true
+
+            binding.searchLayout.attachToolbar = root
             btnSearch.setOnClickListener {
-                //TODO: CLICK SEARCH
+                binding.searchLayout.openSearch()
+            }
+        }
+
+        with(binding.searchLayout) {
+            setSystemInsetsInTop()
+            textChangeListener = object : SearchToolbar.TextChangeListener {
+                override fun newText(query: String) {
+                    provideSearchLiveData.postValue(query)
+                }
             }
         }
 
@@ -56,5 +73,14 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels)
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (binding.searchLayout.isSearch) {
+            binding.searchLayout.closeSearch()
+            return true
+        }
+
+        return false
     }
 }

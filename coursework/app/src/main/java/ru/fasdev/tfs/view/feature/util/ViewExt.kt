@@ -30,11 +30,11 @@ fun View.showKeyboard() {
     requestFocus()
 }
 
-fun View.hideKeyboard() {
+fun EditText.hideKeyboard(isClearContent: Boolean = true) {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(windowToken, 0)
 
-    if (this is EditText) {
+    if (isClearContent) {
         text.clear()
     }
 

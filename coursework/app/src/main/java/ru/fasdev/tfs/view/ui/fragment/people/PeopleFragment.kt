@@ -1,11 +1,8 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -20,12 +17,13 @@ import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideBackPressed
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ProvideFragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
-import ru.fasdev.tfs.view.ui.global.recycler.itemDecoration.VerticalSpaceItemDecoration
+import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 
-class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, ProvideBackPressed
 {
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
@@ -45,9 +43,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
-    private val isSearch
-        get() = binding.searchLayout.root.visibility == View.VISIBLE
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentPeopleBinding.bind(it) }
@@ -56,24 +51,22 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toolbarLayout.apply {
+        with(binding.toolbarLayout) {
             root.setSystemInsetsInTop()
             title.text = resources.getString(R.string.users)
             btnSearch.isVisible = true
+
+            binding.searchLayout.attachToolbar = root
             btnSearch.setOnClickListener {
-                searchLayoutState(true)
+                binding.searchLayout.openSearch()
             }
         }
 
-        binding.searchLayout.apply {
-            root.setSystemInsetsInTop()
-            btnBackSearch.setOnClickListener {
-                searchLayoutState(false)
-            }
-
-            searchEdt.addTextChangedListener {
-                it?.let {
-                    searchUser(it.toString())
+        with(binding.searchLayout) {
+            setSystemInsetsInTop()
+            textChangeListener = object : SearchToolbar.TextChangeListener {
+                override fun newText(query: String) {
+                    searchUser(query)
                 }
             }
         }
@@ -84,25 +77,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     }
 
     private fun searchUser(query: String = "") {
-        adapter.items = usersInteractor.searchUser(query)
-                .mapToUserUi { usersInteractor.isOnlineUser(it) }
-    }
-
-    private fun searchLayoutState(isSearch: Boolean)
-    {
-        if (isSearch) {
-            binding.toolbarLayout.root.visibility = View.INVISIBLE
-
-            binding.searchLayout.root.visibility = View.VISIBLE
-            binding.searchLayout.searchEdt.showKeyboard()
-        } else {
-            binding.toolbarLayout.root.visibility = View.VISIBLE
-
-            binding.searchLayout.root.visibility = View.GONE
-            binding.searchLayout.searchEdt.hideKeyboard()
-
-            searchUser()
-        }
+        adapter.items = usersInteractor.searchUser(query).mapToUserUi { usersInteractor.isOnlineUser(it) }
     }
 
     override fun onDestroy() {
@@ -112,5 +87,15 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
     override fun onClickUser(idUser: Int) {
         rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser))
+        binding.searchLayout.hideKeyboard()
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (binding.searchLayout.isSearch) {
+            binding.searchLayout.closeSearch()
+            return true
+        }
+
+        return false
     }
 }
