@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -21,7 +24,8 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
-import ru.fasdev.tfs.view.feature.util.toDp
+import ru.fasdev.tfs.view.feature.util.*
+import ru.fasdev.tfs.view.feature.util.setSystemInsets
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.ChatHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatDiffUtilCallback
@@ -94,16 +98,28 @@ class ChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbarLayout.root.setSystemInsetsInTop()
+
+        view.doOnApplyWindowsInsets { view, windowInsets, initialPadding ->
+            val systemInsets = windowInsets.getSystemInsets()
+            view.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
+        }
+
         val subTopic = topicInteractor.getSubTopic(idSubTopic)
         val mainTopic = topicInteractor.getMainTopic(subTopic?.rootIdTopic ?: 0)
 
-        //TODO: CHANGE TO RES TEMPALTE
-        binding.toolbar.title = "#${mainTopic?.name?.toString()}"
-        binding.subTopic.text = "Topic: ${subTopic?.name?.toString()}"
+        binding.toolbarLayout.apply {
+            toolbarRoot.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_500))
 
-        binding.toolbar.setNavigationOnClickListener {
-            fragmentRouter.back()
+            title.text = resources.getString(R.string.main_topic_title, mainTopic?.name)
+
+            btnNav.isVisible = true
+            btnNav.setOnClickListener {
+                fragmentRouter.back()
+            }
         }
+
+        binding.subTopic.text = resources.getString(R.string.sub_topic_title, subTopic?.name)
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)

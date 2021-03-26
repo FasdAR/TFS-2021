@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_root"
+    android:background="@color/grey_910"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="19dp"
+    android:paddingBottom="19dp"
+    android:paddingStart="22dp"
+    android:paddingEnd="19dp"
+    android:gravity="center_vertical">
+
+    <ImageButton
+        android:id="@+id/btn_nav"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:layout_marginEnd="43dp"
+        android:src="@drawable/ic_back"
+        android:visibility="gone"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.TFS.Toolbar.Title"
+        tools:text="Toolbar"/>
+
+    <ImageButton
+        android:id="@+id/btn_search"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:src="@drawable/ic_search"
+        android:visibility="gone"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+</LinearLayout>

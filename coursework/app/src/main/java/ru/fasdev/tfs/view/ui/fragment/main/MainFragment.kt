@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
 import ru.fasdev.tfs.view.feature.util.getCurrentFragment
+import ru.fasdev.tfs.view.feature.util.setSystemInsets
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment

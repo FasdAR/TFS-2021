@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
+import ru.fasdev.tfs.view.feature.util.setSystemInsets
+import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
@@ -51,17 +54,21 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbarLayout.apply {
+            root.setSystemInsetsInTop()
+            title.text = resources.getString(R.string.profile)
+            btnNav.isVisible = true
+            btnNav.setOnClickListener {
+                rootRouter.back()
+            }
+        }
+
         userInteractor.getUserById(idUser)?.let { user ->
             val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
             cardProfile.fullName = user.fullName
             cardProfile.status = userInteractor.getStatusUser(user.id)
             cardProfile.isOnline = userInteractor.isOnlineUser(user.id)
         }
-
-        binding.toolbar.setNavigationOnClickListener {
-            rootRouter.back()
-        }
-        binding.toolbar.title
     }
 
     override fun onDestroy() {

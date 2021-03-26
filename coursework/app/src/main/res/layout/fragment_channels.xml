@@ -13,15 +13,9 @@
         android:paddingBottom="27dp"
         app:elevation="0dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            style="@style/Widget.TFS.Toolbar.Primary.Black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toolbar"
-            android:background="@null"
-            android:elevation="0dp"
-            app:menu="@menu/toolbar_channels_menu"
-            app:title="@string/channels" />
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar"/>
 
         <View
             android:layout_width="match_parent"

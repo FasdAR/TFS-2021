@@ -8,21 +8,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/app_bar"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            style="@style/Widget.TFS.Toolbar.Primary.Black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/toolbar"
-            android:elevation="0dp"
-            android:background="@color/teal_500"
-            app:navigationIcon="@drawable/ic_back"
-            tools:title="#general" />
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -36,7 +31,7 @@
             android:id="@+id/sub_topic"
             tools:text="Topic: #testing"/>
 
-    </com.google.android.material.appbar.AppBarLayout>
+    </LinearLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView

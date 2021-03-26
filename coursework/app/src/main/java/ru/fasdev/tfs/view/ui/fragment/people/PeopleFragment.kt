@@ -2,6 +2,7 @@ package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -10,6 +11,8 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
+import ru.fasdev.tfs.view.feature.util.setSystemInsets
+import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
@@ -49,38 +52,18 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvUsers.adapter = adapter
-        adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
-
-        binding.toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.action_search -> {
-                    stateSearchLayout(true)
-                    true
-                }
-                else -> false
+        binding.toolbarLayout.apply {
+            root.setSystemInsetsInTop()
+            title.text = resources.getString(R.string.users)
+            btnSearch.isVisible = true
+            btnSearch.setOnClickListener {
+                //TODO: CLICK SEARCH
             }
         }
 
-        binding.backBtnSearch.setOnClickListener {
-            stateSearchLayout(false)
-        }
-    }
-
-    private fun stateSearchLayout(isSearch: Boolean) {
-        if (isSearch) {
-            binding.searchLayout.visibility = View.VISIBLE
-            binding.toolbar.visibility = View.INVISIBLE
-
-            binding.edtSearch.isFocusable = true
-        }
-        else {
-            binding.searchLayout.visibility = View.GONE
-            binding.toolbar.visibility = View.VISIBLE
-
-            binding.edtSearch.clearFocus()
-        }
+        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvUsers.adapter = adapter
+        adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
     }
 
     override fun onDestroy() {

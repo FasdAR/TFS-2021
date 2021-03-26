@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.TFS" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.TFS.Base" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/teal_500</item>
         <item name="colorPrimaryVariant">@color/teal_500</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -16,6 +16,8 @@
         <item name="fontFamily">@font/inter</item>
         <item name="tabStyle">@style/Widget.TFS.TabLayout</item>
     </style>
+
+    <style name="Theme.TFS.Main" parent="Theme.TFS.Base"/>
 
     <style name="Theme.TFS.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.TFS.MaterialComponents.BottomSheet.Modal</item>
