@@ -20,14 +20,12 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun changeSelectedReaction(idChat: Int, idMessage: Int, emoji: String) {
         val isSelected = getMessageByChat(idChat)
-            .find { it.id == idMessage }
-            ?.reactions
-            ?.find { it.emoji == emoji }
-            ?.isSelected ?: false
+            .find { it.id == idMessage }?.reactions?.find { it.emoji == emoji }?.isSelected ?: false
 
         setSelectedReaction(idChat, idMessage, emoji, !isSelected)
     }
 
-    override fun sendMessage(idChat: Int, text: String) =
-        messageRepo.sendMessage(idChat, CURRENT_USER, text)
+    override fun sendMessage(idChat: Int, text: String) {
+        return messageRepo.sendMessage(idChat, CURRENT_USER, text)
+    }
 }

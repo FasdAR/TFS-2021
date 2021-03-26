@@ -1,16 +1,16 @@
 package ru.fasdev.tfs.domain.topic.interactor
 
-import ru.fasdev.tfs.domain.model.SubTopic
+import ru.fasdev.tfs.domain.model.Stream
 import ru.fasdev.tfs.domain.model.Topic
 
 interface TopicInteractor {
+    fun getAllStreams(): List<Stream>
     fun getAllTopics(): List<Topic>
-    fun getAllSubTopics(): List<SubTopic>
 
-    fun getMainTopic(idTopic: Int): Topic?
-    fun getSubTopic(subTopicId: Int): SubTopic?
+    fun getStream(id: Int): Stream?
+    fun getTopic(id: Int): Topic?
 
-    fun getMainTopicInSubTopic(subTopicId: Int): Topic?
-    fun getSubTopicsInMainTopic(rootId: Int): List<SubTopic>
-    fun searchTopics(query: String): List<Topic>
+    fun getStreamInTopic(idTopic: Int): Stream?
+    fun getTopicsInStream(idStream: Int): List<Topic>
+    fun searchStream(query: String): List<Stream>
 }

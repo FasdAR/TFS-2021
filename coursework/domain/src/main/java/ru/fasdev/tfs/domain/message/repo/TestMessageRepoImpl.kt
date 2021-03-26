@@ -18,8 +18,9 @@ class TestMessageRepoImpl : MessageRepo {
     private val messageList: MutableList<Message> = generateInitialData()
     // #endregion
 
-    override fun getMessageByChat(idChat: Int): List<Message> =
-        if (idChat == 1) messageList else emptyList()
+    override fun getMessageByChat(idChat: Int): List<Message> {
+        return if (idChat == 1) messageList else emptyList()
+    }
 
     override fun sendMessage(idChat: Int, idUser: Int, messageText: String) {
         messageList.add(
