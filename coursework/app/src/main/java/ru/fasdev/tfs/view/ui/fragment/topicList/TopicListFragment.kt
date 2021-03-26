@@ -12,22 +12,24 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
+import ru.fasdev.tfs.view.feature.mapper.mapToStreamUi
+import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.diffUtil.TopicItemCallback
-import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.StreamViewHolder
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.StreamUi
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.view.di.ProvideFragmentRouter
-import ru.fasdev.tfs.view.feature.mapper.mapToStreamUi
-import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class TopicListFragment : Fragment(R.layout.fragment_topic_list),
-        StreamViewHolder.OnClickStreamListener, TopicViewHolder.OnClickTopicListener {
+class TopicListFragment :
+    Fragment(R.layout.fragment_topic_list),
+    StreamViewHolder.OnClickStreamListener,
+    TopicViewHolder.OnClickTopicListener {
     companion object {
         const val ALL_MODE = 1
         const val SUBSCRIBED_MODE = 2

@@ -23,12 +23,16 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
 
         private const val DEFAULT_IMAGE = R.drawable.ic_launcher_background
 
-        fun newInstance(avatarSrc: String, fullName: String,
-                        status: String, isOnline: Boolean) : CardProfileFragment {
+        fun newInstance(
+            avatarSrc: String,
+            fullName: String,
+            status: String,
+            isOnline: Boolean
+        ): CardProfileFragment {
             return CardProfileFragment().apply {
                 arguments = bundleOf(
-                        KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
-                        KEY_STATUS to status, KEY_IS_ONLINE to isOnline
+                    KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
+                    KEY_STATUS to status, KEY_IS_ONLINE to isOnline
                 )
             }
         }
@@ -61,8 +65,11 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
             updateOnlineIndicator(value)
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentCardProfileBinding.bind(this)
         }

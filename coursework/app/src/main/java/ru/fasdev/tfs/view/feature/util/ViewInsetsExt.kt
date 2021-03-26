@@ -42,7 +42,7 @@ fun View.doOnApplyWindowsInsets(block: (View, WindowInsets, Rect) -> Unit) {
     }
 }
 
-//Отдает системные отступы
+// Отдает системные отступы
 fun WindowInsets.getSystemInsets(): Insets {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
@@ -57,12 +57,12 @@ fun WindowInsets.getSystemInsets(): Insets {
     }
 }
 
-//Записывает отступы
+// Записывает отступы
 private fun View.recordPadding(): Rect {
     return Rect(paddingLeft, paddingTop, paddingRight, paddingBottom)
 }
 
-//Запрашивает повторные отсупы
+// Запрашивает повторные отсупы
 private fun View.requestApplyInsetsWhenAttached() {
     if (isAttachedToWindow) {
         requestApplyInsets()

@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,8 +21,10 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 import ru.fasdev.tfs.view.feature.mapper.mapToUiList
 import ru.fasdev.tfs.view.feature.util.doOnApplyWindowsInsets
+import ru.fasdev.tfs.view.feature.util.getColorCompat
 import ru.fasdev.tfs.view.feature.util.getSystemInsets
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.bottomDialog.emoji.SelectEmojiBottomDialog
@@ -33,13 +33,13 @@ import ru.fasdev.tfs.view.ui.fragment.chat.adapter.diffUtil.ChatItemCallback
 import ru.fasdev.tfs.view.ui.fragment.chat.adapter.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.di.ProvideFragmentRouter
-import ru.fasdev.tfs.view.feature.util.getColorCompat
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class ChatFragment : Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
+class ChatFragment :
+    Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener,
+    MessageViewHolder.OnClickReactionListener,
     AsyncListDiffer.ListListener<ViewType> {
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
@@ -87,8 +87,11 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentChatBinding.bind(this)
         }

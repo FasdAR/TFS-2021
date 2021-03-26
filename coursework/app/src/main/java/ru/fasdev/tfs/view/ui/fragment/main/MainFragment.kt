@@ -11,8 +11,8 @@ import ru.fasdev.tfs.view.feature.util.getCurrentFragment
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 
 class MainFragment : Fragment(R.layout.fragment_main), ImplBackPressed {
     companion object {

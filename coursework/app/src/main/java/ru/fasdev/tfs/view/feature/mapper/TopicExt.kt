@@ -2,8 +2,8 @@ package ru.fasdev.tfs.view.feature.mapper
 
 import ru.fasdev.tfs.domain.model.Stream
 import ru.fasdev.tfs.domain.model.Topic
-import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.StreamUi
+import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.TopicUi
 
 fun Stream.toStreamUi() = StreamUi(id, name, false)
 fun List<Stream>.mapToStreamUi() = map { it.toStreamUi() }

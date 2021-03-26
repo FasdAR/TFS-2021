@@ -3,11 +3,11 @@ package ru.fasdev.tfs.view.ui.activity.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 import ru.fasdev.tfs.view.feature.util.initEdgeToEdge
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
-import ru.fasdev.tfs.view.di.ProvideFragmentRouter
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 
 class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
     private val fragmentRouter: FragmentRouter by lazy {

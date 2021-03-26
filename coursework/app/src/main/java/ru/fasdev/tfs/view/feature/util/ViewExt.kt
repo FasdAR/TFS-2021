@@ -11,7 +11,7 @@ fun View.layout(rect: Rect) {
     layout(rect.left, rect.top, rect.right, rect.bottom)
 }
 
-//#region Get size margin
+// #region Get size margin
 fun View.getWidthMeasuredMargin(): Int {
     val layoutParams = layoutParams as ViewGroup.MarginLayoutParams
     return measuredWidth + layoutParams.leftMargin + layoutParams.rightMargin
@@ -21,9 +21,9 @@ fun View.getHeightMeasuredMargin(): Int {
     val layoutParams = layoutParams as ViewGroup.MarginLayoutParams
     return measuredHeight + layoutParams.topMargin + layoutParams.bottomMargin
 }
-//#ednregion
+// #endregion
 
-//#region Keyboard
+// #region Keyboard
 fun EditText.showKeyboard() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
@@ -41,4 +41,4 @@ fun EditText.hideKeyboard(isClearContent: Boolean = true) {
 
     clearFocus()
 }
-//#endregion
+// #endregion

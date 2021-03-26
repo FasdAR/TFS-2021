@@ -25,7 +25,7 @@ class TestUserRepoImpl : UserRepo {
 
     override fun getStatusUser(id: Int): UserStatus {
         return if ((id % 2) == 0) UserStatus.MEETING
-            else UserStatus.FREE
+        else UserStatus.FREE
     }
 
     override fun isOnlineUser(id: Int): Boolean = (id % 2) == 0
