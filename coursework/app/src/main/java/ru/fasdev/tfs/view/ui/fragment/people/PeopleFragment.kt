@@ -1,8 +1,11 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.fasdev.tfs.R
@@ -11,9 +14,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
-import ru.fasdev.tfs.view.feature.util.setSystemInsets
-import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
-import ru.fasdev.tfs.view.feature.util.toDp
+import ru.fasdev.tfs.view.feature.util.*
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
@@ -44,6 +45,9 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
+    private val isSearch
+        get() = binding.searchLayout.root.visibility == View.VISIBLE
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.let { _binding = FragmentPeopleBinding.bind(it) }
@@ -57,13 +61,46 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
             title.text = resources.getString(R.string.users)
             btnSearch.isVisible = true
             btnSearch.setOnClickListener {
-                //TODO: CLICK SEARCH
+                searchLayoutState(true)
+            }
+        }
+
+        binding.searchLayout.apply {
+            root.setSystemInsetsInTop()
+            btnBackSearch.setOnClickListener {
+                searchLayoutState(false)
+            }
+
+            searchEdt.addTextChangedListener {
+                if (!it.isNullOrEmpty()) searchUser(it.toString())
             }
         }
 
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
         adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.isOnlineUser(it) }
+    }
+
+    private fun searchUser(query: String = "") {
+        adapter.items = usersInteractor.searchUser(query)
+                .mapToUserUi { usersInteractor.isOnlineUser(it) }
+    }
+
+    private fun searchLayoutState(isSearch: Boolean)
+    {
+        if (isSearch) {
+            binding.toolbarLayout.root.visibility = View.INVISIBLE
+
+            binding.searchLayout.root.visibility = View.VISIBLE
+            binding.searchLayout.searchEdt.showKeyboard()
+        } else {
+            binding.toolbarLayout.root.visibility = View.VISIBLE
+
+            binding.searchLayout.root.visibility = View.GONE
+            binding.searchLayout.searchEdt.hideKeyboard()
+
+            searchUser()
+        }
     }
 
     override fun onDestroy() {
