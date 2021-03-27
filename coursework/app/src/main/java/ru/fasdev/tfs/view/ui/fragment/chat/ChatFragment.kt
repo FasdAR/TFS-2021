@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChatBinding
@@ -38,11 +40,11 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class ChatFragment :
-    Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener,
-    MessageViewHolder.OnClickReactionListener,
-    AsyncListDiffer.ListListener<ViewType> {
+class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongClickMessageListener,
+    MessageViewHolder.OnClickReactionListener, AsyncListDiffer.ListListener<ViewType> {
+
+    //TODO: CHECK AND FIXED REACTION EMOJI
+
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
 
@@ -118,10 +120,13 @@ class ChatFragment :
             .observeOn(Schedulers.io())
             .flatMap { topicInteractor.getStream(it.idStream) }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { item ->
-                binding.toolbarLayout.title.text =
-                    resources.getString(R.string.main_topic_title, item.name)
-            }
+            .subscribeBy(
+                onSuccess = {
+                    binding.toolbarLayout.title.text =
+                        resources.getString(R.string.main_topic_title, it.name)
+                },
+                onError = ::onError
+            )
 
         with(binding.toolbarLayout) {
             toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
@@ -140,7 +145,7 @@ class ChatFragment :
         binding.sendBtn.setOnClickListener {
             val msgText = binding.msgText.text.toString().trim()
             if (msgText.isNotEmpty()) {
-                interactor.sendMessage(currentChatId, msgText)
+                interactor.sendMessage(currentChatId, msgText).subscribeBy(onError = ::onError)
                 updateChatItems()
 
                 binding.msgText.text?.clear()
@@ -166,11 +171,14 @@ class ChatFragment :
 
     private fun updateChatItems() {
         interactor.getMessageByChat(currentChatId)
-            .observeOn(AndroidSchedulers.mainThread())
             .map { it.mapToUiList(currentUserId) }
-            .subscribe { array ->
-                adapter.items = array
-            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = {
+                    adapter.items = it
+                },
+                onError = ::onError
+            )
 
         selectedMessageId = 0
     }
@@ -191,6 +199,7 @@ class ChatFragment :
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
         interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
+            .subscribeBy(onError = ::onError)
         updateChatItems()
     }
 
@@ -199,5 +208,9 @@ class ChatFragment :
         currentList: MutableList<ViewType>
     ) {
         if (!binding.rvList.canScrollVertically(1)) binding.rvList.scrollToPosition(0)
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(binding.root, "Error: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
 }

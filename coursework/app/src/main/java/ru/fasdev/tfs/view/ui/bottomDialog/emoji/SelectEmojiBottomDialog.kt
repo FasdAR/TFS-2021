@@ -10,6 +10,10 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
 import ru.fasdev.tfs.view.feature.util.EmojiUtil
@@ -48,10 +52,15 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val rvList: RecyclerView = binding.rvEmojiList
         rvList.adapter = adapter
 
-        val listEmoji = EmojiUtil.getListEmoji(requireContext())
-        val resultEmoji = listEmoji.map { EmojiUi(listEmoji.indexOf(it), it) }
-
-        adapter.items = resultEmoji
+        Single.just(EmojiUtil.getListEmoji(requireContext()))
+            .flatMapObservable { Observable.fromIterable(it.withIndex()) }
+            .map { EmojiUi(it.index, it.value) }
+            .toList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { array ->
+                adapter.items = array
+            }
 
         rvList.post {
             val sizeColumn = rvList.width / EmojiUi.COLUMN_WIDTH // Calculate column size
