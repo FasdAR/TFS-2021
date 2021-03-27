@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
@@ -39,6 +40,8 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
     private val holderFactory by lazy { EmojiHolderFactory(this) }
     private val adapter by lazy { return@lazy BaseAdapter<ViewType>(holderFactory) }
 
+    private var disposeEmojiLoad: Disposable? = null
+
     override fun getTheme(): Int = R.style.Theme_TFS_BottomSheetDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,7 +55,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val rvList: RecyclerView = binding.rvEmojiList
         rvList.adapter = adapter
 
-        Single.just(EmojiUtil.getListEmoji(requireContext()))
+        disposeEmojiLoad = Single.just(EmojiUtil.getListEmoji(requireContext()))
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
             .map { EmojiUi(it.index, it.value) }
             .toList()
@@ -70,6 +73,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     override fun onDestroy() {
         super.onDestroy()
+        disposeEmojiLoad?.dispose()
         _binding = null
     }
 

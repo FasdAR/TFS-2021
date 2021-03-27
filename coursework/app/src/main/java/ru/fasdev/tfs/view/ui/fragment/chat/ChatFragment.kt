@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
@@ -84,6 +85,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
 
     private var selectedMessageId: Int = 0
 
+    private val compositeDisposable = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -111,22 +114,24 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        topicInteractor
-            .getTopic(idSubTopic)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess {
-                binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
-            }
-            .observeOn(Schedulers.io())
-            .flatMap { topicInteractor.getStream(it.idStream) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    binding.toolbarLayout.title.text =
-                        resources.getString(R.string.main_topic_title, it.name)
-                },
-                onError = ::onError
-            )
+        compositeDisposable.add(
+            topicInteractor
+                .getTopic(idSubTopic)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
+                }
+                .observeOn(Schedulers.io())
+                .flatMap { topicInteractor.getStream(it.idStream) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        binding.toolbarLayout.title.text =
+                            resources.getString(R.string.main_topic_title, it.name)
+                    },
+                    onError = ::onError
+                )
+        )
 
         with(binding.toolbarLayout) {
             toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
@@ -145,7 +150,9 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         binding.sendBtn.setOnClickListener {
             val msgText = binding.msgText.text.toString().trim()
             if (msgText.isNotEmpty()) {
-                interactor.sendMessage(currentChatId, msgText).subscribeBy(onError = ::onError)
+                compositeDisposable.add(
+                    interactor.sendMessage(currentChatId, msgText).subscribeBy(onError = ::onError)
+                )
                 updateChatItems()
 
                 binding.msgText.text?.clear()
@@ -166,19 +173,22 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
 
     override fun onDestroy() {
         super.onDestroy()
+        compositeDisposable.dispose()
         _binding = null
     }
 
     private fun updateChatItems() {
-        interactor.getMessageByChat(currentChatId)
-            .map { it.mapToUiList(currentUserId) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    adapter.items = it
-                },
-                onError = ::onError
-            )
+        compositeDisposable.add(
+            interactor.getMessageByChat(currentChatId)
+                .map { it.mapToUiList(currentUserId) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
 
         selectedMessageId = 0
     }
@@ -198,8 +208,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
-            .subscribeBy(onError = ::onError)
+        compositeDisposable.add(
+            interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
+                .subscribeBy(onError = ::onError)
+        )
         updateChatItems()
     }
 

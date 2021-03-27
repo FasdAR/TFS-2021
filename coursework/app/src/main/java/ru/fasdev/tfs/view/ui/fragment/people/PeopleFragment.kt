@@ -11,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
@@ -51,6 +52,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
+    private val compositeDisposable = CompositeDisposable()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,21 +85,23 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
 
-        usersInteractor.getAllUsers()
-            .flatMapObservable { items -> Observable.fromIterable(items) }
-            .concatMap { item ->
-                usersInteractor.getIsOnlineStatusUser(item.id)
-                    .map { item.toUserUi(it) }
-                    .toObservable()
-            }
-            .toList()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = { array ->
-                    adapter.items = array
-                },
-                onError = ::onError
-            )
+        compositeDisposable.add(
+            usersInteractor.getAllUsers()
+                .flatMapObservable { items -> Observable.fromIterable(items) }
+                .concatMap { item ->
+                    usersInteractor.getIsOnlineStatusUser(item.id)
+                        .map { item.toUserUi(it) }
+                        .toObservable()
+                }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { array ->
+                        adapter.items = array
+                    },
+                    onError = ::onError
+                )
+        )
     }
 
     private fun searchUser(query: String = "") {
@@ -110,6 +115,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
     override fun onDestroy() {
         super.onDestroy()
+        compositeDisposable.dispose()
         _binding = null
     }
 

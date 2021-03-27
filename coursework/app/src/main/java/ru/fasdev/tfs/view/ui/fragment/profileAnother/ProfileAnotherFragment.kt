@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
@@ -33,6 +34,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
                 arguments = bundleOf(KEY_ID_USER to idUser)
             }
         }
+
         fun getScreen(idUser: Int) = FragmentScreen(TAG, newInstance(idUser))
     }
 
@@ -47,7 +49,13 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private val compositeDisposable = CompositeDisposable()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentAnotherProfileBinding.bind(this)
         }
@@ -63,34 +71,35 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
-        val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+        val cardProfile =
+            childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
-        userInteractor.getUserById(idUser)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    cardProfile.fullName = it.fullName
-                },
-                onError = ::onError
-            )
-
-        userInteractor.getStatusUser(idUser)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    cardProfile.status = it
-                },
-                onError = ::onError
-            )
-
-        userInteractor.getIsOnlineStatusUser(idUser)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    cardProfile.isOnline = it
-                },
-                onError = ::onError
-            )
+        compositeDisposable.addAll(
+            userInteractor.getUserById(idUser)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        cardProfile.fullName = it.fullName
+                    },
+                    onError = ::onError
+                ),
+            userInteractor.getStatusUser(idUser)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        cardProfile.status = it
+                    },
+                    onError = ::onError
+                ),
+            userInteractor.getIsOnlineStatusUser(idUser)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        cardProfile.isOnline = it
+                    },
+                    onError = ::onError
+                )
+        )
     }
 
     private fun onError(error: Throwable) {
@@ -99,6 +108,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     override fun onDestroy() {
         super.onDestroy()
+        compositeDisposable.dispose()
         _binding = null
     }
 }

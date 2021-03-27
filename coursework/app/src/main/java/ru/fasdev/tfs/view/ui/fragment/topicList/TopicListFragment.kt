@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
@@ -70,6 +71,8 @@ class TopicListFragment :
 
     private val searchObservable get() = (parentFragment as ChannelsFragment).provideSearch
 
+    private val compositeDisposable = CompositeDisposable()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -79,44 +82,48 @@ class TopicListFragment :
         rvTopics.layoutManager = LinearLayoutManager(requireContext())
         rvTopics.adapter = adapter
 
-        topicInteractor.getAllStreams()
-            .flatMapObservable { Observable.fromIterable(it) }
-            .map { it.toStreamUi() }
-            .toList()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    adapter.items = it
-                },
-                onError = ::onError
-            )
+        compositeDisposable.add(
+            topicInteractor.getAllStreams()
+                .flatMapObservable { Observable.fromIterable(it) }
+                .map { it.toStreamUi() }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
-        topicInteractor.getTopicsInStream(idStream)
-            .flatMapObservable { Observable.fromIterable(it) }
-            .map { it.toTopicUi() }
-            .toList()
-            .map { topics ->
-                val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
+        compositeDisposable.addAll(
+            topicInteractor.getTopicsInStream(idStream)
+                .flatMapObservable { Observable.fromIterable(it) }
+                .map { it.toTopicUi() }
+                .toList()
+                .map { topics ->
+                    val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
 
-                val currentStreamIndex =
-                    currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
-                val stream = currentArray[currentStreamIndex] as StreamUi
-                currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
+                    val currentStreamIndex =
+                        currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
+                    val stream = currentArray[currentStreamIndex] as StreamUi
+                    currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
 
-                if (opened) currentArray.addAll(currentStreamIndex + 1, topics)
-                else currentArray.removeAll(topics)
+                    if (opened) currentArray.addAll(currentStreamIndex + 1, topics)
+                    else currentArray.removeAll(topics)
 
-                return@map currentArray
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    adapter.items = it
-                },
-                onError = ::onError
-            )
+                    return@map currentArray
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
     }
 
     override fun onClickTopic(idTopic: Int) {
@@ -124,17 +131,24 @@ class TopicListFragment :
     }
 
     private fun searchStream(query: String) {
-        topicInteractor.searchStream(query)
-            .flatMapObservable { Observable.fromIterable(it) }
-            .map { it.toStreamUi() }
-            .toList()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    adapter.items = it
-                },
-                onError = ::onError
-            )
+        compositeDisposable.add(
+            topicInteractor.searchStream(query)
+                .flatMapObservable { Observable.fromIterable(it) }
+                .map { it.toStreamUi() }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     private fun onError(error: Throwable) {
