@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
@@ -89,13 +91,21 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
             }
             .toList()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { array ->
-                adapter.items = array
-            }
+            .subscribeBy(
+                onSuccess = { array ->
+                    adapter.items = array
+                },
+                onError = ::onError
+            )
     }
 
     private fun searchUser(query: String = "") {
+        //TODO: FIX SEARCH
         //adapter.items = usersInteractor.searchUser(query).mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {

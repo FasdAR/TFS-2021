@@ -211,6 +211,6 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
     }
 
     private fun onError(error: Throwable) {
-        Snackbar.make(binding.root, "Error: ${error.message}", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 }

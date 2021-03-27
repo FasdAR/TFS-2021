@@ -6,7 +6,10 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
@@ -16,6 +19,8 @@ import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 import ru.fasdev.tfs.view.feature.mapper.mapToStreamUi
 import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
+import ru.fasdev.tfs.view.feature.mapper.toStreamUi
+import ru.fasdev.tfs.view.feature.mapper.toTopicUi
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.chat.ChatFragment
 import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.TopicHolderFactory
@@ -75,16 +80,23 @@ class TopicListFragment :
         rvTopics.adapter = adapter
 
         topicInteractor.getAllStreams()
-            .map { it.mapToStreamUi() }
+            .flatMapObservable { Observable.fromIterable(it) }
+            .map { it.toStreamUi() }
+            .toList()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { item ->
-                adapter.items = item
-            }
+            .subscribeBy(
+                onSuccess = {
+                    adapter.items = it
+                },
+                onError = ::onError
+            )
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
         topicInteractor.getTopicsInStream(idStream)
-            .map { it.mapToTopicUi() }
+            .flatMapObservable { Observable.fromIterable(it) }
+            .map { it.toTopicUi() }
+            .toList()
             .map { topics ->
                 val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
 
@@ -99,9 +111,12 @@ class TopicListFragment :
                 return@map currentArray
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { array ->
-                adapter.items = array
-            }
+            .subscribeBy(
+                onSuccess = {
+                    adapter.items = it
+                },
+                onError = ::onError
+            )
     }
 
     override fun onClickTopic(idTopic: Int) {
@@ -110,10 +125,19 @@ class TopicListFragment :
 
     private fun searchStream(query: String) {
         topicInteractor.searchStream(query)
-            .map { it.mapToStreamUi() }
+            .flatMapObservable { Observable.fromIterable(it) }
+            .map { it.toStreamUi() }
+            .toList()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { items ->
-                adapter.items = items
-            }
+            .subscribeBy(
+                onSuccess = {
+                    adapter.items = it
+                },
+                onError = ::onError
+            )
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(rvTopics, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 }

@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
@@ -65,21 +67,34 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
         userInteractor.getUserById(idUser)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { user ->
-                cardProfile.fullName = user.fullName
-            }
+            .subscribeBy(
+                onSuccess = {
+                    cardProfile.fullName = it.fullName
+                },
+                onError = ::onError
+            )
 
         userInteractor.getStatusUser(idUser)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { status ->
-                cardProfile.status = status
-            }
+            .subscribeBy(
+                onSuccess = {
+                    cardProfile.status = it
+                },
+                onError = ::onError
+            )
 
         userInteractor.getIsOnlineStatusUser(idUser)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { status ->
-                cardProfile.isOnline = status
-            }
+            .subscribeBy(
+                onSuccess = {
+                    cardProfile.isOnline = it
+                },
+                onError = ::onError
+            )
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
