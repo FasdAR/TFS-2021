@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
@@ -60,12 +61,14 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
-        userInteractor.getUserById(idUser)?.let { user ->
-            val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
-            cardProfile.fullName = user.fullName
-            cardProfile.status = userInteractor.getStatusUser(user.id)
-            cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
-        }
+        userInteractor.getUserById(idUser)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { user ->
+                val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+                cardProfile.fullName = user.fullName
+                //cardProfile.status = userInteractor.getStatusUser(user.id)
+                //cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
+            }
     }
 
     override fun onDestroy() {

@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
@@ -54,6 +56,7 @@ class ChatFragment :
                 arguments = bundleOf(KEY_ID_TOPIC to idSubTopic)
             }
         }
+
         fun getScreen(idSubTopic: Int) = FragmentScreen(TAG, newInstance(idSubTopic))
     }
 
@@ -106,20 +109,28 @@ class ChatFragment :
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        val subTopic = topicInteractor.getTopic(idSubTopic)
-        val mainTopic = topicInteractor.getStream(subTopic?.idStream ?: -1)
+        topicInteractor
+            .getTopic(idSubTopic)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
+            }
+            .observeOn(Schedulers.io())
+            .flatMap { topicInteractor.getStream(it.idStream) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { item ->
+                binding.toolbarLayout.title.text =
+                    resources.getString(R.string.main_topic_title, item.name)
+            }
 
         with(binding.toolbarLayout) {
             toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
-            title.text = resources.getString(R.string.main_topic_title, mainTopic?.name)
 
             btnNav.isVisible = true
             btnNav.setOnClickListener {
                 fragmentRouter.back()
             }
         }
-
-        binding.topic.text = resources.getString(R.string.sub_topic_title, subTopic?.name)
 
         binding.msgText.addTextChangedListener {
             if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
@@ -154,7 +165,13 @@ class ChatFragment :
     }
 
     private fun updateChatItems() {
-        adapter.items = interactor.getMessageByChat(currentChatId).mapToUiList(currentUserId)
+        interactor.getMessageByChat(currentChatId)
+            .observeOn(AndroidSchedulers.mainThread())
+            .map { it.mapToUiList(currentUserId) }
+            .subscribe { array ->
+                adapter.items = array
+            }
+
         selectedMessageId = 0
     }
 
@@ -177,7 +194,10 @@ class ChatFragment :
         updateChatItems()
     }
 
-    override fun onCurrentListChanged(previousList: MutableList<ViewType>, currentList: MutableList<ViewType>) {
+    override fun onCurrentListChanged(
+        previousList: MutableList<ViewType>,
+        currentList: MutableList<ViewType>
+    ) {
         if (!binding.rvList.canScrollVertically(1)) binding.rvList.scrollToPosition(0)
     }
 }

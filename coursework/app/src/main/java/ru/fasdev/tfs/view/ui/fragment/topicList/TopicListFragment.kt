@@ -6,6 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
@@ -73,10 +74,17 @@ class TopicListFragment :
         rvTopics.layoutManager = LinearLayoutManager(requireContext())
         rvTopics.adapter = adapter
 
-        adapter.items = topicInteractor.getAllStreams().mapToStreamUi()
+        topicInteractor.getAllStreams()
+            .map { it.mapToStreamUi() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { item ->
+                adapter.items = item
+            }
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
+        //TODO: MAP THIS FUNTION TO RX
+        /*
         val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
 
         val topics = topicInteractor.getTopicsInStream(idStream).mapToTopicUi()
@@ -89,6 +97,7 @@ class TopicListFragment :
         else uiModels.removeAll(topics)
 
         adapter.items = uiModels
+        */
     }
 
     override fun onClickTopic(idTopic: Int) {
@@ -96,6 +105,11 @@ class TopicListFragment :
     }
 
     private fun searchStream(query: String) {
-        adapter.items = topicInteractor.searchStream(query).mapToStreamUi()
+        topicInteractor.searchStream(query)
+            .map { it.mapToStreamUi() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { items ->
+                adapter.items = items
+            }
     }
 }

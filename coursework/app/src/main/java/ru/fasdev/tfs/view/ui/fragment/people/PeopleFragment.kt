@@ -70,11 +70,13 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
-        adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
+
+        //TODO: FIX THIS
+        //adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
     }
 
     private fun searchUser(query: String = "") {
-        adapter.items = usersInteractor.searchUser(query).mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
+        //adapter.items = usersInteractor.searchUser(query).mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
     }
 
     override fun onDestroy() {
