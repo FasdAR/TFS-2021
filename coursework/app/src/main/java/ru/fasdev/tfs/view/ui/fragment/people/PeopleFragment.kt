@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
@@ -31,6 +33,7 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
+import java.util.concurrent.TimeUnit
 
 class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener,
     ImplBackPressed {
@@ -52,6 +55,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
+    private val searchSubject = PublishSubject.create<String>()
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
@@ -85,6 +89,42 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
 
+        loadAllUsers()
+
+        compositeDisposable.add(
+            searchSubject
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .switchMapSingle { usersInteractor.searchUser(it) }
+                .flatMapSingle { items ->
+                    Observable.fromIterable(items)
+                        .concatMap { user ->
+                            usersInteractor.getIsOnlineStatusUser(user.id)
+                                .map { user.toUserUi(it) }
+                                .toObservable()
+                        }
+                        .toList()
+                }
+                .subscribeBy(
+                    onNext = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    private fun searchUser(query: String = "") {
+        if (query.isEmpty()) {
+            loadAllUsers()
+        }
+        else {
+            searchSubject.onNext(query)
+        }
+    }
+
+    private fun loadAllUsers() {
         compositeDisposable.add(
             usersInteractor.getAllUsers()
                 .flatMapObservable { items -> Observable.fromIterable(items) }
@@ -102,11 +142,6 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
                     onError = ::onError
                 )
         )
-    }
-
-    private fun searchUser(query: String = "") {
-        //TODO: FIX SEARCH
-        //adapter.items = usersInteractor.searchUser(query).mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
     }
 
     private fun onError(error: Throwable) {
