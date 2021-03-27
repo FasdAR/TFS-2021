@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.domain.topic.interactor
 
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.model.Stream
@@ -18,28 +19,40 @@ class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
     }
 
     override fun getStream(id: Int): Single<Stream> {
-        return getAllStreams().map { it.find { it.id == id }!! }
+        return getAllStreams()
+            .flatMapObservable { items -> Observable.fromIterable(items) }
+            .filter { it.id == id }
+            .firstOrError()
             .subscribeOn(Schedulers.io())
     }
 
     override fun getTopic(id: Int): Single<Topic> {
-        return getAllTopics().map { it.find { it.id == id }!! }
+        return getAllTopics()
+            .flatMapObservable { items -> Observable.fromIterable(items) }
+            .filter { it.id == id }
+            .firstOrError()
             .subscribeOn(Schedulers.io())
     }
 
     override fun getStreamInTopic(idTopic: Int): Single<Stream> {
-        return getTopic(idTopic).flatMap { getStream(it.idStream) }
+        return getTopic(idTopic)
+            .flatMap { getStream(it.idStream) }
             .subscribeOn(Schedulers.io())
     }
 
     override fun getTopicsInStream(idStream: Int): Single<List<Topic>> {
-        return getAllTopics().map { it.filter { it.idStream == idStream } }
+        return getAllTopics()
+            .flatMapObservable { items -> Observable.fromIterable(items) }
+            .filter { it.idStream == idStream }
+            .toList()
             .subscribeOn(Schedulers.io())
     }
 
     override fun searchStream(query: String): Single<List<Stream>> {
         return getAllStreams()
-            .map { it.filter { it.name.toLowerCase().contains(query.trim().toLowerCase()) } }
+            .flatMapObservable { items -> Observable.fromIterable(items) }
+            .filter { it.name.toLowerCase().contains(query.trim().toLowerCase()) }
+            .toList()
             .subscribeOn(Schedulers.io())
     }
 }

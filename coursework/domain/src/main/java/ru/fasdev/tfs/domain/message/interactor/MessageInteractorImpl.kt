@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.domain.message.interactor
 
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.TestError
@@ -35,12 +36,16 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun changeSelectedReaction(idChat: Int, idMessage: Int, emoji: String): Completable {
         return getMessageByChat(idChat)
-            .map { array -> array.find { it.id == idMessage } }
-            .map { item -> item?.reactions?.find { it.emoji == emoji } }
-            .map { reaction -> reaction?.isSelected }
+            .flatMapObservable { array -> Observable.fromIterable(array) }
+            .filter { it.id == idMessage }
+            .firstElement()
+            .flatMapObservable { Observable.fromIterable(it.reactions) }
+            .filter { it.emoji == emoji }
+            .firstElement()
+            .map { it.isSelected }
             .flatMapCompletable { isSelected ->
                 Completable.fromCallable {
-                    setSelectedReaction(idChat, idMessage, emoji, !isSelected!!)
+                    setSelectedReaction(idChat, idMessage, emoji, !isSelected)
                 }
             }
             .subscribeOn(Schedulers.io())

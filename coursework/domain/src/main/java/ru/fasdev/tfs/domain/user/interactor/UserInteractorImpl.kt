@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.domain.user.interactor
 
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.model.User
@@ -29,12 +30,12 @@ class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
 
     override fun searchUser(query: String): Single<List<User>> {
         return getAllUsers()
-            .map {
-                it.filter {
-                    val resQuery = query.toLowerCase().trim()
-                    it.fullName.toLowerCase().contains(resQuery) || it.email.toLowerCase()
-                        .contains(resQuery)
-                }
+            .flatMapObservable { Observable.fromIterable(it) }
+            .filter {
+                val resQuery = query.toLowerCase().trim()
+                return@filter it.fullName.toLowerCase().contains(resQuery) || it.email.toLowerCase().contains(resQuery)
             }
+            .toList()
+            .subscribeOn(Schedulers.io())
     }
 }
