@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
@@ -14,6 +17,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
+import ru.fasdev.tfs.view.feature.mapper.toUserUi
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
@@ -25,7 +29,8 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 
-class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, ImplBackPressed {
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener,
+    ImplBackPressed {
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
@@ -44,7 +49,11 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { BaseAdapter<ViewType>(holderFactory) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentPeopleBinding.bind(this)
         }
@@ -71,8 +80,18 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
 
-        //TODO: FIX THIS
-        //adapter.items = usersInteractor.getAllUsers().mapToUserUi { usersInteractor.getIsOnlineStatusUser(it) }
+        usersInteractor.getAllUsers()
+            .flatMapObservable { items -> Observable.fromIterable(items) }
+            .concatMap { item ->
+                usersInteractor.getIsOnlineStatusUser(item.id)
+                    .map { item.toUserUi(it) }
+                    .toObservable()
+            }
+            .toList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { array ->
+                adapter.items = array
+            }
     }
 
     private fun searchUser(query: String = "") {
