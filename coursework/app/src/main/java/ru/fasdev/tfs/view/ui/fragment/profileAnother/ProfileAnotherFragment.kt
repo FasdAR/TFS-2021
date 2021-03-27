@@ -61,13 +61,24 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
+        val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
         userInteractor.getUserById(idUser)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { user ->
-                val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
                 cardProfile.fullName = user.fullName
-                //cardProfile.status = userInteractor.getStatusUser(user.id)
-                //cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
+            }
+
+        userInteractor.getStatusUser(idUser)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { status ->
+                cardProfile.status = status
+            }
+
+        userInteractor.getIsOnlineStatusUser(idUser)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { status ->
+                cardProfile.isOnline = status
             }
     }
 
