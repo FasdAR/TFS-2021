@@ -1,19 +1,40 @@
 package ru.fasdev.tfs.domain.user.interactor
 
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.model.User
 import ru.fasdev.tfs.domain.model.UserStatus
 import ru.fasdev.tfs.domain.user.repo.UserRepo
 
 class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
-    override fun getAllUsers(): List<User> = usersRepo.getAllUsers()
-    override fun getUserById(id: Int): User? = usersRepo.getUserById(id)
-    override fun getStatusUser(id: Int): UserStatus = usersRepo.getStatusUser(id)
-    override fun getIsOnlineStatusUser(id: Int): Boolean = usersRepo.isOnlineUser(id)
+    override fun getAllUsers(): Single<List<User>> {
+        return Single.just(usersRepo.getAllUsers())
+            .subscribeOn(Schedulers.io())
+    }
 
-    override fun searchUser(query: String): List<User> {
-        return getAllUsers().filter {
-            val resQuery = query.toLowerCase().trim()
-            it.fullName.toLowerCase().contains(resQuery) || it.email.toLowerCase().contains(resQuery)
-        }
+    override fun getUserById(id: Int): Single<User> {
+        return Single.just(usersRepo.getUserById(id)!!)
+            .subscribeOn(Schedulers.io())
+    }
+
+    override fun getStatusUser(id: Int): Single<UserStatus> {
+        return Single.just(usersRepo.getStatusUser(id))
+            .subscribeOn(Schedulers.io())
+    }
+
+    override fun getIsOnlineStatusUser(id: Int): Single<Boolean> {
+        return Single.just(usersRepo.isOnlineUser(id))
+            .subscribeOn(Schedulers.io())
+    }
+
+    override fun searchUser(query: String): Single<List<User>> {
+        return getAllUsers()
+            .map {
+                it.filter {
+                    val resQuery = query.toLowerCase().trim()
+                    it.fullName.toLowerCase().contains(resQuery) || it.email.toLowerCase()
+                        .contains(resQuery)
+                }
+            }
     }
 }
