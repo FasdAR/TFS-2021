@@ -83,21 +83,25 @@ class TopicListFragment :
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
-        //TODO: MAP THIS FUNTION TO RX
-        /*
-        val uiModels = mutableListOf<ViewType>().apply { addAll(adapter.items) }
+        topicInteractor.getTopicsInStream(idStream)
+            .map { it.mapToTopicUi() }
+            .map { topics ->
+                val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
 
-        val topics = topicInteractor.getTopicsInStream(idStream).mapToTopicUi()
+                val currentStreamIndex =
+                    currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
+                val stream = currentArray[currentStreamIndex] as StreamUi
+                currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
 
-        val streamIndex = uiModels.indexOfFirst { it.uId == idStream && it is StreamUi }
-        val stream = uiModels[streamIndex] as StreamUi
-        uiModels[streamIndex] = stream.copy(isOpen = opened)
+                if (opened) currentArray.addAll(currentStreamIndex + 1, topics)
+                else currentArray.removeAll(topics)
 
-        if (opened) uiModels.addAll(streamIndex + 1, topics)
-        else uiModels.removeAll(topics)
-
-        adapter.items = uiModels
-        */
+                return@map currentArray
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { array ->
+                adapter.items = array
+            }
     }
 
     override fun onClickTopic(idTopic: Int) {
