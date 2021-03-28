@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,8 +44,6 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
 class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongClickMessageListener,
     MessageViewHolder.OnClickReactionListener, AsyncListDiffer.ListListener<ViewType> {
-
-    //TODO: CHECK AND FIXED REACTION EMOJI
 
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
@@ -114,6 +113,22 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
+        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
+            val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
+
+            selectedEmoji?.let {
+                interactor
+                    .changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(
+                        onComplete = {
+                            updateChatItems()
+                        },
+                        onError = ::onError
+                    )
+            }
+        }
+
         compositeDisposable.add(
             topicInteractor
                 .getTopic(idSubTopic)
@@ -151,9 +166,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
             val msgText = binding.msgText.text.toString().trim()
             if (msgText.isNotEmpty()) {
                 compositeDisposable.add(
-                    interactor.sendMessage(currentChatId, msgText).subscribeBy(onError = ::onError)
+                    interactor.sendMessage(currentChatId, msgText).subscribeBy(onComplete = {updateChatItems()}, onError = ::onError)
                 )
-                updateChatItems()
 
                 binding.msgText.text?.clear()
             }
@@ -210,9 +224,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
         compositeDisposable.add(
             interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
-                .subscribeBy(onError = ::onError)
+                .subscribeBy(onComplete = {updateChatItems()}, onError = ::onError)
         )
-        updateChatItems()
     }
 
     override fun onCurrentListChanged(

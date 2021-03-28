@@ -7,6 +7,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.TestError
 import ru.fasdev.tfs.domain.message.repo.MessageRepo
 import ru.fasdev.tfs.domain.model.Message
+import sun.rmi.runtime.Log
 
 class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor {
     companion object {
@@ -39,14 +40,17 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
             .flatMapObservable { array -> Observable.fromIterable(array) }
             .filter { it.id == idMessage }
             .firstElement()
-            .flatMapObservable { Observable.fromIterable(it.reactions) }
-            .filter { it.emoji == emoji }
-            .firstElement()
-            .map { it.isSelected }
-            .flatMapCompletable { isSelected ->
-                Completable.fromCallable {
-                    setSelectedReaction(idChat, idMessage, emoji, !isSelected)
+            .flatMapSingle {
+                val indexReaction = it.reactions.indexOfFirst { it.emoji == emoji }
+                if (indexReaction != -1) {
+                    Single.just(it.reactions[indexReaction].isSelected)
                 }
+                else {
+                    Single.just(false)
+                }
+            }
+            .flatMapCompletable { isSelected ->
+                setSelectedReaction(idChat, idMessage, emoji, !isSelected)
             }
             .subscribeOn(Schedulers.io())
     }

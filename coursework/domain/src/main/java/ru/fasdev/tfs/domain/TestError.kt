@@ -6,7 +6,7 @@ class TestError {
     companion object {
         fun testError() {
             val randomError = Random.nextBoolean()
-            if (randomError) error("YEEEEE, IT IS A RANDOM ERROR")
+            //if (randomError) error("YEEEEE, IT IS A RANDOM ERROR")
         }
     }
 }
