@@ -94,9 +94,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         compositeDisposable.add(
             searchSubject
                 .debounce(500, TimeUnit.MILLISECONDS)
-                .filter { it.isNotEmpty() }
                 .distinctUntilChanged()
-                .switchMapSingle { usersInteractor.searchUser(it) }
+                .switchMapSingle { if (it.isNotEmpty()) usersInteractor.searchUser(it) else usersInteractor.getAllUsers()}
                 .flatMapSingle { items ->
                     Observable.fromIterable(items)
                         .concatMap { user ->
@@ -116,12 +115,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
     }
 
     private fun searchUser(query: String = "") {
-        if (query.isEmpty()) {
-            loadAllUsers()
-        }
-        else {
-            searchSubject.onNext(query)
-        }
+        searchSubject.onNext(query)
     }
 
     private fun loadAllUsers() {
