@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
@@ -104,6 +105,8 @@ class TopicListFragment :
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle { if (it.isNotEmpty()) topicInteractor.searchStream(it) else topicInteractor.getAllStreams() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .flatMapSingle { Observable.fromIterable(it).map { it.toStreamUi() }.toList() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(

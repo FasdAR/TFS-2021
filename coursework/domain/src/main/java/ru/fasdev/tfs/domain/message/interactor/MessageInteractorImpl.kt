@@ -16,7 +16,7 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun getMessageByChat(idChat: Int): Single<List<Message>> {
         return Single.just(messageRepo.getMessageByChat(idChat))
-            .doOnSuccess { TestError.testError() }
+            .doOnSuccess { TestError.testError("Get messages") }
             .subscribeOn(Schedulers.io())
     }
 
@@ -25,7 +25,7 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
         emoji: String, isSelected: Boolean
     ): Completable {
         return Completable.fromCallable {
-            TestError.testError()
+            TestError.testError("Selected Reaction")
 
             if (isSelected) {
                 messageRepo.addReaction(idChat, idMessage, CURRENT_USER, emoji)
@@ -57,7 +57,7 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun sendMessage(idChat: Int, text: String): Completable {
         return Completable.fromCallable {
-            TestError.testError()
+            TestError.testError("Send Message")
 
             messageRepo.sendMessage(idChat, CURRENT_USER, text)
         }.subscribeOn(Schedulers.io())
