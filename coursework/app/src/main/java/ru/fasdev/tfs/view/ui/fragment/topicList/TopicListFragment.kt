@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
@@ -32,6 +33,7 @@ import ru.fasdev.tfs.view.ui.fragment.topicList.adapter.viewType.StreamUi
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
+import java.util.concurrent.TimeUnit
 
 class TopicListFragment :
     Fragment(R.layout.fragment_topic_list),
@@ -71,6 +73,7 @@ class TopicListFragment :
 
     private val searchObservable get() = (parentFragment as ChannelsFragment).provideSearch
 
+    private val searchSubject = PublishSubject.create<String>()
     private val compositeDisposable = CompositeDisposable()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,6 +93,21 @@ class TopicListFragment :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
+
+        compositeDisposable.add(
+            searchSubject
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .switchMapSingle { if (it.isNotEmpty()) topicInteractor.searchStream(it) else topicInteractor.getAllStreams() }
+                .flatMapSingle { Observable.fromIterable(it).map { it.toStreamUi() }.toList() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onNext = {
                         adapter.items = it
                     },
                     onError = ::onError
@@ -131,19 +149,7 @@ class TopicListFragment :
     }
 
     private fun searchStream(query: String) {
-        compositeDisposable.add(
-            topicInteractor.searchStream(query)
-                .flatMapObservable { Observable.fromIterable(it) }
-                .map { it.toStreamUi() }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
+        searchSubject.onNext(query)
     }
 
     override fun onDestroy() {
