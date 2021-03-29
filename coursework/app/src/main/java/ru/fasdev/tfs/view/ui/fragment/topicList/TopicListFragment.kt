@@ -1,8 +1,11 @@
 package ru.fasdev.tfs.view.ui.fragment.topicList
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +17,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.databinding.FragmentTopicListBinding
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
@@ -51,7 +55,8 @@ class TopicListFragment :
         }
     }
 
-    lateinit var rvTopics: RecyclerView
+    private var _binding: FragmentTopicListBinding? = null
+    private val binding get() =  _binding!!
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
@@ -75,14 +80,23 @@ class TopicListFragment :
     private val searchSubject = PublishSubject.create<String>()
     private val compositeDisposable = CompositeDisposable()
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState).apply {
+            _binding = FragmentTopicListBinding.bind(this!!)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         searchObservable.observe(viewLifecycleOwner) { searchStream(it) }
 
-        rvTopics = view as RecyclerView
-        rvTopics.layoutManager = LinearLayoutManager(requireContext())
-        rvTopics.adapter = adapter
+        binding.rvTopics.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTopics.adapter = adapter
 
         getAllStreams()
         observerSearch()
@@ -106,13 +120,26 @@ class TopicListFragment :
     }
 
     private fun onError(error: Throwable) {
-        Snackbar.make(rvTopics, error.message.toString(), Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun loadingState() {
+        binding.loadingLayout.root.isVisible = true
+        binding.rvTopics.isVisible = false
+    }
+
+    private fun loadedState() {
+        binding.loadingLayout.root.isVisible = false
+        binding.rvTopics.isVisible = true
     }
 
     //#region Rx chains
     private fun getAllStreams() {
         compositeDisposable.add(
             topicInteractor.getAllStreams()
+                .doOnSubscribe {
+                    loadingState()
+                }
                 .flatMapObservable { Observable.fromIterable(it) }
                 .map { it.toStreamUi() }
                 .toList()
@@ -120,6 +147,7 @@ class TopicListFragment :
                 .subscribeBy(
                     onSuccess = {
                         adapter.items = it
+                        loadedState()
                     },
                     onError = ::onError
                 )
@@ -129,6 +157,9 @@ class TopicListFragment :
     private fun observerSearch() {
         compositeDisposable.add(
             searchSubject
+                .doOnNext {
+                    loadingState()
+                }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
@@ -146,6 +177,7 @@ class TopicListFragment :
                 .subscribeBy(
                     onNext = {
                         adapter.items = it
+                        loadedState()
                     },
                     onError = ::onError
                 )
@@ -155,6 +187,9 @@ class TopicListFragment :
     private fun loadedTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.addAll(
             topicInteractor.getTopicsInStream(idStream)
+                .doOnSubscribe {
+                    loadingState()
+                }
                 .flatMapObservable {
                     Observable.fromIterable(it)
                 }
@@ -183,6 +218,7 @@ class TopicListFragment :
                 .subscribeBy(
                     onSuccess = {
                         adapter.items = it
+                        loadedState()
                     },
                     onError = ::onError
                 )
