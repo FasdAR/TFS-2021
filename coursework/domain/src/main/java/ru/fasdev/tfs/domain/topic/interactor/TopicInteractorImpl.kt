@@ -3,7 +3,6 @@ package ru.fasdev.tfs.domain.topic.interactor
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import ru.fasdev.tfs.domain.TestError
 import ru.fasdev.tfs.domain.model.Stream
 import ru.fasdev.tfs.domain.model.Topic
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
@@ -11,13 +10,11 @@ import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
     override fun getAllStreams(): Single<List<Stream>> {
         return Single.just(topicRepo.getAllStreams())
-            .doOnSuccess { TestError.testError("Get all streams") }
             .subscribeOn(Schedulers.io())
     }
 
     override fun getAllTopics(): Single<List<Topic>> {
         return Single.just(topicRepo.getAllTopics())
-            .doOnSuccess { TestError.testError("Get all topics") }
             .subscribeOn(Schedulers.io())
     }
 

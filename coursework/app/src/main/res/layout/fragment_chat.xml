@@ -33,7 +33,6 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -42,6 +41,17 @@
         android:paddingBottom="10dp"
         android:clipToPadding="false"
         tools:listitem="@layout/item_external_message"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintBottom_toTopOf="@id/msg_text"/>
+
+
+    <include
+        layout="@layout/layout_loading"
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/msg_text"/>
 

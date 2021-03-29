@@ -148,7 +148,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
-        updateChatItems()
+        updateChatItems(true)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -186,6 +186,16 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
     ) {
         if (!binding.rvList.canScrollVertically(1))
             binding.rvList.scrollToPosition(0)
+    }
+
+    private fun loadingState() {
+        binding.loadingLayout.root.isVisible = true
+        binding.rvList.isVisible = false
+    }
+
+    private fun loadedState() {
+        binding.loadingLayout.root.isVisible = false
+        binding.rvList.isVisible = true
     }
 
     private fun onError(error: Throwable) {
@@ -246,9 +256,12 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         )
     }
 
-    private fun updateChatItems() {
+    private fun updateChatItems(isLoading: Boolean = false) {
         compositeDisposable.add(
             interactor.getMessageByChat(currentChatId)
+                .doOnSubscribe {
+                    if (isLoading) loadingState()
+                }
                 .map { it.mapToUiList(currentUserId) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
@@ -257,6 +270,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
                 .subscribeBy(
                     onSuccess = {
                         adapter.items = it
+                        loadedState()
                     },
                     onError = ::onError
                 )
