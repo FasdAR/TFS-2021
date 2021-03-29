@@ -174,7 +174,7 @@ class ExternalMessageViewGroup
             if (avatarSrc.isDigitsOnly()) {
                 avatarImageView.setImageResource(avatarSrc.toInt())
             } else {
-                // TODO: LOAD FROM OTHER METHOD
+                // TODO: LOAD FROM OTHER METHOD IMAGE
             }
         }
     }
