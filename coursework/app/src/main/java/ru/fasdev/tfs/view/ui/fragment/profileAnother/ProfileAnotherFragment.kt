@@ -50,6 +50,8 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
     private val compositeDisposable = CompositeDisposable()
+    private val cardProfile
+        get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,9 +73,21 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
-        val cardProfile =
-            childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+        loadProfileData()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+        _binding = null
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+    }
+
+    //#region Rx chains
+    private fun loadProfileData() {
         compositeDisposable.addAll(
             userInteractor.getUserById(idUser)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -101,14 +115,5 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
                 )
         )
     }
-
-    private fun onError(error: Throwable) {
-        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
-        _binding = null
-    }
+    //#endregion
 }

@@ -17,6 +17,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
+import ru.fasdev.tfs.domain.model.User
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
@@ -26,6 +27,7 @@ import ru.fasdev.tfs.view.feature.mapper.toUserUi
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
+import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewType.UserUi
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
@@ -90,56 +92,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         binding.rvUsers.adapter = adapter
 
         loadAllUsers()
-
-        compositeDisposable.add(
-            searchSubject
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMapSingle { if (it.isNotEmpty()) usersInteractor.searchUser(it) else usersInteractor.getAllUsers()}
-                .flatMapSingle { items ->
-                    Observable.fromIterable(items)
-                        .concatMap { user ->
-                            usersInteractor.getIsOnlineStatusUser(user.id)
-                                .map { user.toUserUi(it) }
-                                .toObservable()
-                        }
-                        .toList()
-                }
-                .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun searchUser(query: String = "") {
-        searchSubject.onNext(query)
-    }
-
-    private fun loadAllUsers() {
-        compositeDisposable.add(
-            usersInteractor.getAllUsers()
-                .flatMapObservable { items -> Observable.fromIterable(items) }
-                .concatMap { item ->
-                    usersInteractor.getIsOnlineStatusUser(item.id)
-                        .map { item.toUserUi(it) }
-                        .toObservable()
-                }
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = { array ->
-                        adapter.items = array
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun onError(error: Throwable) {
-        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+        observerSearch()
     }
 
     override fun onDestroy() {
@@ -161,4 +114,63 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
 
         return false
     }
+
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+    }
+
+    //#region Rx chains
+    private fun searchUser(query: String = "") {
+        searchSubject.onNext(query)
+    }
+
+    private fun Observable<User>.mapToUserUi(): Observable<UserUi> {
+        return concatMap { user ->
+            usersInteractor.getIsOnlineStatusUser(user.id)
+                .map { user.toUserUi(it) }
+                .toObservable()
+        }
+    }
+
+    private fun observerSearch() {
+        compositeDisposable.add(
+            searchSubject
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .switchMapSingle {
+                    if (it.isNotEmpty()) usersInteractor.searchUser(it)
+                    else usersInteractor.getAllUsers()
+                }
+                .flatMapSingle { items ->
+                    Observable.fromIterable(items)
+                        .mapToUserUi()
+                        .toList()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onNext = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    private fun loadAllUsers() {
+        compositeDisposable.add(
+            usersInteractor.getAllUsers()
+                .flatMapObservable { items -> Observable.fromIterable(items) }
+                .mapToUserUi()
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { array ->
+                        adapter.items = array
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+    //#endregion
 }

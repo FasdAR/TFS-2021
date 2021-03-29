@@ -20,8 +20,6 @@ import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 import ru.fasdev.tfs.view.di.ProvideFragmentRouter
-import ru.fasdev.tfs.view.feature.mapper.mapToStreamUi
-import ru.fasdev.tfs.view.feature.mapper.mapToTopicUi
 import ru.fasdev.tfs.view.feature.mapper.toStreamUi
 import ru.fasdev.tfs.view.feature.mapper.toTopicUi
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
@@ -86,6 +84,33 @@ class TopicListFragment :
         rvTopics.layoutManager = LinearLayoutManager(requireContext())
         rvTopics.adapter = adapter
 
+        getAllStreams()
+        observerSearch()
+    }
+
+    private fun searchStream(query: String) {
+        searchSubject.onNext(query)
+    }
+
+    override fun onClickStream(idStream: Int, opened: Boolean) {
+        loadedTopics(idStream, opened)
+    }
+
+    override fun onClickTopic(idTopic: Int) {
+        fragmentRouter.navigateTo(ChatFragment.getScreen(idTopic))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
+
+    private fun onError(error: Throwable) {
+        Snackbar.make(rvTopics, error.message.toString(), Snackbar.LENGTH_LONG).show()
+    }
+
+    //#region Rx chains
+    private fun getAllStreams() {
         compositeDisposable.add(
             topicInteractor.getAllStreams()
                 .flatMapObservable { Observable.fromIterable(it) }
@@ -99,15 +124,24 @@ class TopicListFragment :
                     onError = ::onError
                 )
         )
+    }
 
+    private fun observerSearch() {
         compositeDisposable.add(
             searchSubject
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
-                .switchMapSingle { if (it.isNotEmpty()) topicInteractor.searchStream(it) else topicInteractor.getAllStreams() }
+                .switchMapSingle {
+                    if (it.isNotEmpty()) topicInteractor.searchStream(it)
+                    else topicInteractor.getAllStreams()
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .flatMapSingle { Observable.fromIterable(it).map { it.toStreamUi() }.toList() }
+                .flatMapSingle { array ->
+                    Observable.fromIterable(array)
+                        .map { it.toStreamUi() }
+                        .toList()
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = {
@@ -118,11 +152,15 @@ class TopicListFragment :
         )
     }
 
-    override fun onClickStream(idStream: Int, opened: Boolean) {
+    private fun loadedTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.addAll(
             topicInteractor.getTopicsInStream(idStream)
-                .flatMapObservable { Observable.fromIterable(it) }
-                .map { it.toTopicUi() }
+                .flatMapObservable {
+                    Observable.fromIterable(it)
+                }
+                .map {
+                    it.toTopicUi()
+                }
                 .toList()
                 .map { topics ->
                     val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
@@ -132,8 +170,12 @@ class TopicListFragment :
                     val stream = currentArray[currentStreamIndex] as StreamUi
                     currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
 
-                    if (opened) currentArray.addAll(currentStreamIndex + 1, topics)
-                    else currentArray.removeAll(topics)
+                    if (opened) {
+                        currentArray.addAll(currentStreamIndex + 1, topics)
+                    }
+                    else {
+                        currentArray.removeAll(topics)
+                    }
 
                     return@map currentArray
                 }
@@ -146,21 +188,5 @@ class TopicListFragment :
                 )
         )
     }
-
-    override fun onClickTopic(idTopic: Int) {
-        fragmentRouter.navigateTo(ChatFragment.getScreen(idTopic))
-    }
-
-    private fun searchStream(query: String) {
-        searchSubject.onNext(query)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
-    }
-
-    private fun onError(error: Throwable) {
-        Snackbar.make(rvTopics, error.message.toString(), Snackbar.LENGTH_LONG).show()
-    }
+    //#endregion
 }

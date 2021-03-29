@@ -55,15 +55,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val rvList: RecyclerView = binding.rvEmojiList
         rvList.adapter = adapter
 
-        disposeEmojiLoad = Single.just(EmojiUtil.getListEmoji(requireContext()))
-            .flatMapObservable { Observable.fromIterable(it.withIndex()) }
-            .map { EmojiUi(it.index, it.value) }
-            .toList()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { array ->
-                adapter.items = array
-            }
+        loadEmoji()
 
         rvList.post {
             val sizeColumn = rvList.width / EmojiUi.COLUMN_WIDTH // Calculate column size
@@ -81,4 +73,18 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         setFragmentResult(TAG, bundleOf(KEY_SELECTED_EMOJI to emoji))
         dismiss()
     }
+
+    //#region Rx chains
+    private fun loadEmoji() {
+        disposeEmojiLoad = Single.just(EmojiUtil.getListEmoji(requireContext()))
+            .flatMapObservable { Observable.fromIterable(it.withIndex()) }
+            .map { EmojiUi(it.index, it.value) }
+            .toList()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { array ->
+                adapter.items = array
+            }
+    }
+    //#endregion
 }

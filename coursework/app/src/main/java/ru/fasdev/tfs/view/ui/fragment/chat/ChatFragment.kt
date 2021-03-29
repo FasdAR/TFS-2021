@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -116,37 +117,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
-            selectedEmoji?.let {
-                interactor
-                    .changeSelectedReaction(currentChatId, selectedMessageId, selectedEmoji)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(
-                        onComplete = {
-                            updateChatItems()
-                        },
-                        onError = ::onError
-                    )
-            }
+            selectedEmoji?.let { changeSelectedReaction(emoji = it) }
         }
 
-        compositeDisposable.add(
-            topicInteractor
-                .getTopic(idSubTopic)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
-                }
-                .observeOn(Schedulers.io())
-                .flatMap { topicInteractor.getStream(it.idStream) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        binding.toolbarLayout.title.text =
-                            resources.getString(R.string.main_topic_title, it.name)
-                    },
-                    onError = ::onError
-                )
-        )
+        getTopic(idSubTopic)
 
         with(binding.toolbarLayout) {
             toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
@@ -158,19 +132,16 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         }
 
         binding.msgText.addTextChangedListener {
-            if (it.isNullOrEmpty()) binding.sendBtn.setIconResource(R.drawable.ic_add)
-            else binding.sendBtn.setIconResource(R.drawable.ic_send)
+            if (it.isNullOrEmpty()) {
+                binding.sendBtn.setIconResource(R.drawable.ic_add)
+            } else {
+                binding.sendBtn.setIconResource(R.drawable.ic_send)
+            }
         }
 
         binding.sendBtn.setOnClickListener {
             val msgText = binding.msgText.text.toString().trim()
-            if (msgText.isNotEmpty()) {
-                compositeDisposable.add(
-                    interactor.sendMessage(currentChatId, msgText).subscribeBy(onComplete = {updateChatItems()}, onError = ::onError)
-                )
-
-                binding.msgText.text?.clear()
-            }
+            sendMessage(msgText)
         }
 
         val rvList: RecyclerView = binding.rvList
@@ -191,22 +162,6 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         _binding = null
     }
 
-    private fun updateChatItems() {
-        compositeDisposable.add(
-            interactor.getMessageByChat(currentChatId)
-                .map { it.mapToUiList(currentUserId) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
-
-        selectedMessageId = 0
-    }
-
     private fun showBottomEmojiDialog() {
         SelectEmojiBottomDialog.show(parentFragmentManager)
     }
@@ -222,20 +177,90 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        compositeDisposable.add(
-            interactor.changeSelectedReaction(currentChatId, uIdMessage, emoji)
-                .subscribeBy(onComplete = {updateChatItems()}, onError = ::onError)
-        )
+        changeSelectedReaction(uIdMessage, emoji)
     }
 
     override fun onCurrentListChanged(
         previousList: MutableList<ViewType>,
         currentList: MutableList<ViewType>
     ) {
-        if (!binding.rvList.canScrollVertically(1)) binding.rvList.scrollToPosition(0)
+        if (!binding.rvList.canScrollVertically(1))
+            binding.rvList.scrollToPosition(0)
     }
 
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
+
+    //#region Rx chains
+    private fun sendMessage(messageText: String) {
+        compositeDisposable.add(
+            Single.just(messageText)
+                .filter { it.isNotEmpty() }
+                .doOnSuccess {
+                    binding.msgText.text?.clear()
+                }
+                .flatMapCompletable { interactor.sendMessage(currentChatId, it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onComplete = {
+                        updateChatItems()
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    private fun getTopic(idSubTopic: Int) {
+        compositeDisposable.add(
+            topicInteractor
+                .getTopic(idSubTopic)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
+                }
+                .observeOn(Schedulers.io())
+                .flatMap { topicInteractor.getStream(it.idStream) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        binding.toolbarLayout.title.text =
+                            resources.getString(R.string.main_topic_title, it.name)
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    private fun changeSelectedReaction(idMessage: Int = selectedMessageId, emoji: String) {
+        compositeDisposable.add(
+            interactor
+                .changeSelectedReaction(currentChatId, idMessage, emoji)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onComplete = {
+                        updateChatItems()
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    private fun updateChatItems() {
+        compositeDisposable.add(
+            interactor.getMessageByChat(currentChatId)
+                .map { it.mapToUiList(currentUserId) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    selectedMessageId = 0
+                }
+                .subscribeBy(
+                    onSuccess = {
+                        adapter.items = it
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+    //#endregion
 }
