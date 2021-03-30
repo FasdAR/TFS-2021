@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.view.ui.fragment.people
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -37,7 +35,9 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
 
-class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener,
+class PeopleFragment :
+    Fragment(R.layout.fragment_people),
+    UserViewHolder.OnClickUserListener,
     ImplBackPressed {
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
@@ -115,12 +115,11 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
         return false
     }
 
-
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun searchUser(query: String = "") {
         searchSubject.onNext(query)
     }
@@ -172,5 +171,5 @@ class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClic
                 )
         )
     }
-    //#endregion
+    // #endregion
 }

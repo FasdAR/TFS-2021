@@ -18,4 +18,4 @@ class TestEnv {
 fun Completable.testEnv(errorTitle: String = ERR_RANDOM_TITLE): Completable = delay(TIME_EMULATE_DELAY, TimeUnit.MILLISECONDS)
 fun <T> Observable<T>.testEnv(errorTitle: String = ERR_RANDOM_TITLE): Observable<T> = delay(TIME_EMULATE_DELAY, TimeUnit.MILLISECONDS)
 fun <T> Single<T>.testEnv(errorTitle: String = ERR_RANDOM_TITLE): Single<T> = delay(TIME_EMULATE_DELAY, TimeUnit.MILLISECONDS)
-    .doOnSuccess { if (Random.nextBoolean()) error("$errorTitle")}
+    .doOnSuccess { if (Random.nextBoolean()) error("$errorTitle") }

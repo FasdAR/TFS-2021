@@ -8,7 +8,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -57,7 +56,7 @@ class TopicListFragment :
     }
 
     private var _binding: FragmentTopicListBinding? = null
-    private val binding get() =  _binding!!
+    private val binding get() = _binding!!
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
@@ -122,7 +121,7 @@ class TopicListFragment :
 
     private fun onError(error: Throwable) {
         loadedState()
-        Snackbar.make(binding.root, "ERROR: ${error.message.toString()}", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
 
     private fun loadingState() {
@@ -135,7 +134,7 @@ class TopicListFragment :
         binding.rvTopics.isVisible = true
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun getAllStreams() {
         compositeDisposable.add(
             topicInteractor.getAllStreams()
@@ -203,8 +202,7 @@ class TopicListFragment :
 
                     if (opened) {
                         currentArray.addAll(currentStreamIndex + 1, topics)
-                    }
-                    else {
+                    } else {
                         currentArray.removeAll(topics)
                     }
 
@@ -219,5 +217,5 @@ class TopicListFragment :
                 )
         )
     }
-    //#endregion
+    // #endregion
 }

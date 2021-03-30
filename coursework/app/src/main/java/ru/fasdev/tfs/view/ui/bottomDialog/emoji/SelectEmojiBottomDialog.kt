@@ -74,7 +74,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         dismiss()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun loadEmoji() {
         disposeEmojiLoad = Single.just(EmojiUtil.getListEmoji(requireContext()))
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
@@ -86,5 +86,5 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
                 adapter.items = array
             }
     }
-    //#endregion
+    // #endregion
 }

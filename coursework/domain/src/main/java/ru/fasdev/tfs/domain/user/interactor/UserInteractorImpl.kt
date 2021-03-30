@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.model.User
 import ru.fasdev.tfs.domain.model.UserStatus
-import ru.fasdev.tfs.domain.testEnv
 import ru.fasdev.tfs.domain.user.repo.UserRepo
 
 class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {

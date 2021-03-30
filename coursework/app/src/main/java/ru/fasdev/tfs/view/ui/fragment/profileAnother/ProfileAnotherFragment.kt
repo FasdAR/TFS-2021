@@ -86,7 +86,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun loadProfileData() {
         compositeDisposable.addAll(
             userInteractor.getUserById(idUser)
@@ -115,5 +115,5 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
                 )
         )
     }
-    //#endregion
+    // #endregion
 }

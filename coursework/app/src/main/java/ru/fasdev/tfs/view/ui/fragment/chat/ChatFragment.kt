@@ -24,7 +24,6 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
-import ru.fasdev.tfs.domain.testEnv
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
@@ -44,8 +43,11 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
-class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongClickMessageListener,
-    MessageViewHolder.OnClickReactionListener, AsyncListDiffer.ListListener<ViewType> {
+class ChatFragment :
+    Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener,
+    MessageViewHolder.OnClickReactionListener,
+    AsyncListDiffer.ListListener<ViewType> {
 
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
@@ -203,7 +205,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun sendMessage(messageText: String) {
         compositeDisposable.add(
             Single.just(messageText)
@@ -277,5 +279,5 @@ class ChatFragment : Fragment(R.layout.fragment_chat), MessageViewHolder.OnLongC
                 )
         )
     }
-    //#endregion
+    // #endregion
 }

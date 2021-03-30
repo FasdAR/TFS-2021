@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.model.Stream
 import ru.fasdev.tfs.domain.model.Topic
-import ru.fasdev.tfs.domain.testEnv
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
 
 class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
