@@ -18,6 +18,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
+import ru.fasdev.tfs.domain.testEnv
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
@@ -120,7 +121,8 @@ class TopicListFragment :
     }
 
     private fun onError(error: Throwable) {
-        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+        loadedState()
+        Snackbar.make(binding.root, "ERROR: ${error.message.toString()}", Snackbar.LENGTH_LONG).show()
     }
 
     private fun loadingState() {
@@ -137,6 +139,7 @@ class TopicListFragment :
     private fun getAllStreams() {
         compositeDisposable.add(
             topicInteractor.getAllStreams()
+                .testEnv("test")
                 .doOnSubscribe {
                     loadingState()
                 }
@@ -157,9 +160,6 @@ class TopicListFragment :
     private fun observerSearch() {
         compositeDisposable.add(
             searchSubject
-                .doOnNext {
-                    loadingState()
-                }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
@@ -177,7 +177,6 @@ class TopicListFragment :
                 .subscribeBy(
                     onNext = {
                         adapter.items = it
-                        loadedState()
                     },
                     onError = ::onError
                 )
@@ -187,9 +186,6 @@ class TopicListFragment :
     private fun loadedTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.addAll(
             topicInteractor.getTopicsInStream(idStream)
-                .doOnSubscribe {
-                    loadingState()
-                }
                 .flatMapObservable {
                     Observable.fromIterable(it)
                 }
@@ -218,7 +214,6 @@ class TopicListFragment :
                 .subscribeBy(
                     onSuccess = {
                         adapter.items = it
-                        loadedState()
                     },
                     onError = ::onError
                 )

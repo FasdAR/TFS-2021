@@ -24,6 +24,7 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
+import ru.fasdev.tfs.domain.testEnv
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
 import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl

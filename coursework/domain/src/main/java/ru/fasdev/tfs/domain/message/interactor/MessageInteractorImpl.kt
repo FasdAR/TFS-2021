@@ -15,7 +15,6 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
 
     override fun getMessageByChat(idChat: Int): Single<List<Message>> {
         return Single.just(messageRepo.getMessageByChat(idChat))
-            .testEnv("Get msg by chat")
             .subscribeOn(Schedulers.io())
     }
 
@@ -26,12 +25,11 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
         return Completable.fromCallable {
             if (isSelected) messageRepo.addReaction(idChat, idMessage, CURRENT_USER, emoji)
             else messageRepo.removeReaction(idChat, idMessage, CURRENT_USER, emoji)
-        }.testEnv("Selected reaction").subscribeOn(Schedulers.io())
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun changeSelectedReaction(idChat: Int, idMessage: Int, emoji: String): Completable {
         return getMessageByChat(idChat)
-            .testEnv("Change selected reaction")
             .flatMapObservable { array -> Observable.fromIterable(array) }
             .filter { it.id == idMessage }
             .firstElement()
@@ -52,6 +50,6 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
     override fun sendMessage(idChat: Int, text: String): Completable {
         return Completable.fromCallable {
             messageRepo.sendMessage(idChat, CURRENT_USER, text)
-        }.testEnv("Send message").subscribeOn(Schedulers.io())
+        }.subscribeOn(Schedulers.io())
     }
 }
