@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation project(":domain")
+    implementation project(":data")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$androidXCoreKtx"
     implementation "androidx.appcompat:appcompat:$androidXAppCompat"
@@ -47,4 +48,13 @@ dependencies {
 
     implementation "io.reactivex.rxjava3:rxkotlin:3.0.1"
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0"
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
 }
