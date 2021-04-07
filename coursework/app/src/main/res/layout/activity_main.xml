@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ui.activity.main.MainActivity">
+    tools:context=".screen.activity.main.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_container"
-        class="ru.fasdev.tfs.view.ui.fragment.main.MainFragment"/>
+        class="ru.fasdev.tfs.screen.fragment.main.MainFragment"/>
 
 </FrameLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ru.fasdev.tfs.view.ui.global.view.viewGroup.message.ExternalMessageViewGroup
+<ru.fasdev.tfs.view.message.base.ExternalMessageView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="?attr/selectableItemBackground"
     android:id="@+id/message"

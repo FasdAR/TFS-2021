@@ -14,7 +14,7 @@
             android:id="@+id/toolbar_layout"
             layout="@layout/layout_toolbar"/>
 
-        <ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
+        <ru.fasdev.tfs.view.searchToolbar.SearchToolbar
             android:id="@+id/search_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
