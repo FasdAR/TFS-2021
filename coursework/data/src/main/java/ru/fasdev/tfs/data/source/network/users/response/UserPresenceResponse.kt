@@ -7,7 +7,7 @@ import ru.fasdev.tfs.data.source.network.response.BaseResponse
 
 @Serializable
 class UserPresenceResponse(
-    override val code: String?,
+    override val code: String? = null,
     override val msg: String,
     override val result: Result,
     val presence: Presence

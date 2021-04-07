@@ -14,6 +14,7 @@ class UserRepoImpl (private val userApi: UserApi): UserRepo
     override fun getAllUsers(): Single<List<User>> {
         return userApi.getAllUsers()
             .flatMapObservable { Observable.fromIterable(it.members) }
+            .filter { !it.isBot }
             .map { it.toUserDomain() }
             .toList()
     }

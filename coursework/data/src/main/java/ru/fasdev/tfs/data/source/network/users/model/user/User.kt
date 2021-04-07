@@ -8,5 +8,6 @@ class User(
     override val email: String,
     @SerialName("user_id") override val userId: Long,
     @SerialName("full_name") override val fullName: String,
-    @SerialName("avatar_url") override val avatarUrl: String
+    @SerialName("avatar_url") override val avatarUrl: String,
+    @SerialName("is_bot") val isBot: Boolean
 ) : BaseUser

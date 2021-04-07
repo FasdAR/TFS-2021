@@ -3,8 +3,11 @@ package ru.fasdev.tfs.di.module
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -24,12 +27,24 @@ class RetrofitModule
             }
         }
 
+        fun getAuthInterceptor(): Interceptor = Interceptor { chain ->
+            val token = "Basic YW5kcmV5cmVkbmlrb3ZAZ21haWwuY29tOk5ud3lUakNVZEpnc0s4Sm1QbWo2YVdIdHJMNWZjUktn"
+            val request: Request = chain.request()
+            val authRequest: Request = request.newBuilder()
+                .header("Authorization", token).build()
+
+            return@Interceptor chain.proceed(authRequest)
+        }
+
         fun getOkHttpClient(
-            loggingInterceptor: HttpLoggingInterceptor = getLoggingInterceptor()
+            loggingInterceptor: HttpLoggingInterceptor = getLoggingInterceptor(),
+            authInterceptor: Interceptor? = getAuthInterceptor()
         ): OkHttpClient {
             return OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .build()
+                .apply {
+                    addInterceptor(loggingInterceptor)
+                    authInterceptor?.let { addInterceptor(it) }
+                }.build()
         }
 
         fun getCallAdapter(): CallAdapter.Factory = RxJava3CallAdapterFactory.create()

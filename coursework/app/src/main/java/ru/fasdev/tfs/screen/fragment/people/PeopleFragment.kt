@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
@@ -142,6 +144,7 @@ class PeopleFragment :
     private fun loadAllUsers() {
         compositeDisposable.add(
             usersInteractor.getAllUsers()
+                .subscribeOn(Schedulers.io())
                 .flatMapObservable { items -> Observable.fromIterable(items) }
                 .mapToUserUi()
                 .toList()
@@ -150,7 +153,7 @@ class PeopleFragment :
                     onSuccess = { array ->
                         adapter.items = array
                     },
-                    onError = ::onError
+                    //onError = ::onError
                 )
         )
     }
