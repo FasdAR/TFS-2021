@@ -13,8 +13,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.old.view.feature.util.hideKeyboard
-import ru.fasdev.tfs.old.view.feature.util.showKeyboard
+import ru.fasdev.tfs.core.ext.hideKeyboard
+import ru.fasdev.tfs.core.ext.showKeyboard
 import ru.fasdev.tfs.core.ext.toDp
 
 class SearchToolbar @JvmOverloads
