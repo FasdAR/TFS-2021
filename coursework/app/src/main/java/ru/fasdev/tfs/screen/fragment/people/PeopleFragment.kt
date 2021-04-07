@@ -14,14 +14,17 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
-import ru.fasdev.tfs.domain.model.User
+import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
-import ru.fasdev.tfs.di.ProvideFragmentRouter
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
+import ru.fasdev.tfs.data.repo.UserRepoImpl
+import ru.fasdev.tfs.di.module.UserDomainModule
+import ru.fasdev.tfs.domain.user.repo.UserRepo
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
@@ -38,10 +41,16 @@ class PeopleFragment :
     Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
     ProviderBackPressed {
+
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
+    }
+
+    object PeopleComponent {
+        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        val userInteractor = UserInteractorImpl(userRepo)
     }
 
     private var _binding: FragmentPeopleBinding? = null
@@ -50,8 +59,7 @@ class PeopleFragment :
     private val rootRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    private val testUsersRepo = TestUserRepoImpl()
-    private val usersInteractor: UserInteractor = UserInteractorImpl(testUsersRepo)
+    private val usersInteractor = PeopleComponent.userInteractor
 
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
@@ -91,7 +99,7 @@ class PeopleFragment :
         binding.rvUsers.adapter = adapter
 
         loadAllUsers()
-        observerSearch()
+        //observerSearch()
     }
 
     override fun onDestroy() {
@@ -100,7 +108,7 @@ class PeopleFragment :
         _binding = null
     }
 
-    override fun onClickUser(idUser: Int) {
+    override fun onClickUser(idUser: Int, email: String) {
         rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser))
         binding.searchLayout.hideKeyboard()
     }
@@ -123,6 +131,32 @@ class PeopleFragment :
         searchSubject.onNext(query)
     }
 
+    private fun Observable<User>.mapToUserUi(): Observable<UserUi> {
+        return concatMap { user ->
+            usersInteractor.getStatusUser(user.email)
+                .map { user.toUserUi(it) }
+                .toObservable()
+        }
+    }
+
+    private fun loadAllUsers() {
+        compositeDisposable.add(
+            usersInteractor.getAllUsers()
+                .flatMapObservable { items -> Observable.fromIterable(items) }
+                .mapToUserUi()
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { array ->
+                        adapter.items = array
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+
+    // #endregion
+    /*
     private fun Observable<User>.mapToUserUi(): Observable<UserUi> {
         return concatMap { user ->
             usersInteractor.getIsOnlineStatusUser(user.id)
@@ -169,6 +203,5 @@ class PeopleFragment :
                     onError = ::onError
                 )
         )
-    }
-    // #endregion
+    }*/
 }

@@ -3,29 +3,21 @@ package ru.fasdev.tfs.domain.user.interactor
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import ru.fasdev.tfs.domain.model.User
-import ru.fasdev.tfs.domain.model.UserStatus
+import ru.fasdev.tfs.domain.user.model.User
+import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.domain.user.repo.UserRepo
 
 class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
     override fun getAllUsers(): Single<List<User>> {
-        return Single.just(usersRepo.getAllUsers())
-            .subscribeOn(Schedulers.io())
+        return usersRepo.getAllUsers()
     }
 
-    override fun getUserById(id: Int): Single<User> {
-        return Single.just(usersRepo.getUserById(id)!!)
-            .subscribeOn(Schedulers.io())
+    override fun getUserById(id: Long): Single<User> {
+        return usersRepo.getUserById(id)
     }
 
-    override fun getStatusUser(id: Int): Single<UserStatus> {
-        return Single.just(usersRepo.getStatusUser(id))
-            .subscribeOn(Schedulers.io())
-    }
-
-    override fun getIsOnlineStatusUser(id: Int): Single<Boolean> {
-        return Single.just(usersRepo.isOnlineUser(id))
-            .subscribeOn(Schedulers.io())
+    override fun getStatusUser(email: String): Single<UserStatus> {
+        return usersRepo.getStatusUser(email)
     }
 
     override fun searchUser(query: String): Single<List<User>> {

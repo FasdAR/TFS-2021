@@ -24,7 +24,7 @@ import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
 import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
 import ru.fasdev.tfs.domain.topic.repo.TopicRepo
-import ru.fasdev.tfs.di.ProvideFragmentRouter
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.data.mapper.toTopicUi
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment

@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TFS.Main">
+        android:theme="@style/Theme.TFS.Main"
+        android:name=".TfsApp">
         <activity
             android:name="ru.fasdev.tfs.screen.activity.main.MainActivity"
             android:windowSoftInputMode="adjustNothing">

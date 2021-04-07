@@ -2,7 +2,7 @@ package ru.fasdev.tfs.domain.message.repo
 
 import ru.fasdev.tfs.domain.model.Message
 import ru.fasdev.tfs.domain.model.Reaction
-import ru.fasdev.tfs.domain.model.User
+import ru.fasdev.tfs.domain.user.model.User
 import java.util.Date
 
 class TestMessageRepoImpl : MessageRepo {

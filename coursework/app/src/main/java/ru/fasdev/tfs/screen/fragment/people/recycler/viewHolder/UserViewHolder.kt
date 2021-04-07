@@ -9,7 +9,7 @@ import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
 
 class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : ViewHolder<UserUi>(view) {
     fun interface OnClickUserListener {
-        fun onClickUser(idUser: Int)
+        fun onClickUser(idUser: Int, email: String)
     }
 
     private val binding = ItemUserBinding.bind(view)
@@ -17,7 +17,7 @@ class UserViewHolder(val view: View, private val clickUser: OnClickUserListener)
     private var item: UserUi? = null
 
     init {
-        binding.root.setOnClickListener { clickUser.onClickUser(item?.uId ?: -1) }
+        binding.root.setOnClickListener { clickUser.onClickUser(item?.uId ?: -1, item?.email.toString()) }
     }
 
     override fun bind(item: UserUi) {

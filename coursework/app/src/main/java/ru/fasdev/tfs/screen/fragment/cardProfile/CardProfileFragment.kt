@@ -9,7 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
-import ru.fasdev.tfs.domain.model.UserStatus
+import ru.fasdev.tfs.domain.user.model.UserStatus
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {

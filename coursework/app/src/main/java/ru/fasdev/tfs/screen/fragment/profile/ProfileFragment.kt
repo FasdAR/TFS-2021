@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentProfileBinding
-import ru.fasdev.tfs.domain.model.UserStatus
+import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 
