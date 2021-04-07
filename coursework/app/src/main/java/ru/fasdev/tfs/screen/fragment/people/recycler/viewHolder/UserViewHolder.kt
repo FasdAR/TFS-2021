@@ -30,7 +30,7 @@ class UserViewHolder(val view: View, private val clickUser: OnClickUserListener)
         if (avatarRes.isEmpty()) avatarRes = R.drawable.ic_launcher_background.toString()
         if (avatarRes.isDigitsOnly()) binding.avatar.setImageResource(avatarRes.toInt())
 
-        if (item.isOnline) binding.onlineStatus.setImageResource(R.drawable.sh_indicator_online)
-        else binding.onlineStatus.setImageResource(R.drawable.sh_indicator_offline)
+        //if (item.isOnline) binding.onlineStatus.setImageResource(R.drawable.sh_indicator_online)
+        //else binding.onlineStatus.setImageResource(R.drawable.sh_indicator_offline)
     }
 }

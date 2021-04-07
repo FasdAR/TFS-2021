@@ -26,7 +26,7 @@ class TestMessageRepoImpl : MessageRepo {
         messageList.add(
             Message(
                 id = messageList.size + 1,
-                sender = users.find { idUser == it.id }!!,
+                sender = users.find { idUser == it.id.toInt() }!!,
                 text = messageText
             )
         )

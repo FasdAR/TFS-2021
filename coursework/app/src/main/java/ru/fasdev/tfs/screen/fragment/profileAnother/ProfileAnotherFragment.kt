@@ -16,7 +16,6 @@ import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
@@ -44,8 +43,8 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     private val rootRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    private val testUserRepo = TestUserRepoImpl()
-    private val userInteractor: UserInteractor = UserInteractorImpl(testUserRepo)
+    //private val testUserRepo = TestUserRepoImpl()
+    //private val userInteractor: UserInteractor = UserInteractorImpl(testUserRepo)
 
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
@@ -88,6 +87,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     // #region Rx chains
     private fun loadProfileData() {
+        /*
         compositeDisposable.addAll(
             userInteractor.getUserById(idUser)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -113,7 +113,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
                     },
                     onError = ::onError
                 )
-        )
+        )*/
     }
     // #endregion
 }

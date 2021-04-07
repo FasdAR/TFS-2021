@@ -32,7 +32,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
         cardProfile.isOnline = true
-        cardProfile.status = UserStatus.MEETING
+        //cardProfile.status = UserStatus.MEETING
         cardProfile.fullName = "Test User"
 
         binding.logoutBtn.setOnClickListener {

@@ -36,7 +36,7 @@ fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
             }
 
             items?.forEach { message ->
-                if (message.sender.id == internalUserId) resultList.add(message.toInternalMessageUi())
+                if (message.sender.id.toInt() == internalUserId) resultList.add(message.toInternalMessageUi())
                 else resultList.add(message.toExternalMessageUi())
             }
         }
