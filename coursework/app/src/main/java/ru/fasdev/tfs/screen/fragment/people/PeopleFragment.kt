@@ -136,14 +136,6 @@ class PeopleFragment :
         searchSubject.onNext(query)
     }
 
-    private fun Observable<User>.mapToUserUi(): Observable<UserUi> {
-        return concatMap { user ->
-            usersInteractor.getStatusUser(user.email)
-                .map { user.toUserUi(it) }
-                .toObservable()
-        }
-    }
-
     private fun loadAllUsers() {
         compositeDisposable.add(
             usersInteractor.getAllUsers()
