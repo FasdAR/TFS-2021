@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.delay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
@@ -145,15 +148,20 @@ class PeopleFragment :
         compositeDisposable.add(
             usersInteractor.getAllUsers()
                 .subscribeOn(Schedulers.io())
-                .flatMapObservable { items -> Observable.fromIterable(items) }
-                .mapToUserUi()
+                .flatMapObservable(::fromIterable)
+                .concatMap { Observable.just(it).delay(10, TimeUnit.MILLISECONDS) }
+                .flatMapSingle { user ->
+                    usersInteractor.getStatusUser(user.email)
+                        .map { user.toUserUi(it) }
+                        .subscribeOn(Schedulers.io())
+                }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = { array ->
                         adapter.items = array
                     },
-                    //onError = ::onError
+                    onError = ::onError
                 )
         )
     }
