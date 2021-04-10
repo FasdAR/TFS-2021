@@ -1,10 +1,10 @@
 package ru.fasdev.tfs.domain.message.repo
 
-import ru.fasdev.tfs.domain.model.Message
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import ru.fasdev.tfs.domain.message.model.Message
 
 interface MessageRepo {
-    fun getMessageByChat(idChat: Int): List<Message>
-    fun sendMessage(idChat: Int, idUser: Int, messageText: String)
-    fun addReaction(idChat: Int, idMessage: Int, idUser: Int, emoji: String)
-    fun removeReaction(idChat: Int, idMessage: Int, idUser: Int, emoji: String)
+    fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>>
+    fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable
 }

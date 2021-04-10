@@ -5,13 +5,18 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.message.repo.MessageRepo
-import ru.fasdev.tfs.domain.model.Message
+import ru.fasdev.tfs.domain.message.model.Message
 
 class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor {
-    companion object {
-        private const val CURRENT_USER = 1
+    override fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>> {
+        return messageRepo.getMessagesByTopic(nameStream, nameTopic)
     }
 
+    override fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable {
+        return messageRepo.sendMessage(nameStream, nameTopic, message)
+    }
+
+    /*
     override fun getMessageByChat(idChat: Int): Single<List<Message>> {
         return Single.just(messageRepo.getMessageByChat(idChat))
             .subscribeOn(Schedulers.io())
@@ -52,5 +57,5 @@ class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInter
         return Completable.fromCallable {
             messageRepo.sendMessage(idChat, CURRENT_USER, text)
         }.subscribeOn(Schedulers.io())
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.data.mapper
 
-import ru.fasdev.tfs.domain.model.Message
+import ru.fasdev.tfs.domain.message.model.Message
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.InternalMessageUi
 import ru.fasdev.tfs.recycler.viewHolder.ViewType

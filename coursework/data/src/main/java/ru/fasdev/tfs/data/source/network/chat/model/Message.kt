@@ -16,5 +16,6 @@ class Message(
     @Serializable(with = DateLongSerializer::class) val timestamp: Date,
     @SerialName("stream_id") val streamId: Long,
     val subject: String,
-    val reactions: List<Reaction>
+    val reactions: List<Reaction>,
+    val content: String
 ) : BaseUser
