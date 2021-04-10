@@ -33,4 +33,8 @@ class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
             .toList()
             .subscribeOn(Schedulers.io())
     }
+
+    fun getOwnUser(): Single<User> {
+        return usersRepo.getOwnUser()
+    }
 }

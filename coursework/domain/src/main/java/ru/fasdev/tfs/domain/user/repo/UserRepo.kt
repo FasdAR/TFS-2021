@@ -8,4 +8,5 @@ interface UserRepo {
     fun getAllUsers(): Single<List<User>>
     fun getUserById(id: Long): Single<User>
     fun getStatusUser(email: String): Single<UserStatus>
+    fun getOwnUser(): Single<User>
 }

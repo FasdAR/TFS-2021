@@ -28,4 +28,9 @@ class UserRepoImpl (private val userApi: UserApi): UserRepo
         return userApi.getUserPresence(email)
             .map { it.presence.aggregated.toUserStatus() }
     }
+
+    override fun getOwnUser(): Single<User> {
+        return userApi.getOwnUser()
+            .map { it.toUserDomain() }
+    }
 }

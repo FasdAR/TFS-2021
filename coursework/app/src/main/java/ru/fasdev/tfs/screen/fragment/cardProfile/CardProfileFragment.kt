@@ -8,32 +8,33 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
 import ru.fasdev.tfs.domain.user.model.UserStatus
+import ru.fasdev.tfs.domain.user.model.UserStatus.*
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {
         private const val KEY_AVATAR_SRC = "avatarSrc"
         private const val KEY_FULL_NAME = "fullName"
         private const val KEY_STATUS = "status"
-        private const val KEY_IS_ONLINE = "isOnline"
 
         private const val ONLINE_COLOR = R.color.green_500
         private const val OFFLINE_COLOR = R.color.red_500
+        private const val IDLE_COLOR = R.color.yellow_200
 
         private const val DEFAULT_IMAGE = R.drawable.ic_launcher_background
 
         fun newInstance(
             avatarSrc: String,
             fullName: String,
-            status: String,
-            isOnline: Boolean
+            status: String
         ): CardProfileFragment {
             return CardProfileFragment().apply {
                 arguments = bundleOf(
                     KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
-                    KEY_STATUS to status, KEY_IS_ONLINE to isOnline
+                    KEY_STATUS to status
                 )
             }
         }
@@ -60,12 +61,6 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
             updateStatusText(value)
         }
 
-    var isOnline: Boolean = false
-        set(value) {
-            field = value
-            updateOnlineIndicator(value)
-        }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,12 +77,13 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
         avatarSrc = arguments?.getString(KEY_AVATAR_SRC)
         fullName = arguments?.getString(KEY_FULL_NAME)
         status = arguments?.getSerializable(KEY_STATUS) as UserStatus?
-        isOnline = arguments?.getBoolean(KEY_IS_ONLINE) ?: false
     }
 
     private fun updateAvatarSrc(avatarSrc: String?) {
         avatarSrc?.let {
-            // TODO: LOAD OTHER IMAGE
+            binding.avatar.load(it) {
+                crossfade(true)
+            }
         } ?: kotlin.run {
             binding.avatar.setImageResource(DEFAULT_IMAGE)
         }
@@ -98,21 +94,19 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     }
 
     private fun updateStatusText(userStatus: UserStatus?) {
-        userStatus?.let {
-            binding.status.visibility = View.VISIBLE
-            binding.status.isVisible = false
-        } ?: kotlin.run {
-            binding.status.visibility = View.GONE
-        }
-    }
-
-    private fun updateOnlineIndicator(isOnline: Boolean) {
-        if (isOnline) {
-            binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), ONLINE_COLOR))
-            binding.onlineStatus.text = resources.getString(R.string.online)
-        } else {
-            binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), OFFLINE_COLOR))
-            binding.onlineStatus.text = resources.getString(R.string.offline)
+        when (userStatus) {
+            ONLINE -> {
+                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), ONLINE_COLOR))
+                binding.onlineStatus.text = resources.getString(R.string.online)
+            }
+            OFFLINE -> {
+                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), OFFLINE_COLOR))
+                binding.onlineStatus.text = resources.getString(R.string.offline)
+            }
+            IDLE -> {
+                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), IDLE_COLOR))
+                binding.onlineStatus.text = resources.getString(R.string.idle)
+            }
         }
     }
 
