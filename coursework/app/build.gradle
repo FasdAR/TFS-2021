@@ -72,4 +72,7 @@ dependencies {
 
     //Material Lib
     implementation "com.google.android.material:material:$androidMaterial"
+
+    //coil
+    implementation "io.coil-kt:coil:1.1.1"
 }

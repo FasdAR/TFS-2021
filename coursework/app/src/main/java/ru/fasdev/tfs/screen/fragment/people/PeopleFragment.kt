@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.user.model.User
-import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
@@ -38,7 +36,6 @@ import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
-import java.util.function.BiFunction
 
 class PeopleFragment :
     Fragment(R.layout.fragment_people),
@@ -176,11 +173,14 @@ class PeopleFragment :
                         .mapToUiUser()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn { error ->
+                    onError(error)
+                    return@onErrorReturn listOf()
+                }
                 .subscribeBy(
                     onNext = { array ->
                         adapter.items = array
-                    },
-                    onError = ::onError
+                    }
                 )
         )
     }

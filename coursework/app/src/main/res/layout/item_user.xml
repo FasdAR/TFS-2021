@@ -55,7 +55,9 @@
             android:id="@+id/email"
             android:textColor="@color/grey_490"
             android:textSize="16sp"
-            tools:text="darrel@company.com"/>
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="darrel@email.com"/>
 
     </LinearLayout>
 
