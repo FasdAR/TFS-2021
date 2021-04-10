@@ -1,14 +1,13 @@
-package ru.fasdev.tfs.data.source.network.stream.response
+package ru.fasdev.tfs.data.source.network.chat.response
 
-import ru.fasdev.tfs.data.source.network.stream.model.Topic
-import ru.fasdev.tfs.data.source.network.base.response.Result
 import kotlinx.serialization.Serializable
 import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
+import ru.fasdev.tfs.data.source.network.base.response.Result
 
 @Serializable
-class TopicsResponse (
+class SendMessageResponse(
     override val code: String? = null,
     override val msg: String,
     override val result: Result,
-    val topics: List<Topic>
+    val id: Long
 ) : BaseResponse

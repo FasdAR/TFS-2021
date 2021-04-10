@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.data.source.network.response
+package ru.fasdev.tfs.data.source.network.base.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

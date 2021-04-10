@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.data.source.network.users.response
 
 import kotlinx.serialization.Serializable
-import ru.fasdev.tfs.data.source.network.response.BaseResponse
-import ru.fasdev.tfs.data.source.network.response.Result
+import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
+import ru.fasdev.tfs.data.source.network.base.response.Result
 import ru.fasdev.tfs.data.source.network.users.model.user.User
 
 @Serializable
