@@ -11,12 +11,16 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
+import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
+import ru.fasdev.tfs.di.module.UserDomainModule
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
@@ -25,16 +29,21 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
         val TAG: String = ProfileAnotherFragment::class.java.simpleName
 
-        private const val NULL_USER = -1
+        private const val NULL_USER = -1L
         private const val KEY_ID_USER = "id_user"
 
-        fun newInstance(idUser: Int): ProfileAnotherFragment {
+        fun newInstance(idUser: Long): ProfileAnotherFragment {
             return ProfileAnotherFragment().apply {
                 arguments = bundleOf(KEY_ID_USER to idUser)
             }
         }
 
-        fun getScreen(idUser: Int) = FragmentScreen(TAG, newInstance(idUser))
+        fun getScreen(idUser: Long) = FragmentScreen(TAG, newInstance(idUser))
+    }
+
+    object ProfileAnotherComponent {
+        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        val userInteractor = UserInteractorImpl(userRepo)
     }
 
     private var _binding: FragmentAnotherProfileBinding? = null
@@ -43,10 +52,9 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     private val rootRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    //private val testUserRepo = TestUserRepoImpl()
-    //private val userInteractor: UserInteractor = UserInteractorImpl(testUserRepo)
+    private val userInteractor: UserInteractor = ProfileAnotherComponent.userInteractor
 
-    private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
+    private val idUser: Long get() = arguments?.getLong(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
     private val compositeDisposable = CompositeDisposable()
     private val cardProfile
@@ -87,33 +95,23 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     // #region Rx chains
     private fun loadProfileData() {
-        /*
         compositeDisposable.addAll(
             userInteractor.getUserById(idUser)
+                .subscribeOn(Schedulers.io())
+                .flatMap { user ->
+                    userInteractor.getStatusUser(user.email)
+                        .map { user.toUserUi(it) }
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = {
+                        cardProfile.status = it.userStatus
+                        cardProfile.avatarSrc = it.avatarSrc
                         cardProfile.fullName = it.fullName
                     },
                     onError = ::onError
-                ),
-            userInteractor.getStatusUser(idUser)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        cardProfile.status = it
-                    },
-                    onError = ::onError
-                ),
-            userInteractor.getIsOnlineStatusUser(idUser)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        cardProfile.isOnline = it
-                    },
-                    onError = ::onError
                 )
-        )*/
+        )
     }
     // #endregion
 }

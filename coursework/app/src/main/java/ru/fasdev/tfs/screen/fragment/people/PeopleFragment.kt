@@ -109,7 +109,7 @@ class PeopleFragment :
     }
 
     override fun onClickUser(idUser: Int, email: String) {
-        rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser))
+        rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser.toLong()))
         binding.searchLayout.hideKeyboard()
     }
 
