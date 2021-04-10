@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.screen.fragment.topicList.recycler.viewType
+package ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType
 
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.recycler.viewHolder.ViewType

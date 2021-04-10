@@ -1,16 +1,16 @@
-package ru.fasdev.tfs.screen.fragment.topicList
+package ru.fasdev.tfs.screen.fragment.streamList
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -22,23 +22,22 @@ import ru.fasdev.tfs.data.mapper.toStreamUi
 import ru.fasdev.tfs.data.mapper.toTopicUi
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
 import ru.fasdev.tfs.di.module.StreamDomainModule
-import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractorImpl
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
+import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.TopicHolderFactory
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.diuff.TopicItemCallback
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.StreamViewHolder
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.TopicViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import java.util.concurrent.TimeUnit
 
-class TopicListFragment :
+class StreamListFragment :
     Fragment(R.layout.fragment_topic_list),
     StreamViewHolder.OnClickStreamListener,
     TopicViewHolder.OnClickTopicListener {
@@ -48,8 +47,8 @@ class TopicListFragment :
 
         private const val MODE_KEY = "mode"
 
-        fun newInstance(mode: Int): TopicListFragment {
-            return TopicListFragment().apply {
+        fun newInstance(mode: Int): StreamListFragment {
+            return StreamListFragment().apply {
                 arguments = bundleOf(MODE_KEY to mode)
             }
         }
@@ -67,8 +66,8 @@ class TopicListFragment :
 
     private val streamInteractor: StreamInteractor = StreamComponent.streamInteractor
 
-    private val holderFactory by lazy { TopicHolderFactory(this, this) }
-    private val adapter by lazy { RecyclerAdapter(holderFactory, TopicItemCallback()) }
+    private val holderFactory by lazy { StreamHolderFactory(this, this) }
+    private val adapter by lazy { RecyclerAdapter(holderFactory, StreamItemCallback()) }
 
     private val fragmentRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
@@ -97,10 +96,10 @@ class TopicListFragment :
         binding.rvTopics.adapter = adapter
 
         loadAllStreams()
-        //observerSearch()
+        observerSearch()
     }
 
-    private fun searchStream(query: String) {
+    fun searchStream(query: String) {
         searchSubject.onNext(query)
     }
 
@@ -121,20 +120,53 @@ class TopicListFragment :
         Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
 
-    // #region Rx chains
-    private fun loadAllStreams() {
-        val source = if (mode == ALL_MODE) streamInteractor.getAllStreams()
-            else streamInteractor.getSubStreams()
+    //#region Rx chains
+    private fun Single<List<Stream>>.mapToDomain(): Single<List<StreamUi>> {
+        return flatMapObservable(::fromIterable)
+            .map { it.toStreamUi() }
+            .toList()
+    }
 
+    private fun getStreamSource(): Single<List<Stream>> {
+        return if (mode == ALL_MODE) streamInteractor.getAllStreams()
+            else streamInteractor.getSubStreams()
+    }
+
+    private fun loadAllStreams() {
         compositeDisposable.add(
-            source.subscribeOn(Schedulers.io())
-                .flatMapObservable { it -> Observable.fromIterable(it) }
-                .map { it.toStreamUi() }
-                .toList()
+            getStreamSource().subscribeOn(Schedulers.io())
+                .mapToDomain()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy (
                     onSuccess = {
                         adapter.items = it
+                    }
+                )
+        )
+    }
+
+    private fun observerSearch() {
+        compositeDisposable.add(
+            searchSubject
+                .filter{ isVisible }
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .switchMapSingle {
+                    if (it.isNotEmpty()) streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
+                    else  getStreamSource()
+                }
+                .subscribeOn(Schedulers.io())
+                .flatMapSingle {
+                    Single.just(it).mapToDomain()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorReturn { error ->
+                    onError(error)
+                    return@onErrorReturn listOf()
+                }
+                .subscribeBy(
+                    onNext = { array ->
+                        adapter.items = array
                     }
                 )
         )
@@ -169,5 +201,5 @@ class TopicListFragment :
                 }
         )
     }
-    // #endregion
+    //#endregion
 }

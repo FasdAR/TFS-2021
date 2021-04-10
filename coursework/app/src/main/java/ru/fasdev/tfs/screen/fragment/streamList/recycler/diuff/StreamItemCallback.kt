@@ -1,12 +1,12 @@
-package ru.fasdev.tfs.screen.fragment.topicList.recycler.diuff
+package ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff
 
 import android.os.Bundle
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.StreamViewHolder
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 import ru.fasdev.tfs.recycler.diff.ItemCallback
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 
-class TopicItemCallback<T : ViewType> : ItemCallback<T>() {
+class StreamItemCallback<T : ViewType> : ItemCallback<T>() {
     override fun getChangePayload(oldItem: T, newItem: T): Any? {
         if (oldItem is StreamUi && newItem is StreamUi) {
             val diffBundle = Bundle()

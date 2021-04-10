@@ -8,4 +8,6 @@ interface StreamInteractor {
     fun getAllStreams(): Single<List<Stream>>
     fun getSubStreams(): Single<List<Stream>>
     fun getAllTopics(idStream: Long): Single<List<Topic>>
+
+    fun searchStream(query: String, isSub: Boolean): Single<List<Stream>>
 }

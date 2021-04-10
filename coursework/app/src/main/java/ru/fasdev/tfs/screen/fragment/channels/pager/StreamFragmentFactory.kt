@@ -3,7 +3,7 @@ package ru.fasdev.tfs.screen.fragment.channels.pager
 import android.content.Context
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.screen.fragment.topicList.TopicListFragment
+import ru.fasdev.tfs.screen.fragment.streamList.StreamListFragment
 import ru.fasdev.tfs.pager.ViewPagerFragmentFactory
 
 class StreamFragmentFactory : ViewPagerFragmentFactory {
@@ -15,8 +15,8 @@ class StreamFragmentFactory : ViewPagerFragmentFactory {
 
     override fun createFragment(position: Int): Fragment? {
         return when (position) {
-            SUBSCRIBED_POS -> TopicListFragment.newInstance(TopicListFragment.SUBSCRIBED_MODE)
-            ALL_POS -> TopicListFragment.newInstance(TopicListFragment.ALL_MODE)
+            SUBSCRIBED_POS -> StreamListFragment.newInstance(StreamListFragment.SUBSCRIBED_MODE)
+            ALL_POS -> StreamListFragment.newInstance(StreamListFragment.ALL_MODE)
             else -> null
         }
     }

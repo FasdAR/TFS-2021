@@ -1,13 +1,13 @@
-package ru.fasdev.tfs.screen.fragment.topicList.recycler
+package ru.fasdev.tfs.screen.fragment.streamList.recycler
 
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.StreamViewHolder
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.TopicViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolderFactory
 
-class TopicHolderFactory(
+class StreamHolderFactory(
     private val streamListener: StreamViewHolder.OnClickStreamListener,
     private val topicListener: TopicViewHolder.OnClickTopicListener
 ) : ViewHolderFactory() {

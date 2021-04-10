@@ -126,7 +126,7 @@ class PeopleFragment :
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    // #region Rx chains
+    //#region Rx chains
     private fun searchUser(query: String = "") {
         searchSubject.onNext(query)
     }
@@ -184,4 +184,5 @@ class PeopleFragment :
                 )
         )
     }
+    //#endregion
 }
