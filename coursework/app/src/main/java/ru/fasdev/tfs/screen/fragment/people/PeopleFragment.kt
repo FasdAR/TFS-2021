@@ -12,35 +12,33 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
-import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.delay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
-import ru.fasdev.tfs.domain.user.model.User
-import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
-import ru.fasdev.tfs.data.repo.UserRepoImpl
 import ru.fasdev.tfs.di.module.UserDomainModule
-import ru.fasdev.tfs.domain.user.repo.UserRepo
+import ru.fasdev.tfs.domain.user.model.User
+import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
 import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
+import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 
 class PeopleFragment :
     Fragment(R.layout.fragment_people),
@@ -104,7 +102,7 @@ class PeopleFragment :
         binding.rvUsers.adapter = adapter
 
         loadAllUsers()
-        //observerSearch()
+        observerSearch()
     }
 
     override fun onDestroy() {
@@ -136,18 +134,24 @@ class PeopleFragment :
         searchSubject.onNext(query)
     }
 
+    private fun Single<List<User>>.mapToUiUser(): Single<List<UserUi>> {
+        return flatMapObservable(::fromIterable)
+        .concatMap {
+            Observable.just(it).delay(10, TimeUnit.MILLISECONDS)
+        }
+        .flatMapSingle { user ->
+            usersInteractor.getStatusUser(user.email)
+                .map { status -> user.toUserUi(status) }
+                .subscribeOn(Schedulers.io())
+        }
+        .toList()
+    }
+
     private fun loadAllUsers() {
         compositeDisposable.add(
             usersInteractor.getAllUsers()
                 .subscribeOn(Schedulers.io())
-                .flatMapObservable(::fromIterable)
-                .concatMap { Observable.just(it).delay(10, TimeUnit.MILLISECONDS) }
-                .flatMapSingle { user ->
-                    usersInteractor.getStatusUser(user.email)
-                        .map { user.toUserUi(it) }
-                        .subscribeOn(Schedulers.io())
-                }
-                .toList()
+                .mapToUiUser()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = { array ->
@@ -156,16 +160,6 @@ class PeopleFragment :
                     onError = ::onError
                 )
         )
-    }
-
-    // #endregion
-    /*
-    private fun Observable<User>.mapToUserUi(): Observable<UserUi> {
-        return concatMap { user ->
-            usersInteractor.getIsOnlineStatusUser(user.id)
-                .map { user.toUserUi(it) }
-                .toObservable()
-        }
     }
 
     private fun observerSearch() {
@@ -177,34 +171,17 @@ class PeopleFragment :
                     if (it.isNotEmpty()) usersInteractor.searchUser(it)
                     else usersInteractor.getAllUsers()
                 }
-                .flatMapSingle { items ->
-                    Observable.fromIterable(items)
-                        .mapToUserUi()
-                        .toList()
+                .flatMapSingle {
+                    Single.just(it)
+                        .mapToUiUser()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun loadAllUsers() {
-        compositeDisposable.add(
-            usersInteractor.getAllUsers()
-                .flatMapObservable { items -> Observable.fromIterable(items) }
-                .mapToUserUi()
-                .toList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = { array ->
+                    onNext = { array ->
                         adapter.items = array
                     },
                     onError = ::onError
                 )
         )
-    }*/
+    }
 }
