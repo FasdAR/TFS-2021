@@ -1,23 +1,24 @@
-package ru.fasdev.tfs.domain.topic.interactor
+package ru.fasdev.tfs.domain.stream.interactor
 
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-import ru.fasdev.tfs.domain.model.Stream
-import ru.fasdev.tfs.domain.model.Topic
-import ru.fasdev.tfs.domain.topic.repo.TopicRepo
+import ru.fasdev.tfs.domain.stream.model.Stream
+import ru.fasdev.tfs.domain.stream.model.Topic
+import ru.fasdev.tfs.domain.stream.repo.StreamRepo
 
-class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
+class StreamInteractorImpl(private val streamRepo: StreamRepo) : StreamInteractor {
     override fun getAllStreams(): Single<List<Stream>> {
-        return Single.just(topicRepo.getAllStreams())
-            .subscribeOn(Schedulers.io())
+        return streamRepo.getAllStreams()
     }
 
-    override fun getAllTopics(): Single<List<Topic>> {
-        return Single.just(topicRepo.getAllTopics())
-            .subscribeOn(Schedulers.io())
+    override fun getSubStreams(): Single<List<Stream>> {
+        return streamRepo.getSubStreams()
     }
 
+    override fun getAllTopics(idStream: Long): Single<List<Topic>> {
+        return streamRepo.getTopics(idStream)
+    }
+
+    /*
     override fun getStream(id: Int): Single<Stream> {
         return getAllStreams()
             .flatMapObservable { items -> Observable.fromIterable(items) }
@@ -55,4 +56,5 @@ class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
             .toList()
             .subscribeOn(Schedulers.io())
     }
+    */
 }

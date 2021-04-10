@@ -11,32 +11,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toStreamUi
-import ru.fasdev.tfs.databinding.FragmentTopicListBinding
-import ru.fasdev.tfs.domain.testEnv
-import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
-import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
-import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
-import ru.fasdev.tfs.domain.topic.repo.TestSubscribedTopicRepoImpl
-import ru.fasdev.tfs.domain.topic.repo.TopicRepo
-import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.data.mapper.toTopicUi
+import ru.fasdev.tfs.databinding.FragmentTopicListBinding
+import ru.fasdev.tfs.di.module.StreamDomainModule
+import ru.fasdev.tfs.di.module.UserDomainModule
+import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
+import ru.fasdev.tfs.domain.stream.interactor.StreamInteractorImpl
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
+import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.topicList.recycler.TopicHolderFactory
 import ru.fasdev.tfs.screen.fragment.topicList.recycler.diuff.TopicItemCallback
 import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewHolder.TopicViewHolder
-import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewType.StreamUi
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
-import java.util.concurrent.TimeUnit
+import ru.fasdev.tfs.screen.fragment.topicList.recycler.viewType.StreamUi
 
 class TopicListFragment :
     Fragment(R.layout.fragment_topic_list),
@@ -55,19 +55,17 @@ class TopicListFragment :
         }
     }
 
+    object StreamComponent {
+        val streamRepo = StreamDomainModule.getStreamRepo(TfsApp.AppComponent.streamApi)
+        val streamInteractor = StreamDomainModule.getStreamInteractor(streamRepo)
+    }
+
     private var _binding: FragmentTopicListBinding? = null
     private val binding get() = _binding!!
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
 
-    private val topicRepo: TopicRepo by lazy {
-        when (mode) {
-            ALL_MODE -> TestAllTopicRepoImpl()
-            SUBSCRIBED_MODE -> TestSubscribedTopicRepoImpl()
-            else -> error("Don't support this type mode $mode")
-        }
-    }
-    private val topicInteractor: TopicInteractor by lazy { TopicInteractorImpl(topicRepo) }
+    private val streamInteractor: StreamInteractor = StreamComponent.streamInteractor
 
     private val holderFactory by lazy { TopicHolderFactory(this, this) }
     private val adapter by lazy { RecyclerAdapter(holderFactory, TopicItemCallback()) }
@@ -98,8 +96,8 @@ class TopicListFragment :
         binding.rvTopics.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTopics.adapter = adapter
 
-        getAllStreams()
-        observerSearch()
+        loadAllStreams()
+        //observerSearch()
     }
 
     private fun searchStream(query: String) {
@@ -107,7 +105,7 @@ class TopicListFragment :
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
-        loadedTopics(idStream, opened)
+        loadTopics(idStream, opened)
     }
 
     override fun onClickTopic(idTopic: Int) {
@@ -120,77 +118,34 @@ class TopicListFragment :
     }
 
     private fun onError(error: Throwable) {
-        loadedState()
         Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
 
-    private fun loadingState() {
-        binding.loadingLayout.root.isVisible = true
-        binding.rvTopics.isVisible = false
-    }
-
-    private fun loadedState() {
-        binding.loadingLayout.root.isVisible = false
-        binding.rvTopics.isVisible = true
-    }
-
     // #region Rx chains
-    private fun getAllStreams() {
+    private fun loadAllStreams() {
+        val source = if (mode == ALL_MODE) streamInteractor.getAllStreams()
+            else streamInteractor.getSubStreams()
+
         compositeDisposable.add(
-            topicInteractor.getAllStreams()
-                .testEnv("test")
-                .doOnSubscribe {
-                    loadingState()
-                }
-                .flatMapObservable { Observable.fromIterable(it) }
+            source.subscribeOn(Schedulers.io())
+                .flatMapObservable { it -> Observable.fromIterable(it) }
                 .map { it.toStreamUi() }
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
+                .subscribeBy (
                     onSuccess = {
                         adapter.items = it
-                        loadedState()
-                    },
-                    onError = ::onError
+                    }
                 )
         )
     }
 
-    private fun observerSearch() {
+    private fun loadTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.add(
-            searchSubject
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMapSingle {
-                    if (it.isNotEmpty()) topicInteractor.searchStream(it)
-                    else topicInteractor.getAllStreams()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .flatMapSingle { array ->
-                    Observable.fromIterable(array)
-                        .map { it.toStreamUi() }
-                        .toList()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun loadedTopics(idStream: Int, opened: Boolean) {
-        compositeDisposable.addAll(
-            topicInteractor.getTopicsInStream(idStream)
-                .flatMapObservable {
-                    Observable.fromIterable(it)
-                }
-                .map {
-                    it.toTopicUi()
-                }
+            streamInteractor.getAllTopics(idStream.toLong())
+                .subscribeOn(Schedulers.io())
+                .flatMapObservable { Observable.fromIterable(it) }
+                .map { it.toTopicUi() }
                 .toList()
                 .map { topics ->
                     val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
@@ -209,12 +164,9 @@ class TopicListFragment :
                     return@map currentArray
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
+                .subscribeBy {
+                    adapter.items = it
+                }
         )
     }
     // #endregion

@@ -8,7 +8,7 @@ import ru.fasdev.tfs.data.source.network.response.BaseResponse
 
 @Serializable
 class SubStreamsResponse (
-    override val code: String?,
+    override val code: String? = null,
     override val msg: String,
     override val result: Result,
     @SerialName("subscriptions") val subscriptions: List<Stream>

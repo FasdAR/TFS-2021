@@ -4,6 +4,8 @@ import ru.fasdev.tfs.data.source.network.stream.response.StreamsResponse
 import ru.fasdev.tfs.data.source.network.stream.response.SubStreamsResponse
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
+import ru.fasdev.tfs.data.source.network.stream.response.TopicsResponse
 
 interface StreamApi
 {
@@ -12,4 +14,7 @@ interface StreamApi
 
     @GET("users/me/subscriptions")
     fun getSubscriptionsStreams(): Single<SubStreamsResponse>
+
+    @GET("users/me/{id_stream}/topics")
+    fun getTopics(@Path("id_stream") idStream: Long): Single<TopicsResponse>
 }

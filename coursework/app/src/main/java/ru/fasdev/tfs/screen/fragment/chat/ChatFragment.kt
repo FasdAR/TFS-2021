@@ -24,10 +24,9 @@ import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
-import ru.fasdev.tfs.domain.topic.interactor.TopicInteractor
-import ru.fasdev.tfs.domain.topic.interactor.TopicInteractorImpl
-import ru.fasdev.tfs.domain.topic.repo.TestAllTopicRepoImpl
-import ru.fasdev.tfs.domain.topic.repo.TopicRepo
+import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
+import ru.fasdev.tfs.domain.stream.interactor.StreamInteractorImpl
+import ru.fasdev.tfs.domain.stream.repo.StreamRepo
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.data.mapper.mapToUiList
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
@@ -75,8 +74,8 @@ class ChatFragment :
     private val testMessageRepoImpl = TestMessageRepoImpl()
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
 
-    private val topicRepo: TopicRepo = TestAllTopicRepoImpl()
-    private val topicInteractor: TopicInteractor = TopicInteractorImpl(topicRepo)
+    //private val topicRepo: StreamRepo = TestAllTopicRepoImpl()
+    //private val topicInteractor: StreamInteractor = StreamInteractorImpl(topicRepo)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
     private val adapter by lazy {
@@ -230,6 +229,7 @@ class ChatFragment :
     }
 
     private fun getTopic(idSubTopic: Int) {
+        /*
         compositeDisposable.add(
             topicInteractor
                 .getTopic(idSubTopic)
@@ -247,7 +247,7 @@ class ChatFragment :
                     },
                     onError = ::onError
                 )
-        )
+        )*/
     }
 
     private fun changeSelectedReaction(idMessage: Int = selectedMessageId, emoji: String) {

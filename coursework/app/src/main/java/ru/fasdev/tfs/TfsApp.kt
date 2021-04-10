@@ -11,6 +11,7 @@ class TfsApp : Application(), ProvideRetrofit
     object AppComponent {
         val retrofit = RetrofitModule.getRetrofit()
         val userApi = RetrofitModule.getUserApi(retrofit)
+        val streamApi = RetrofitModule.getStreamApi(retrofit)
     }
 
     override fun getRetrofit(): Retrofit = AppComponent.retrofit

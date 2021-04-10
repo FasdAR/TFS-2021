@@ -13,6 +13,7 @@ import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import ru.fasdev.tfs.BuildConfig
+import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.data.source.network.users.api.UserApi
 
 class RetrofitModule
@@ -68,6 +69,10 @@ class RetrofitModule
 
         fun getUserApi(retrofit: Retrofit): UserApi {
             return retrofit.create(UserApi::class.java)
+        }
+
+        fun getStreamApi(retrofit: Retrofit): StreamApi {
+            return retrofit.create(StreamApi::class.java)
         }
     }
 }
