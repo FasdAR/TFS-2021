@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
+import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.getHeightMeasuredMargin
 import ru.fasdev.tfs.core.ext.getWidthMeasuredMargin
@@ -174,7 +175,9 @@ class ExternalMessageView
             if (avatarSrc.isDigitsOnly()) {
                 avatarImageView.setImageResource(avatarSrc.toInt())
             } else {
-                // TODO: LOAD FROM OTHER METHOD IMAGE
+               avatarImageView.load(avatarSrc) {
+                   crossfade(true)
+               }
             }
         }
     }
