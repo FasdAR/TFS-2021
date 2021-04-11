@@ -44,17 +44,6 @@
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/msg_text"/>
 
-
-    <include
-        layout="@layout/layout_loading"
-        android:id="@+id/loading_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintBottom_toTopOf="@id/msg_text"/>
-
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_width="0dp"
         android:layout_height="51dp"

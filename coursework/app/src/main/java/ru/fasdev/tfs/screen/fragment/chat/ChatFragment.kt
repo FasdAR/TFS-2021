@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -202,16 +200,6 @@ class ChatFragment :
         }
     }
 
-    private fun loadingState() {
-        binding.loadingLayout.root.isVisible = true
-        binding.rvList.isVisible = false
-    }
-
-    private fun loadedState() {
-        binding.loadingLayout.root.isVisible = false
-        binding.rvList.isVisible = true
-    }
-
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
@@ -231,9 +219,7 @@ class ChatFragment :
                     onComplete = {
                         updateChatItems()
                     },
-                    onError = {
-                        Log.e("ERRR", it.toString())
-                    }
+                    onError = ::onError
                 )
         )
     }
@@ -262,7 +248,6 @@ class ChatFragment :
                 .subscribeBy(
                     onNext = {
                         adapter.items = it
-                        loadedState()
                     },
                     onError = ::onError
                 )

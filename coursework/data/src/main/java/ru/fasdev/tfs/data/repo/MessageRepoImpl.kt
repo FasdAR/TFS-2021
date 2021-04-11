@@ -15,6 +15,10 @@ import java.util.*
 
 class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : MessageRepo
 {
+    companion object {
+        private const val USER_ID = 402233L
+    }
+
     override fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>> {
         val filterNarrow = FilterNarrow(operator = "stream", operand = nameStream)
 
@@ -22,7 +26,7 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
             .map { it.messages }
             .flatMapObservable(::fromIterable)
             .filter { it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT)) }
-            .map {  it.mapToDomain() }
+            .map { it.mapToDomain(USER_ID) }
             .toList()
     }
 
