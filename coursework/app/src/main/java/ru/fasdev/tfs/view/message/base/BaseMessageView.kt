@@ -72,7 +72,7 @@ abstract class BaseMessageView
 
             reactionView.setOnClickListener {
                 val reactionFindView = it as ReactionView
-                onClickReactionListener?.onClickReaction(reactionFindView, reaction.emoji)
+                onClickReactionListener?.onClickReaction(reactionFindView, reaction.emojiName, !reaction.isSelected)
             }
 
             reactionsLayout.addView(reactionView)

@@ -122,14 +122,13 @@ class ChatFragment :
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        binding.toolbarLayout.title.text =
-            resources.getString(R.string.main_topic_title, streamName)
+        binding.toolbarLayout.title.text = resources.getString(R.string.main_topic_title, streamName)
         binding.topic.text = resources.getString(R.string.sub_topic_title, topicName)
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
-            selectedEmoji?.let { }//changeSelectedReaction(emoji = it) }
+            selectedEmoji?.let { selectedReaction(selectedMessageId, it, true) }
         }
 
         with(binding.toolbarLayout) {
@@ -186,8 +185,8 @@ class ChatFragment :
         showBottomEmojiDialog()
     }
 
-    override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        //changeSelectedReaction(uIdMessage, emoji)
+    override fun onClickReaction(uIdMessage: Int, emoji: String, isSelected: Boolean) {
+        selectedReaction(uIdMessage, emoji, isSelected)
     }
 
     override fun onCurrentListChanged(
@@ -224,11 +223,10 @@ class ChatFragment :
         )
     }
 
-    /*
-    private fun changeSelectedReaction(idMessage: Int = selectedMessageId, emoji: String) {
+    private fun selectedReaction(idMessage: Int = selectedMessageId, emojiName: String, isSelected: Boolean) {
         compositeDisposable.add(
-            interactor
-                .changeSelectedReaction(currentChatId, idMessage, emoji)
+            interactor.setSelectionReaction(idMessage, emojiName, isSelected)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onComplete = {
@@ -237,7 +235,7 @@ class ChatFragment :
                     onError = ::onError
                 )
         )
-    }*/
+    }
 
     private fun updateChatItems() {
         compositeDisposable.add(

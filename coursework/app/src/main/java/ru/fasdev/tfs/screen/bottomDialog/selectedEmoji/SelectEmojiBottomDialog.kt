@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.data.mapper.Emoji
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.data.EmojiUtil
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.EmojiHolderFactory
@@ -76,9 +77,9 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     // #region Rx chains
     private fun loadEmoji() {
-        disposeEmojiLoad = Single.just(EmojiUtil.getListEmoji(requireContext()))
+        disposeEmojiLoad = Single.just(Emoji.values())
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
-            .map { EmojiUi(it.index, it.value) }
+            .map { EmojiUi(it.index, it.value.unicode, it.value.nameInZulip) }
             .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

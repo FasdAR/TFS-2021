@@ -27,7 +27,7 @@ fun List<Reaction>.mapToDomain(userId: Long): List<DomainReaction> {
         val isSelected = allReactionList.indexOfFirst { it.userId == userId } != -1
 
         emoji?.let {
-            returnList.put(reaction.emojiName, DomainReaction(it, sumReaction, isSelected))
+            returnList.put(reaction.emojiName, DomainReaction(it, reaction.emojiName, sumReaction, isSelected))
         }
     }
 

@@ -17,7 +17,7 @@ abstract class MessageViewHolder<T : MessageUi>(
 ) : ViewHolder<T>(view), MessageViewGroup.OnClickReactionListener, View.OnLongClickListener {
 
     interface OnClickReactionListener {
-        fun onClickReaction(uIdMessage: Int, emoji: String)
+        fun onClickReaction(uIdMessage: Int, emoji: String, isSelected: Boolean)
         fun onClickAddNewReaction(uIdMessage: Int)
     }
 
@@ -62,7 +62,7 @@ abstract class MessageViewHolder<T : MessageUi>(
         reactionListener.onClickAddNewReaction(messageId)
     }
 
-    override fun onClickReaction(reactionView: ReactionView, emoji: String) {
-        reactionListener.onClickReaction(messageId, emoji)
+    override fun onClickReaction(reactionView: ReactionView, emoji: String, isSelected: Boolean) {
+        reactionListener.onClickReaction(messageId, emoji, isSelected)
     }
 }

@@ -7,4 +7,6 @@ import ru.fasdev.tfs.domain.message.model.Message
 interface MessageRepo {
     fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>>
     fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable
+    fun addEmoji(messageId: Int, emojiName: String): Completable
+    fun removeEmoji(messageId: Int, emojiName: String): Completable
 }

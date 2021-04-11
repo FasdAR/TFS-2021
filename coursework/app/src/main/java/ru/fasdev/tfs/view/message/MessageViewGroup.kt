@@ -6,7 +6,7 @@ import ru.fasdev.tfs.view.reaction.ReactionView
 
 interface MessageViewGroup {
     interface OnClickReactionListener {
-        fun onClickReaction(reactionView: ReactionView, emoji: String)
+        fun onClickReaction(reactionView: ReactionView, emojiName: String, isSelected: Boolean)
         fun onClickAddNewReaction()
     }
 

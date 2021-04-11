@@ -7,6 +7,7 @@ import ru.fasdev.tfs.recycler.viewHolder.ViewType
 class EmojiUi(
     override val uId: Int,
     val emoji: String,
+    val emojiName: String,
     override val viewType: Int = R.layout.item_emoji
 ) : ViewType() {
     companion object {

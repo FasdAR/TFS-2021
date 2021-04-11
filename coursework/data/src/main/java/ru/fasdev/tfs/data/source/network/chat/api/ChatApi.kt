@@ -1,10 +1,11 @@
 package ru.fasdev.tfs.data.source.network.chat.api
 
 import io.reactivex.rxjava3.core.Single
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
+import ru.fasdev.tfs.data.mapper.Emoji
+import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
 import ru.fasdev.tfs.data.source.network.chat.response.AllMessagesResponse
+import ru.fasdev.tfs.data.source.network.chat.response.EmojiResponse
 import ru.fasdev.tfs.data.source.network.chat.response.SendMessageResponse
 
 interface ChatApi
@@ -27,4 +28,10 @@ interface ChatApi
         @Query("content") content: String,
         @Query("subject") subject: String
     ) : Single<SendMessageResponse>
+
+    @POST("messages/{message_id}/reactions")
+    fun addReaction(@Path("message_id") messageId: Int, @Query("emoji_name") emojiName: String): Single<EmojiResponse>
+
+    @DELETE("messages/{message_id}/reactions")
+    fun removeReaction(@Path("message_id") messageId: Int, @Query("emoji_name") emojiName: String): Single<EmojiResponse>
 }

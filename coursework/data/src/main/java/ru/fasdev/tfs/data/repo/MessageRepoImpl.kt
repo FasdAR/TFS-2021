@@ -34,4 +34,14 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
         return chatApi.sendMessage(to = nameStream, subject = nameTopic, content = message)
             .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS } }
     }
+
+    override fun addEmoji(messageId: Int, emojiName: String): Completable {
+        return chatApi.addReaction(messageId, emojiName)
+            .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS} }
+    }
+
+    override fun removeEmoji(messageId: Int, emojiName: String): Completable {
+        return chatApi.removeReaction(messageId, emojiName)
+            .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS } }
+    }
 }

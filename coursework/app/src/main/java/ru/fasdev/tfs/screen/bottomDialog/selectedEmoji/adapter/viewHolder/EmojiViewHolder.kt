@@ -19,7 +19,7 @@ class EmojiViewHolder(
     override fun bind(item: EmojiUi) {
         text.text = item.emoji
         view.setOnClickListener {
-            onSelectedListener?.onSelectedEmoji(item.emoji)
+            onSelectedListener?.onSelectedEmoji(item.emojiName)
         }
     }
 }
