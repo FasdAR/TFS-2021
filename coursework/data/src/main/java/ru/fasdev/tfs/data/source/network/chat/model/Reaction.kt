@@ -7,6 +7,5 @@ import kotlinx.serialization.Serializable
 class Reaction(
     @SerialName("emoji_name") val emojiName: String,
     @SerialName("emoji_code") val emojiCode: String,
-    @SerialName("user_id") val userId: Long,
-    @SerialName("reaction_type") val reactionType: ReactionType
+    @SerialName("user_id") val userId: Long
 )

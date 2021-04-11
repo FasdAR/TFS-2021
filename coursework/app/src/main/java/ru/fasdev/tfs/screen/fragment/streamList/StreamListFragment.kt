@@ -107,8 +107,8 @@ class StreamListFragment :
         loadTopics(idStream, opened)
     }
 
-    override fun onClickTopic(idTopic: Int) {
-        fragmentRouter.navigateTo(ChatFragment.getScreen(idTopic))
+    override fun onClickTopic(nameTopic: String, streamName: String) {
+        fragmentRouter.navigateTo(ChatFragment.getScreen(streamName, nameTopic))
     }
 
     override fun onDestroy() {
@@ -177,7 +177,14 @@ class StreamListFragment :
             streamInteractor.getAllTopics(idStream.toLong())
                 .subscribeOn(Schedulers.io())
                 .flatMapObservable { Observable.fromIterable(it) }
-                .map { it.toTopicUi() }
+                .map {
+                    val streamName = adapter.items
+                        .filter { it is StreamUi }
+                        .map { it as StreamUi }
+                        .findLast { it.uId == idStream }?.nameTopic.toString()
+
+                    it.toTopicUi(streamName)
+                }
                 .toList()
                 .map { topics ->
                     val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }

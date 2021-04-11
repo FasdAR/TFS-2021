@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.core.Single
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.fasdev.tfs.data.mapper.mapToDomain
+import ru.fasdev.tfs.data.source.network.base.response.Result
 import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.chat.model.FilterNarrow
 import ru.fasdev.tfs.domain.message.model.Message
@@ -17,7 +18,7 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
     override fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>> {
         val filterNarrow = FilterNarrow(operator = "stream", operand = nameStream)
 
-        return chatApi.getAllMessages(narrow = json.encodeToString(filterNarrow))
+        return chatApi.getAllMessages(narrow = json.encodeToString(listOf(filterNarrow)))
             .map { it.messages }
             .flatMapObservable(::fromIterable)
             .filter { it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT)) }
@@ -26,8 +27,7 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
     }
 
     override fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable {
-        return Completable.fromCallable {
-            chatApi.sendMessage(to = nameStream, subject = nameTopic, content = message)
-        }
+        return chatApi.sendMessage(to = nameStream, subject = nameTopic, content = message)
+            .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS } }
     }
 }

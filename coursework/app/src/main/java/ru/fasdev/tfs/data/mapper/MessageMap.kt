@@ -9,12 +9,12 @@ import java.util.Locale
 
 fun Message.toExternalMessageUi(): ExternalMessageUi {
     return ExternalMessageUi(
-        id, sender.fullName, sender.avatarUrl, text, this.reactions.mapToMessageReactionUi()
+        id.toInt(), sender.fullName, sender.avatarUrl, text, this.reactions.mapToMessageReactionUi()
     )
 }
 
 fun Message.toInternalMessageUi(): InternalMessageUi {
-    return InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
+    return InternalMessageUi(id.toInt(), text, this.reactions.mapToMessageReactionUi())
 }
 
 fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {

@@ -13,6 +13,7 @@ import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
 import ru.fasdev.tfs.BuildConfig
+import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.data.source.network.users.api.UserApi
 
@@ -50,8 +51,12 @@ class RetrofitModule
 
         fun getCallAdapter(): CallAdapter.Factory = RxJava3CallAdapterFactory.create()
 
-        fun getConverterFactory(): Converter.Factory {
-            return Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType())
+        fun getJson(): Json {
+            return Json { ignoreUnknownKeys = true }
+        }
+
+        fun getConverterFactory(json: Json = getJson()): Converter.Factory {
+            return json.asConverterFactory("application/json".toMediaType())
         }
 
         fun getRetrofit(
@@ -73,6 +78,10 @@ class RetrofitModule
 
         fun getStreamApi(retrofit: Retrofit): StreamApi {
             return retrofit.create(StreamApi::class.java)
+        }
+
+        fun getChatApi(retrofit: Retrofit): ChatApi {
+            return retrofit.create(ChatApi::class.java)
         }
     }
 }

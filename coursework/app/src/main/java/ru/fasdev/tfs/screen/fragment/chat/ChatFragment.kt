@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,24 +16,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
 import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
-import ru.fasdev.tfs.domain.message.repo.TestMessageRepoImpl
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractorImpl
-import ru.fasdev.tfs.domain.stream.repo.StreamRepo
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.data.mapper.mapToUiList
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.core.ext.getSystemInsets
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
+import ru.fasdev.tfs.data.mapper.mapToUiList
+import ru.fasdev.tfs.di.module.ChatDomainModule
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
@@ -41,6 +42,7 @@ import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import java.util.concurrent.TimeUnit
 
 class ChatFragment :
     Fragment(R.layout.fragment_chat),
@@ -54,15 +56,21 @@ class ChatFragment :
         private const val COLOR_TOOLBAR = R.color.teal_500
 
         private const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
-        private const val KEY_ID_TOPIC = "ID_TOPIC"
+        private const val KEY_STREAM_NAME = "STREAM_NAME"
+        private const val KEY_TOPIC_NAME = "TOPIC_NAME"
 
-        fun newInstance(idSubTopic: Int): ChatFragment {
+        fun newInstance(streamName: String, topicName: String): ChatFragment {
             return ChatFragment().apply {
-                arguments = bundleOf(KEY_ID_TOPIC to idSubTopic)
+                arguments = bundleOf(KEY_STREAM_NAME to streamName, KEY_TOPIC_NAME to topicName)
             }
         }
 
-        fun getScreen(idSubTopic: Int) = FragmentScreen(TAG, newInstance(idSubTopic))
+        fun getScreen(streamName: String, topicName: String) = FragmentScreen(TAG, newInstance(streamName, topicName))
+    }
+
+    object ChatComponent {
+        val messageRepo = ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json)
+        val messageInteractor = MessageInteractorImpl(messageRepo)
     }
 
     private var _binding: FragmentChatBinding? = null
@@ -71,11 +79,7 @@ class ChatFragment :
     private val fragmentRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    private val testMessageRepoImpl = TestMessageRepoImpl()
-    private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
-
-    //private val topicRepo: StreamRepo = TestAllTopicRepoImpl()
-    //private val topicInteractor: StreamInteractor = StreamInteractorImpl(topicRepo)
+    private val interactor: MessageInteractor = ChatComponent.messageInteractor
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
     private val adapter by lazy {
@@ -85,10 +89,8 @@ class ChatFragment :
         ).apply { differListListener = this@ChatFragment }
     }
 
-    private val currentChatId = 1
-    private val currentUserId = 1
-
-    private val idSubTopic: Int get() = requireArguments().getInt(KEY_ID_TOPIC)
+    private val streamName: String get() = requireArguments().getString(KEY_STREAM_NAME).toString()
+    private val topicName: String get() = requireArguments().getString(KEY_TOPIC_NAME).toString()
 
     private var selectedMessageId: Int = 0
 
@@ -115,19 +117,22 @@ class ChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.toolbarLayout.root.setSystemInsetsInTop()
         view.doOnApplyWindowsInsets { insetView, windowInsets, initialPadding ->
             val systemInsets = windowInsets.getSystemInsets()
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
+        binding.toolbarLayout.title.text =
+            resources.getString(R.string.main_topic_title, streamName)
+        binding.topic.text = resources.getString(R.string.sub_topic_title, topicName)
+
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
-            selectedEmoji?.let { changeSelectedReaction(emoji = it) }
+            selectedEmoji?.let { }//changeSelectedReaction(emoji = it) }
         }
-
-        getTopic(idSubTopic)
 
         with(binding.toolbarLayout) {
             toolbarRoot.setBackgroundColor(requireContext().getColorCompat(COLOR_TOOLBAR))
@@ -155,7 +160,7 @@ class ChatFragment :
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
-        updateChatItems(true)
+        updateChatItems()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -184,15 +189,17 @@ class ChatFragment :
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String) {
-        changeSelectedReaction(uIdMessage, emoji)
+        //changeSelectedReaction(uIdMessage, emoji)
     }
 
     override fun onCurrentListChanged(
         previousList: MutableList<ViewType>,
         currentList: MutableList<ViewType>
     ) {
-        if (!binding.rvList.canScrollVertically(1))
-            binding.rvList.scrollToPosition(0)
+        _binding?.let {
+            if (!it.rvList.canScrollVertically(1))
+                it.rvList.scrollToPosition(0)
+        }
     }
 
     private fun loadingState() {
@@ -217,39 +224,21 @@ class ChatFragment :
                 .doOnSuccess {
                     binding.msgText.text?.clear()
                 }
-                .flatMapCompletable { interactor.sendMessage(currentChatId, it) }
+                .observeOn(Schedulers.io())
+                .flatMapCompletable { interactor.sendMessage(streamName, topicName, it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
+                .subscribeBy (
                     onComplete = {
                         updateChatItems()
                     },
-                    onError = ::onError
+                    onError = {
+                        Log.e("ERRR", it.toString())
+                    }
                 )
         )
     }
 
-    private fun getTopic(idSubTopic: Int) {
-        /*
-        compositeDisposable.add(
-            topicInteractor
-                .getTopic(idSubTopic)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
-                }
-                .observeOn(Schedulers.io())
-                .flatMap { topicInteractor.getStream(it.idStream) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        binding.toolbarLayout.title.text =
-                            resources.getString(R.string.main_topic_title, it.name)
-                    },
-                    onError = ::onError
-                )
-        )*/
-    }
-
+    /*
     private fun changeSelectedReaction(idMessage: Int = selectedMessageId, emoji: String) {
         compositeDisposable.add(
             interactor
@@ -262,21 +251,16 @@ class ChatFragment :
                     onError = ::onError
                 )
         )
-    }
+    }*/
 
-    private fun updateChatItems(isLoading: Boolean = false) {
+    private fun updateChatItems() {
         compositeDisposable.add(
-            interactor.getMessageByChat(currentChatId)
-                .doOnSubscribe {
-                    if (isLoading) loadingState()
-                }
-                .map { it.mapToUiList(currentUserId) }
+            Observable.interval(0,10, TimeUnit.SECONDS)
+                .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName) }
+                .map { it.mapToUiList(402233) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    selectedMessageId = 0
-                }
                 .subscribeBy(
-                    onSuccess = {
+                    onNext = {
                         adapter.items = it
                         loadedState()
                     },

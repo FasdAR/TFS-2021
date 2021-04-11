@@ -11,14 +11,14 @@ class TopicViewHolder(val view: View, private val onClickSubTopicListener: OnCli
     private val binding = ItemSubTopicBinding.bind(view)
 
     interface OnClickTopicListener {
-        fun onClickTopic(idTopic: Int)
+        fun onClickTopic(nameTopic: String, nameStream: String)
     }
 
     override fun bind(item: TopicUi) {
         binding.nameTopic.text = item.nameTopic
         binding.msgCount.text = binding.root.resources.getString(R.string.sub_topic_msg, item.messageCount.toString())
 
-        binding.root.setOnClickListener { onClickSubTopicListener.onClickTopic(item.uId) }
+        binding.root.setOnClickListener { onClickSubTopicListener.onClickTopic(item.nameTopic, item.streamName) }
 
         if ((item.uId % 2) != 0) {
             binding.root.setBackgroundColor(binding.root.context.getColorCompat(R.color.teal_500))
