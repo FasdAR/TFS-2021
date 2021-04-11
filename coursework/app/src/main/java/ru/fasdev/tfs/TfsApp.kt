@@ -6,8 +6,7 @@ import ru.fasdev.tfs.data.source.network.users.api.UserApi
 import ru.fasdev.tfs.di.module.RetrofitModule
 import ru.fasdev.tfs.di.provide.ProvideRetrofit
 
-class TfsApp : Application(), ProvideRetrofit
-{
+class TfsApp : Application(), ProvideRetrofit {
     object AppComponent {
         val json = RetrofitModule.getJson()
         val retrofit = RetrofitModule.getRetrofit()

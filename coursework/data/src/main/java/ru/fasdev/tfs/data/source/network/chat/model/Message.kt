@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.fasdev.tfs.data.core.serializer.DateLongSerializer
 import ru.fasdev.tfs.data.source.network.users.model.user.BaseUser
-import java.util.*
+import java.util.Date
 
 @Serializable
 class Message(

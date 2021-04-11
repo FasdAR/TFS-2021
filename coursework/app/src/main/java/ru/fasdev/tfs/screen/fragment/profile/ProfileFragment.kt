@@ -59,7 +59,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     cardProfile.status = it.userStatus
                 },
                 onError = {
-
                 }
             )
     }

@@ -3,8 +3,8 @@ package ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewHolder
 import android.view.View
 import android.widget.TextView
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
+import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 
 class EmojiViewHolder(
     private val view: View,

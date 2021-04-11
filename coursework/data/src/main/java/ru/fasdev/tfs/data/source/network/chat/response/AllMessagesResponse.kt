@@ -6,7 +6,7 @@ import ru.fasdev.tfs.data.source.network.base.response.Result
 import ru.fasdev.tfs.data.source.network.chat.model.Message
 
 @Serializable
-class AllMessagesResponse (
+class AllMessagesResponse(
     override val code: String? = null,
     override val msg: String,
     override val result: Result,

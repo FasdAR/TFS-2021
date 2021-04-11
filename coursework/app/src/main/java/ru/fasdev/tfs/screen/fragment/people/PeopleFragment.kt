@@ -18,22 +18,22 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.databinding.FragmentPeopleBinding
-import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
+import ru.fasdev.tfs.data.mapper.toUserUi
+import ru.fasdev.tfs.databinding.FragmentPeopleBinding
 import ru.fasdev.tfs.di.module.UserDomainModule
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
+import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.model.User
-import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
-import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
+import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
 
@@ -126,22 +126,22 @@ class PeopleFragment :
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun searchUser(query: String = "") {
         searchSubject.onNext(query)
     }
 
     private fun Single<List<User>>.mapToUiUser(): Single<List<UserUi>> {
         return flatMapObservable(::fromIterable)
-        .concatMap {
-            Observable.just(it).delay(10, TimeUnit.MILLISECONDS)
-        }
-        .flatMapSingle { user ->
-            usersInteractor.getStatusUser(user.email)
-                .map { status -> user.toUserUi(status) }
-                .subscribeOn(Schedulers.io())
-        }
-        .toList()
+            .concatMap {
+                Observable.just(it).delay(10, TimeUnit.MILLISECONDS)
+            }
+            .flatMapSingle { user ->
+                usersInteractor.getStatusUser(user.email)
+                    .map { status -> user.toUserUi(status) }
+                    .subscribeOn(Schedulers.io())
+            }
+            .toList()
     }
 
     private fun loadAllUsers() {
@@ -184,5 +184,5 @@ class PeopleFragment :
                 )
         )
     }
-    //#endregion
+    // #endregion
 }

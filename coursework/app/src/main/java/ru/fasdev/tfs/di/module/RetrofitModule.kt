@@ -7,7 +7,6 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -17,8 +16,7 @@ import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.data.source.network.users.api.UserApi
 
-class RetrofitModule
-{
+class RetrofitModule {
     companion object {
         const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
 

@@ -3,8 +3,8 @@ package ru.fasdev.tfs.screen.activity.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.core.ext.initEdgeToEdge
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
 import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter

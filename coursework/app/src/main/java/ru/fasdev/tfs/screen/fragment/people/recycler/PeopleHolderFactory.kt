@@ -2,9 +2,9 @@ package ru.fasdev.tfs.screen.fragment.people.recycler
 
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolderFactory
+import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 
 class PeopleHolderFactory(private val onClickUserListener: UserViewHolder.OnClickUserListener) :
     ViewHolderFactory() {

@@ -3,10 +3,10 @@ package ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder
 import android.os.Bundle
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.databinding.ItemTopicBinding
 import ru.fasdev.tfs.core.ext.getColorCompat
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.databinding.ItemTopicBinding
 import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 
 class StreamViewHolder(val view: View, private val streamListener: OnClickStreamListener) : ViewHolder<StreamUi>(view) {
     companion object {

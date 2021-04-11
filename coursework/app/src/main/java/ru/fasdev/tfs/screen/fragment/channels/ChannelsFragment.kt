@@ -9,13 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.tabs.TabLayoutMediator
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
-import ru.fasdev.tfs.screen.fragment.channels.pager.StreamFragmentFactory
+import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
-import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import ru.fasdev.tfs.pager.ViewPagerFragmentAdapter
+import ru.fasdev.tfs.screen.fragment.channels.pager.StreamFragmentFactory
+import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels), ProviderBackPressed {
     companion object {

@@ -11,10 +11,9 @@ import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.chat.model.FilterNarrow
 import ru.fasdev.tfs.domain.message.model.Message
 import ru.fasdev.tfs.domain.message.repo.MessageRepo
-import java.util.*
+import java.util.Locale
 
-class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : MessageRepo
-{
+class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : MessageRepo {
     companion object {
         private const val USER_ID = 402233L
     }
@@ -37,7 +36,7 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
 
     override fun addEmoji(messageId: Int, emojiName: String): Completable {
         return chatApi.addReaction(messageId, emojiName)
-            .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS} }
+            .flatMapCompletable { Completable.fromCallable { it.result == Result.SUCCESS } }
     }
 
     override fun removeEmoji(messageId: Int, emojiName: String): Completable {

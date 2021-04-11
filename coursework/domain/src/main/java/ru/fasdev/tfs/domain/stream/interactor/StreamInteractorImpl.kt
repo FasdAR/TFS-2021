@@ -2,11 +2,10 @@ package ru.fasdev.tfs.domain.stream.interactor
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic
 import ru.fasdev.tfs.domain.stream.repo.StreamRepo
-import java.util.*
+import java.util.Locale
 
 class StreamInteractorImpl(private val streamRepo: StreamRepo) : StreamInteractor {
     override fun getAllStreams(): Single<List<Stream>> {
@@ -23,7 +22,7 @@ class StreamInteractorImpl(private val streamRepo: StreamRepo) : StreamInteracto
 
     override fun searchStream(query: String, isSub: Boolean): Single<List<Stream>> {
         val source = if (isSub) getSubStreams()
-            else getAllStreams()
+        else getAllStreams()
         return source
             .flatMapObservable { items -> Observable.fromIterable(items) }
             .filter { it.name.toLowerCase(Locale.ROOT).contains(query.trim().toLowerCase(Locale.ROOT)) }

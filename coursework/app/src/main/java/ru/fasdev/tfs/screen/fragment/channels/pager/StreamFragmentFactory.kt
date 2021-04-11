@@ -3,8 +3,8 @@ package ru.fasdev.tfs.screen.fragment.channels.pager
 import android.content.Context
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.screen.fragment.streamList.StreamListFragment
 import ru.fasdev.tfs.pager.ViewPagerFragmentFactory
+import ru.fasdev.tfs.screen.fragment.streamList.StreamListFragment
 
 class StreamFragmentFactory : ViewPagerFragmentFactory {
     companion object {

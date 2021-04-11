@@ -22,24 +22,24 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.databinding.FragmentChatBinding
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
-import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.core.ext.getSystemInsets
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.data.mapper.mapToUiList
+import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.di.module.ChatDomainModule
-import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
-import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
-import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
+import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
+import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
+import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
+import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
+import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
+import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
 import java.util.concurrent.TimeUnit
 
 class ChatFragment :
@@ -114,7 +114,6 @@ class ChatFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         binding.toolbarLayout.root.setSystemInsetsInTop()
         view.doOnApplyWindowsInsets { insetView, windowInsets, initialPadding ->
@@ -214,7 +213,7 @@ class ChatFragment :
                 .observeOn(Schedulers.io())
                 .flatMapCompletable { interactor.sendMessage(streamName, topicName, it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy (
+                .subscribeBy(
                     onComplete = {
                         updateChatItems()
                     },
@@ -239,7 +238,7 @@ class ChatFragment :
 
     private fun updateChatItems() {
         compositeDisposable.add(
-            Observable.interval(0,10, TimeUnit.SECONDS)
+            Observable.interval(0, 10, TimeUnit.SECONDS)
                 .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName) }
                 .map { it.mapToUiList(402233) }
                 .observeOn(AndroidSchedulers.mainThread())

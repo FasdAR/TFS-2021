@@ -11,4 +11,4 @@ class UserResponse(
     override val msg: String,
     override val result: Result,
     val user: User
-): BaseResponse
+) : BaseResponse

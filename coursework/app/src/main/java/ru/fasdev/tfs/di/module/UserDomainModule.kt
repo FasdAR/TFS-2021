@@ -6,8 +6,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.UserRepo
 
-class UserDomainModule
-{
+class UserDomainModule {
     companion object {
         fun getUserRepo(userApi: UserApi): UserRepo = UserRepoImpl(userApi)
         fun getUserInteractor(userRepo: UserRepo): UserInteractor = UserInteractorImpl(userRepo)

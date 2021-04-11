@@ -5,7 +5,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.regex.Pattern
 
-//TODO: MOVE TO DATA LAYER
+// TODO: MOVE TO DATA LAYER
 class EmojiUtil {
     companion object {
         private const val EMOJI_ASSET_FILE = "emoji.txt"

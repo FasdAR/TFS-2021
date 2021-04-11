@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
 import ru.fasdev.tfs.domain.user.model.UserStatus
-import ru.fasdev.tfs.domain.user.model.UserStatus.*
+import ru.fasdev.tfs.domain.user.model.UserStatus.IDLE
+import ru.fasdev.tfs.domain.user.model.UserStatus.OFFLINE
+import ru.fasdev.tfs.domain.user.model.UserStatus.ONLINE
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {

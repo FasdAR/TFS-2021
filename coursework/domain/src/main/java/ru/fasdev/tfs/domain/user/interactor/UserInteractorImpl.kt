@@ -6,8 +6,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.domain.user.repo.UserRepo
-import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
 
 class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
     override fun getAllUsers(): Single<List<User>> {
@@ -27,8 +26,8 @@ class UserInteractorImpl(private val usersRepo: UserRepo) : UserInteractor {
             .flatMapObservable { Observable.fromIterable(it) }
             .filter {
                 val resQuery = query.toLowerCase(Locale.ROOT).trim()
-                return@filter it.fullName.toLowerCase(Locale.ROOT).contains(resQuery)
-                        || it.email.toLowerCase(Locale.ROOT).contains(resQuery)
+                return@filter it.fullName.toLowerCase(Locale.ROOT).contains(resQuery) ||
+                    it.email.toLowerCase(Locale.ROOT).contains(resQuery)
             }
             .toList()
             .subscribeOn(Schedulers.io())

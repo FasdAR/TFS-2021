@@ -9,8 +9,7 @@ import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.domain.user.model.UserStatus
 import ru.fasdev.tfs.domain.user.repo.UserRepo
 
-class UserRepoImpl (private val userApi: UserApi): UserRepo
-{
+class UserRepoImpl(private val userApi: UserApi) : UserRepo {
     override fun getAllUsers(): Single<List<User>> {
         return userApi.getAllUsers()
             .flatMapObservable { Observable.fromIterable(it.members) }
@@ -20,8 +19,8 @@ class UserRepoImpl (private val userApi: UserApi): UserRepo
     }
 
     override fun getUserById(id: Long): Single<User> {
-       return userApi.getUserById(id)
-           .map { it.user.toUserDomain() }
+        return userApi.getUserById(id)
+            .map { it.user.toUserDomain() }
     }
 
     override fun getStatusUser(email: String): Single<UserStatus> {

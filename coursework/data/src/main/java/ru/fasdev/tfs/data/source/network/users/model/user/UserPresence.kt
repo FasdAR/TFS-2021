@@ -1,9 +1,9 @@
 package ru.fasdev.tfs.data.source.network.users.model.user
 
-import ru.fasdev.tfs.data.core.serializer.DateLongSerializer
 import kotlinx.serialization.Serializable
+import ru.fasdev.tfs.data.core.serializer.DateLongSerializer
 import ru.fasdev.tfs.data.source.network.users.model.presence.PresenceStatus
-import java.util.*
+import java.util.Date
 
 @Serializable
 class UserPresence(

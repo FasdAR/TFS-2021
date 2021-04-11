@@ -22,18 +22,18 @@ import ru.fasdev.tfs.data.mapper.toStreamUi
 import ru.fasdev.tfs.data.mapper.toTopicUi
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
 import ru.fasdev.tfs.di.module.StreamDomainModule
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
+import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
 import ru.fasdev.tfs.domain.stream.model.Stream
+import ru.fasdev.tfs.fragmentRouter.FragmentRouter
+import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
-import ru.fasdev.tfs.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 import java.util.concurrent.TimeUnit
 
@@ -120,7 +120,7 @@ class StreamListFragment :
         Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
 
-    //#region Rx chains
+    // #region Rx chains
     private fun Single<List<Stream>>.mapToDomain(): Single<List<StreamUi>> {
         return flatMapObservable(::fromIterable)
             .map { it.toStreamUi() }
@@ -129,7 +129,7 @@ class StreamListFragment :
 
     private fun getStreamSource(): Single<List<Stream>> {
         return if (mode == ALL_MODE) streamInteractor.getAllStreams()
-            else streamInteractor.getSubStreams()
+        else streamInteractor.getSubStreams()
     }
 
     private fun loadAllStreams() {
@@ -137,7 +137,7 @@ class StreamListFragment :
             getStreamSource().subscribeOn(Schedulers.io())
                 .mapToDomain()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy (
+                .subscribeBy(
                     onSuccess = {
                         adapter.items = it
                     }
@@ -148,12 +148,12 @@ class StreamListFragment :
     private fun observerSearch() {
         compositeDisposable.add(
             searchSubject
-                .filter{ isVisible }
+                .filter { isVisible }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
                     if (it.isNotEmpty()) streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
-                    else  getStreamSource()
+                    else getStreamSource()
                 }
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle {
@@ -208,5 +208,5 @@ class StreamListFragment :
                 }
         )
     }
-    //#endregion
+    // #endregion
 }

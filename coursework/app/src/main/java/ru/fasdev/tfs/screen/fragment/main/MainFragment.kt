@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
+import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
+import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
 import ru.fasdev.tfs.screen.fragment.profile.ProfileFragment
-import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
-import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
 
 class MainFragment : Fragment(R.layout.fragment_main), ProviderBackPressed {
     companion object {

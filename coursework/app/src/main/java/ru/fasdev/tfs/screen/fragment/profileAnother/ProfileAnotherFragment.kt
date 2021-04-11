@@ -21,9 +21,9 @@ import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {

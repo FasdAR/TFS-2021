@@ -1,10 +1,10 @@
 package ru.fasdev.tfs.data.source.network.users.response
 
-import ru.fasdev.tfs.data.source.network.base.response.Result
-import ru.fasdev.tfs.data.source.network.users.model.user.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
+import ru.fasdev.tfs.data.source.network.base.response.Result
+import ru.fasdev.tfs.data.source.network.users.model.user.User
 
 @Serializable
 class AllUsersResponse(
@@ -12,4 +12,4 @@ class AllUsersResponse(
     override val msg: String,
     override val result: Result,
     @SerialName("members") val members: List<User>
-): BaseResponse
+) : BaseResponse

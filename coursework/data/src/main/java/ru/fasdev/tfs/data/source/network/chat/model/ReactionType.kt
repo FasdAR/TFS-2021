@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class ReactionType
-{
+enum class ReactionType {
     @SerialName("unicode_emoji")
     UNICODE_EMOJI
 }

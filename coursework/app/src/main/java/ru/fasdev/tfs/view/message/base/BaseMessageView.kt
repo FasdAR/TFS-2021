@@ -9,8 +9,8 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.toDp
 import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
 import ru.fasdev.tfs.view.message.MessageViewGroup
-import ru.fasdev.tfs.view.reaction.ReactionView
 import ru.fasdev.tfs.view.message.base.model.MessageReactionUi
+import ru.fasdev.tfs.view.reaction.ReactionView
 
 abstract class BaseMessageView
 @JvmOverloads constructor(

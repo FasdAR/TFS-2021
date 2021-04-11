@@ -1,10 +1,10 @@
 package ru.fasdev.tfs.screen.fragment.chat.recycler.diff
 
 import android.os.Bundle
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder.Companion.KEY_PAYLOADS_REACTIONS
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.MessageUi
 import ru.fasdev.tfs.recycler.diff.ItemCallback
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder.Companion.KEY_PAYLOADS_REACTIONS
+import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.MessageUi
 
 class ChatItemCallback<T : ViewType> : ItemCallback<T>() {
     override fun getChangePayload(oldItem: T, newItem: T): Any? {

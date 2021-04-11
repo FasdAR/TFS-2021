@@ -1,15 +1,14 @@
 package ru.fasdev.tfs.data.source.network.users.api
 
-import ru.fasdev.tfs.data.source.network.users.response.UserPresenceResponse
-import ru.fasdev.tfs.data.source.network.users.response.OwnUserResponse
-import ru.fasdev.tfs.data.source.network.users.response.AllUsersResponse
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
+import ru.fasdev.tfs.data.source.network.users.response.AllUsersResponse
+import ru.fasdev.tfs.data.source.network.users.response.OwnUserResponse
+import ru.fasdev.tfs.data.source.network.users.response.UserPresenceResponse
 import ru.fasdev.tfs.data.source.network.users.response.UserResponse
 
-interface UserApi
-{
+interface UserApi {
     @GET("users")
     fun getAllUsers(): Single<AllUsersResponse>
 

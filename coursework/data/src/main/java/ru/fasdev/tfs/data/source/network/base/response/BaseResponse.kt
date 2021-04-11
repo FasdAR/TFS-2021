@@ -3,8 +3,7 @@ package ru.fasdev.tfs.data.source.network.base.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-interface BaseResponse
-{
+interface BaseResponse {
     val code: String?
     val msg: String
     val result: Result
