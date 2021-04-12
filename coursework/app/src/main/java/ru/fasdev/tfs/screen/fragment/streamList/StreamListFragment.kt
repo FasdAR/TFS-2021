@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
@@ -55,7 +57,11 @@ class StreamListFragment :
     }
 
     object StreamComponent {
-        val streamRepo = StreamDomainModule.getStreamRepo(TfsApp.AppComponent.streamApi)
+        val streamRepo = StreamDomainModule.getStreamRepo(
+            TfsApp.AppComponent.streamApi,
+            TfsApp.AppComponent.streamDao,
+            TfsApp.AppComponent.topicDao
+        )
         val streamInteractor = StreamDomainModule.getStreamInteractor(streamRepo)
     }
 
@@ -121,13 +127,16 @@ class StreamListFragment :
     }
 
     // #region Rx chains
-    private fun Single<List<Stream>>.mapToDomain(): Single<List<StreamUi>> {
-        return flatMapObservable(::fromIterable)
-            .map { it.toStreamUi() }
-            .toList()
+    private fun Flowable<List<Stream>>.mapToDomain(): Flowable<List<StreamUi>> {
+        return concatMap {
+            fromIterable(it)
+                .map { it.toStreamUi() }
+                .toList()
+                .flatMapPublisher { Flowable.just(it) }
+        }
     }
 
-    private fun getStreamSource(): Single<List<Stream>> {
+    private fun getStreamSource(): Flowable<List<Stream>> {
         return if (mode == ALL_MODE) streamInteractor.getAllStreams()
         else streamInteractor.getSubStreams()
     }
@@ -138,7 +147,7 @@ class StreamListFragment :
                 .mapToDomain()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
+                    onNext = {
                         adapter.items = it
                     }
                 )
@@ -146,6 +155,7 @@ class StreamListFragment :
     }
 
     private fun observerSearch() {
+        /*
         compositeDisposable.add(
             searchSubject
                 .filter { isVisible }
@@ -169,7 +179,7 @@ class StreamListFragment :
                         adapter.items = array
                     }
                 )
-        )
+        )*/
     }
 
     private fun loadTopics(idStream: Int, opened: Boolean) {
