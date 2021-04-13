@@ -165,20 +165,22 @@ class StreamListFragment :
     }
 
     private fun observerSearch() {
-        /*
         compositeDisposable.add(
             searchSubject
+                .subscribeOn(Schedulers.io())
                 .filter { isVisible }
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
-                    if (it.isNotEmpty()) streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
-                    else getStreamSource()
+                    if (it.isNotEmpty()) {
+                        return@switchMapSingle streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
+                            .flatMapPublisher { Flowable.just(it) }.mapToDomain().toList()
+                    }
+                    else {
+                        return@switchMapSingle getStreamSource().mapToDomain().toList()
+                    }
                 }
-                .subscribeOn(Schedulers.io())
-                .flatMapSingle {
-                    Single.just(it).mapToDomain()
-                }
+                .map { it[0] }
                 .observeOn(AndroidSchedulers.mainThread())
                 .onErrorReturn { error ->
                     onError(error)
@@ -189,7 +191,7 @@ class StreamListFragment :
                         adapter.items = array
                     }
                 )
-        )*/
+        )
     }
 
     private fun loadTopics(idStream: Int, opened: Boolean) {
