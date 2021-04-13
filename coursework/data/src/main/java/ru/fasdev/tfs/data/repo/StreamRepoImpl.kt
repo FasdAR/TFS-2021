@@ -4,11 +4,13 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
+import ru.fasdev.tfs.data.mapper.toConstHash
 import ru.fasdev.tfs.data.mapper.toStreamDomain
 import ru.fasdev.tfs.data.mapper.toTopicDomain
 import ru.fasdev.tfs.data.source.db.stream.dao.StreamDao
 import ru.fasdev.tfs.data.source.db.stream.dao.TopicDao
 import ru.fasdev.tfs.data.source.db.stream.model.StreamDB
+import ru.fasdev.tfs.data.source.db.stream.model.TopicDB
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic
@@ -69,11 +71,29 @@ class StreamRepoImpl(
         return dbSource.concatWith(networkSource)
     }
 
-    override fun getTopics(idStream: Long): Single<List<Topic>> {
-        return streamApi.getTopics(idStream)
-            .map { it.topics }
+    override fun getTopics(idStream: Long): Flowable<List<Topic>> {
+        val dbSource = topicDao.getTopicsInStream(idStream)
             .flatMapObservable(::fromIterable)
-            .map { it.toTopicDomain() }
+            .map { topic ->
+                Topic(topic.name.toConstHash().toLong(), topic.name)
+            }
             .toList()
+
+        val networkSource = streamApi.getTopics(idStream)
+            .map { it.topics }
+            .map {
+                it.mapIndexed { index, topic ->
+                    topic.toTopicDomain()
+                }
+            }
+            .doOnSuccess { topics ->
+                val topicsDb = topics.map { topic ->
+                    TopicDB(streamId = idStream, name = topic.name)
+                }
+
+                topicDao.insertAndClear(idStream, topicsDb)
+            }
+
+        return dbSource.concatWith(networkSource)
     }
 }

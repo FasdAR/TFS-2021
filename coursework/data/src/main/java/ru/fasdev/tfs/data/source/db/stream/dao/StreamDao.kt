@@ -26,7 +26,7 @@ abstract class StreamDao: BaseDao<StreamDB>
 
     @Transaction
     open fun insertAndClear(entity: List<StreamDB>, isSub: Boolean) {
-        clearOldData(isSub)
+        clearOldData(isSub).subscribe()
         insert(entity)
     }
 }

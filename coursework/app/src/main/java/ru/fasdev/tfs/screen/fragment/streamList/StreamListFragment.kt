@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.Flowables
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -38,6 +39,7 @@ import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallbac
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 
 class StreamListFragment :
@@ -154,10 +156,10 @@ class StreamListFragment :
                 .subscribeBy(
                     onNext = {
                         Log.d("ON_NEXT", it.toString())
-                        if (it.isNotEmpty())
+                        if (it.isNotEmpty()) {
                             adapter.items = it
-                    },
-                    onError = ::onError
+                        }
+                    }
                 )
         )
     }
@@ -193,36 +195,45 @@ class StreamListFragment :
     private fun loadTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.add(
             streamInteractor.getAllTopics(idStream.toLong())
-                .subscribeOn(Schedulers.io())
-                .flatMapObservable { Observable.fromIterable(it) }
-                .map {
-                    val streamName = adapter.items
-                        .filter { it is StreamUi }
-                        .map { it as StreamUi }
-                        .findLast { it.uId == idStream }?.nameTopic.toString()
-
-                    it.toTopicUi(streamName)
+                .onErrorResumeNext {
+                    onError(it)
+                    Flowable.just(listOf())
                 }
-                .toList()
-                .map { topics ->
-                    val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
+                .subscribeOn(Schedulers.io())
+                .concatMap {
+                    fromIterable(it)
+                        .map {
+                            val streamName = adapter.items
+                                .filter { it is StreamUi }
+                                .map { it as StreamUi }
+                                .findLast { it.uId == idStream }?.nameTopic.toString()
 
-                    val currentStreamIndex =
-                        currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
-                    val stream = currentArray[currentStreamIndex] as StreamUi
-                    currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
+                            it.toTopicUi(streamName)
+                        }
+                        .toList()
+                        .map { topics ->
+                            val currentArray = adapter.items.toMutableList()
 
-                    if (opened) {
-                        currentArray.addAll(currentStreamIndex + 1, topics)
-                    } else {
-                        currentArray.removeAll(topics)
-                    }
+                            val currentStreamIndex =
+                                currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
+                            val stream = currentArray[currentStreamIndex] as StreamUi
+                            currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
 
-                    return@map currentArray
+                            currentArray.removeAll(topics)
+
+                            if (opened) {
+                                currentArray.addAll(currentStreamIndex + 1, topics)
+                            }
+
+                            return@map currentArray
+                        }
+                        .flatMapPublisher { Flowable.just(it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
-                    adapter.items = it
+                    if (it.isNotEmpty()) {
+                        adapter.items = it
+                    }
                 }
         )
     }

@@ -9,5 +9,5 @@ import ru.fasdev.tfs.domain.stream.model.Topic
 interface StreamRepo {
     fun getAllStreams(): Flowable<List<Stream>>
     fun getSubStreams(): Flowable<List<Stream>>
-    fun getTopics(idStream: Long): Single<List<Topic>>
+    fun getTopics(idStream: Long): Flowable<List<Topic>>
 }

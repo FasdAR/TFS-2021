@@ -8,6 +8,23 @@ typealias DomainStream = ru.fasdev.tfs.domain.stream.model.Stream
 typealias TopicStream = ru.fasdev.tfs.domain.stream.model.Topic
 
 fun Stream.toStreamDomain() = DomainStream(this.streamId, this.name)
-fun Topic.toTopicDomain() = TopicStream(this.name, this.maxId)
+fun Topic.toTopicDomain() = TopicStream(this.name.toConstHash().toLong(), this.name)
+
+fun String.toConstHash(): Int {
+    val alphabet = "abcdefghijklmnopqrstuvwxyz"
+    var result = 0
+    forEach {
+        val index = alphabet.indexOf(it)
+        if (index != -1) {
+            val number = alphabet.indexOf(it)
+            result += number
+        }
+        else if (it.isDigit()) {
+            result += it.toInt()
+        }
+    }
+
+    return result
+}
 
 fun StreamDB.toStreamDomain() = DomainStream(this.id, this.name)

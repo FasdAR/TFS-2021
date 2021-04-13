@@ -12,13 +12,12 @@ import androidx.room.PrimaryKey
             entity = StreamDB::class,
             parentColumns = ["id"],
             childColumns = ["id_stream"],
-            onDelete = ForeignKey.CASCADE,
+            onDelete = ForeignKey.NO_ACTION,
             onUpdate = ForeignKey.CASCADE
         )
     ]
 )
 class TopicDB(
-    @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "id_stream") val streamId: Long,
-    val name: String
+    @PrimaryKey val name: String
 )

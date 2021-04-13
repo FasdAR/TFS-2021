@@ -17,7 +17,7 @@ class StreamInteractorImpl(private val streamRepo: StreamRepo) : StreamInteracto
         return streamRepo.getSubStreams()
     }
 
-    override fun getAllTopics(idStream: Long): Single<List<Topic>> {
+    override fun getAllTopics(idStream: Long): Flowable<List<Topic>> {
         return streamRepo.getTopics(idStream)
     }
 
