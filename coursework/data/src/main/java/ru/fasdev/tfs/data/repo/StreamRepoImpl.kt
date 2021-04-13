@@ -1,6 +1,5 @@
 package ru.fasdev.tfs.data.repo
 
-import android.util.Log
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
@@ -15,7 +14,6 @@ import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic
 import ru.fasdev.tfs.domain.stream.repo.StreamRepo
-import java.util.concurrent.TimeUnit
 
 typealias NetworkStream = ru.fasdev.tfs.data.source.network.stream.model.Stream
 
@@ -27,14 +25,14 @@ class StreamRepoImpl(
     private fun Single<List<NetworkStream>>.mapToDomain(): Single<List<Stream>> {
         return flatMapObservable(::fromIterable)
             .map { it.toStreamDomain() }
-            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
     }
 
     @JvmName("mapToDomainStreamDB")
     private fun Single<List<StreamDB>>.mapToDomain(): Single<List<Stream>> {
         return flatMapObservable(::fromIterable)
             .map { it.toStreamDomain() }
-            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
     }
 
     private fun Single<List<Stream>>.cacheToDB(isSub: Boolean = false): Single<List<Stream>> {
@@ -78,13 +76,13 @@ class StreamRepoImpl(
                 val generateId = topic.name.toConstHash().toLong() + idStream
                 Topic(generateId, topic.name)
             }
-            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
 
         val networkSource = streamApi.getTopics(idStream)
             .map { it.topics }
             .flatMapObservable(::fromIterable)
             .map { it.toTopicDomain(idStream) }
-            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
             .doOnSuccess { topics ->
                 val topicsDb = topics.map { topic ->
                     TopicDB(id = topic.id, streamId = idStream, name = topic.name)
@@ -94,5 +92,26 @@ class StreamRepoImpl(
             }
 
         return dbSource.concatWith(networkSource)
+    }
+
+    override fun searchQuery(isSub: Boolean, query: String): Single<List<Stream>> {
+        val source = if (query.isEmpty()) {
+            if (isSub) {
+                streamDao.getSubscription()
+            } else {
+                streamDao.getAll()
+            }
+        } else {
+            if (isSub) {
+                streamDao.searchStreamSub(query)
+            } else {
+                streamDao.searchStream(query)
+            }
+        }
+
+        return source
+            .flatMapObservable(::fromIterable)
+            .map { it.toStreamDomain() }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name) }
     }
 }

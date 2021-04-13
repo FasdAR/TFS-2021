@@ -22,14 +22,6 @@ class StreamInteractorImpl(private val streamRepo: StreamRepo) : StreamInteracto
     }
 
     override fun searchStream(query: String, isSub: Boolean): Single<List<Stream>> {
-        val source = if (isSub) getSubStreams()
-        else getAllStreams()
-
-        return source
-            .toList()
-            .map { it[0] }
-            .flatMapObservable { Observable.fromIterable(it) }
-            .filter { it.name.trim().toLowerCase().contains(query.trim().toLowerCase()) }
-            .toList()
+        return streamRepo.searchQuery(isSub, query)
     }
 }

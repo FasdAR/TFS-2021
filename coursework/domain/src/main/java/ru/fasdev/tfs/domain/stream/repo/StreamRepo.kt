@@ -10,4 +10,5 @@ interface StreamRepo {
     fun getAllStreams(): Flowable<List<Stream>>
     fun getSubStreams(): Flowable<List<Stream>>
     fun getTopics(idStream: Long): Flowable<List<Topic>>
+    fun searchQuery(isSub: Boolean, query: String): Single<List<Stream>>
 }

@@ -21,6 +21,12 @@ abstract class StreamDao: BaseDao<StreamDB>
     @Query("DELETE FROM stream WHERE is_sub = :isSub")
     abstract fun clearOldData(isSub: Boolean)
 
+    @Query("SELECT * FROM stream WHERE name LIKE '%' || :query || '%'")
+    abstract fun searchStream(query: String): Single<List<StreamDB>>
+
+    @Query("SELECT * FROM stream WHERE is_sub = 1 AND name LIKE '%' || :query || '%'")
+    abstract fun searchStreamSub(query: String): Single<List<StreamDB>>
+
     @Transaction
     open fun insertAndClear(entity: List<StreamDB>, isSub: Boolean) {
         clearOldData(isSub)

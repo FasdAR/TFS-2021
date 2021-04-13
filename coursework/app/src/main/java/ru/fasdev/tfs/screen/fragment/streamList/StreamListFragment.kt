@@ -17,6 +17,7 @@ import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.Flowables
+import io.reactivex.rxjava3.kotlin.flatMapIterable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -172,24 +173,20 @@ class StreamListFragment :
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
-                    if (it.isNotEmpty()) {
-                        return@switchMapSingle streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
-                            .flatMapPublisher { Flowable.just(it) }.mapToDomain().toList()
-                    }
-                    else {
-                        return@switchMapSingle getStreamSource().mapToDomain().toList()
-                    }
+                    val isSub = mode == SUBSCRIBED_MODE
+                    return@switchMapSingle streamInteractor.searchStream(it.trim().toLowerCase(), isSub)
                 }
-                .map { it[0] }
+                .flatMapSingle {
+                    fromIterable(it)
+                        .map { it.toStreamUi() }
+                        .toList()
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn { error ->
-                    onError(error)
-                    return@onErrorReturn listOf()
-                }
                 .subscribeBy(
                     onNext = { array ->
                         adapter.items = array
-                    }
+                    },
+                    onError = ::onError
                 )
         )
     }
