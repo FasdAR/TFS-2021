@@ -8,7 +8,7 @@ typealias DomainStream = ru.fasdev.tfs.domain.stream.model.Stream
 typealias TopicStream = ru.fasdev.tfs.domain.stream.model.Topic
 
 fun Stream.toStreamDomain() = DomainStream(this.streamId, this.name)
-fun Topic.toTopicDomain() = TopicStream(this.name.toConstHash().toLong(), this.name)
+fun Topic.toTopicDomain(idStream: Long) = TopicStream(this.name.toConstHash().toLong() + idStream, this.name)
 
 fun String.toConstHash(): Int {
     val alphabet = "abcdefghijklmnopqrstuvwxyz"

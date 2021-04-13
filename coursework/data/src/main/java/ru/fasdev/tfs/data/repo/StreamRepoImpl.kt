@@ -75,20 +75,19 @@ class StreamRepoImpl(
         val dbSource = topicDao.getTopicsInStream(idStream)
             .flatMapObservable(::fromIterable)
             .map { topic ->
-                Topic(topic.name.toConstHash().toLong(), topic.name)
+                val generateId = topic.name.toConstHash().toLong() + idStream
+                Topic(generateId, topic.name)
             }
-            .toList()
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
 
         val networkSource = streamApi.getTopics(idStream)
             .map { it.topics }
-            .map {
-                it.mapIndexed { index, topic ->
-                    topic.toTopicDomain()
-                }
-            }
+            .flatMapObservable(::fromIterable)
+            .map { it.toTopicDomain(idStream) }
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
             .doOnSuccess { topics ->
                 val topicsDb = topics.map { topic ->
-                    TopicDB(streamId = idStream, name = topic.name)
+                    TopicDB(id = topic.id, streamId = idStream, name = topic.name)
                 }
 
                 topicDao.insertAndClear(idStream, topicsDb)

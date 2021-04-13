@@ -193,22 +193,18 @@ class StreamListFragment :
     }
 
     private fun loadTopics(idStream: Int, opened: Boolean) {
+        val selectedStream = adapter.items.filter { it is StreamUi }.map { it as StreamUi}.findLast { it.uId == idStream }
         compositeDisposable.add(
             streamInteractor.getAllTopics(idStream.toLong())
+                .subscribeOn(Schedulers.io())
                 .onErrorResumeNext {
                     onError(it)
                     Flowable.just(listOf())
                 }
-                .subscribeOn(Schedulers.io())
                 .concatMap {
                     fromIterable(it)
                         .map {
-                            val streamName = adapter.items
-                                .filter { it is StreamUi }
-                                .map { it as StreamUi }
-                                .findLast { it.uId == idStream }?.nameTopic.toString()
-
-                            it.toTopicUi(streamName)
+                            it.toTopicUi(selectedStream?.nameTopic.toString())
                         }
                         .toList()
                         .map { topics ->

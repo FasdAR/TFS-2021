@@ -19,14 +19,11 @@ abstract class StreamDao: BaseDao<StreamDB>
     abstract fun getSubscription(): Single<List<StreamDB>>
 
     @Query("DELETE FROM stream WHERE is_sub = :isSub")
-    abstract fun clearOldData(isSub: Boolean): Completable
-
-    @Query("DELETE FROM stream")
-    abstract fun dropTable(): Completable
+    abstract fun clearOldData(isSub: Boolean)
 
     @Transaction
     open fun insertAndClear(entity: List<StreamDB>, isSub: Boolean) {
-        clearOldData(isSub).subscribe()
+        clearOldData(isSub)
         insert(entity)
     }
 }

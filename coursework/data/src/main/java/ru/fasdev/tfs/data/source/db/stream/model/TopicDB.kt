@@ -18,6 +18,7 @@ import androidx.room.PrimaryKey
     ]
 )
 class TopicDB(
+    @PrimaryKey val id: Long,
     @ColumnInfo(name = "id_stream") val streamId: Long,
-    @PrimaryKey val name: String
+    val name: String
 )
