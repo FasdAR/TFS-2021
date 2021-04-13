@@ -2,20 +2,31 @@ package ru.fasdev.tfs.data.source.db.stream.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import ru.fasdev.tfs.data.source.db.base.BaseDao
 import ru.fasdev.tfs.data.source.db.stream.model.StreamDB
 
 @Dao
-interface StreamDao: BaseDao<StreamDB>
+abstract class StreamDao: BaseDao<StreamDB>
 {
     @Query("SELECT * FROM stream")
-    fun getAll(): Single<List<StreamDB>>
+    abstract fun getAll(): Single<List<StreamDB>>
 
     @Query("SELECT * FROM stream WHERE is_sub = 1")
-    fun getSubscription(): Single<List<StreamDB>>
+    abstract fun getSubscription(): Single<List<StreamDB>>
+
+    @Query("DELETE FROM stream WHERE is_sub = :isSub")
+    abstract fun clearOldData(isSub: Boolean): Completable
 
     @Query("DELETE FROM stream")
-    fun dropTable(): Completable
+    abstract fun dropTable(): Completable
+
+    @Transaction
+    open fun insertAndClear(entity: List<StreamDB>, isSub: Boolean) {
+        clearOldData(isSub)
+        insert(entity)
+    }
 }

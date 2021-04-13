@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.data.repo
 
+import android.util.Log
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
@@ -12,6 +13,7 @@ import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic
 import ru.fasdev.tfs.domain.stream.repo.StreamRepo
+import java.util.concurrent.TimeUnit
 
 typealias NetworkStream = ru.fasdev.tfs.data.source.network.stream.model.Stream
 
@@ -23,14 +25,14 @@ class StreamRepoImpl(
     private fun Single<List<NetworkStream>>.mapToDomain(): Single<List<Stream>> {
         return flatMapObservable(::fromIterable)
             .map { it.toStreamDomain() }
-            .toList()
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
     }
 
     @JvmName("mapToDomainStreamDB")
     private fun Single<List<StreamDB>>.mapToDomain(): Single<List<Stream>> {
         return flatMapObservable(::fromIterable)
             .map { it.toStreamDomain() }
-            .toList()
+            .toSortedList { o1, o2 -> o1.name.compareTo(o2.name)  }
     }
 
     private fun Single<List<Stream>>.cacheToDB(isSub: Boolean = false): Single<List<Stream>> {
@@ -39,8 +41,7 @@ class StreamRepoImpl(
                 StreamDB(id = stream.id, isSub, stream.name)
             }
 
-            streamDao.dropTable()
-            streamDao.insert(streamsDB)
+            streamDao.insertAndClear(streamsDB, isSub)
         }
     }
 
@@ -48,24 +49,24 @@ class StreamRepoImpl(
         val dbSource = streamDao.getAll()
             .mapToDomain()
 
-        val newtworkSource = streamApi.getAllStreams()
+        val networkSource = streamApi.getAllStreams()
             .map { it.streams }
             .mapToDomain()
             .cacheToDB()
 
-        return Single.concat(dbSource, newtworkSource)
+        return dbSource.concatWith(networkSource)
     }
 
     override fun getSubStreams(): Flowable<List<Stream>> {
         val dbSource = streamDao.getSubscription()
             .mapToDomain()
 
-        val newtworkSource = streamApi.getSubscriptionsStreams()
+        val networkSource = streamApi.getSubscriptionsStreams()
             .map { it.subscriptions }
             .mapToDomain()
             .cacheToDB(isSub = true)
 
-        return Single.concat(dbSource, newtworkSource)
+        return dbSource.concatWith(networkSource)
     }
 
     override fun getTopics(idStream: Long): Single<List<Topic>> {

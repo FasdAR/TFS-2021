@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.streamList
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -145,11 +146,18 @@ class StreamListFragment :
         compositeDisposable.add(
             getStreamSource().subscribeOn(Schedulers.io())
                 .mapToDomain()
+                .onErrorResumeNext {
+                    onError(it)
+                    Flowable.just(listOf())
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = {
-                        adapter.items = it
-                    }
+                        Log.d("ON_NEXT", it.toString())
+                        if (it.isNotEmpty())
+                            adapter.items = it
+                    },
+                    onError = ::onError
                 )
         )
     }
