@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -156,6 +157,8 @@ class ChatFragment :
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
+        initListenerScrollRv()
+
         updateChatItems()
     }
 
@@ -202,6 +205,21 @@ class ChatFragment :
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
 
+    private fun initListenerScrollRv() {
+        binding.rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                val updateCount = (adapter.itemCount-1) - 5
+
+                if (lastVisibleItem >= updateCount) {
+                    Log.d("SCROLL_TO_NEXT", "$updateCount $lastVisibleItem")
+                }
+            }
+        })
+    }
+
     // #region Rx chains
     private fun sendMessage(messageText: String) {
         compositeDisposable.add(
@@ -239,7 +257,7 @@ class ChatFragment :
     private fun updateChatItems() {
         compositeDisposable.add(
             Observable.interval(0, 10, TimeUnit.SECONDS)
-                .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName) }
+                .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName, -1, 1) }
                 .map { it.mapToUiList(402233) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(

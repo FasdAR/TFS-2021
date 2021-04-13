@@ -18,13 +18,40 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
         private const val USER_ID = 402233L
     }
 
-    override fun getMessagesByTopic(nameStream: String, nameTopic: String): Single<List<Message>> {
+    override fun getMessagesByTopic(
+        nameStream: String,
+        nameTopic: String,
+        anchorMessage: Long,
+        step: Int,
+        direction: Int // 1 - next, -1 - back
+    ): Single<List<Message>> {
         val filterNarrow = FilterNarrow(operator = "stream", operand = nameStream)
 
-        return chatApi.getAllMessages(narrow = json.encodeToString(listOf(filterNarrow)))
+        var anchor = "oldest"
+        if (anchorMessage != -1L) {
+            anchor = anchorMessage.toString()
+        }
+
+        var afterCount = 0
+        var beforeCount = 0
+
+        if (direction == 1) {
+            afterCount = step
+        } else {
+            beforeCount = step
+        }
+
+        return chatApi.getAllMessages(
+            anchor = anchor,
+            numAfter = afterCount,
+            numBefore = beforeCount,
+            narrow = json.encodeToString(listOf(filterNarrow))
+        )
             .map { it.messages }
             .flatMapObservable(::fromIterable)
-            .filter { it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT)) }
+            .filter {
+                it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT))
+            }
             .map { it.mapToDomain(USER_ID) }
             .toList()
     }
