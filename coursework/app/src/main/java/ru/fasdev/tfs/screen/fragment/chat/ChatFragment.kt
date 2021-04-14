@@ -167,6 +167,8 @@ class ChatFragment :
 
         pagingSubject
             .observeOn(Schedulers.io())
+            .distinctUntilChanged { itemOld, itemNew -> itemOld.second == itemNew.second  }
+            .filter { it.second != 0 }
             .flatMapSingle { pair ->
                 val idLast = pair.first
                 val direction = pair.second
@@ -179,13 +181,21 @@ class ChatFragment :
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = {
-                    adapter.items = it
+                    val map = adapter.items.map { it.uId to it }.toMap().toMutableMap()
+
+                    val newList = it
+                    newList.forEach {
+                        map[it.uId] = it
+                    }
+
+                    adapter.items = map.values.toList()
+
+                    pagingSubject.onNext(0L to 0)
                 }
             )
 
         initListenerScrollRv()
-
-        pagingSubject.onNext(MessageRepoImpl.NULL_ANCHOR to MessageRepoImpl.DIRECTION_BEFORE)
+        updateChatItems()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -251,7 +261,7 @@ class ChatFragment :
                     val item = adapter.items[lastVisibleItem]
                     pagingSubject.onNext(item.uId.toLong() to MessageRepoImpl.DIRECTION_BEFORE)
                 }
-                else if (updateCount >= lastVisibleItem) {
+                else if (!isUpScroll && updateCount >= lastVisibleItem) {
                     val item = adapter.items[lastVisibleItem]
                     pagingSubject.onNext(item.uId.toLong() to MessageRepoImpl.DIRECTION_AFTER)
                 }
@@ -298,7 +308,7 @@ class ChatFragment :
     }
 
     private fun updateChatItems() {
-        //pagingSubject.onNext(MessageRepoImpl.NULL_ANCHOR to MessageRepoImpl.DIRECTION_BEFORE)
+        pagingSubject.onNext(MessageRepoImpl.NULL_ANCHOR to MessageRepoImpl.DIRECTION_BEFORE)
     }
     // #endregion
 }
