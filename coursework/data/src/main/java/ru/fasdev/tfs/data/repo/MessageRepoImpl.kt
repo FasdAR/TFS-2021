@@ -15,43 +15,36 @@ import java.util.Locale
 
 class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : MessageRepo {
     companion object {
+        private const val ANCHOR_NEWEST = "newest"
+
+        private const val OPERATOR_STREAM = "stream"
+        private const val OPERATOR_TOPIC = "topic"
+
+        const val DIRECTION_BEFORE = -1
+        const val DIRECTION_AFTER = 1
+
         private const val USER_ID = 402233L
     }
 
     override fun getMessagesByTopic(
-        nameStream: String,
-        nameTopic: String,
-        anchorMessage: Long,
-        step: Int,
-        direction: Int // 1 - next, -1 - back
+        nameStream: String, nameTopic: String, anchorMessage: Long?, limit: Int, direction: Int
     ): Single<List<Message>> {
-        val filterNarrow = FilterNarrow(operator = "stream", operand = nameStream)
+        val filterNarrowStream = FilterNarrow(operator = OPERATOR_STREAM, operand = nameStream)
+        val filterNarrowTopic = FilterNarrow(operator = OPERATOR_TOPIC, operand = nameTopic)
+        val narrowJson = json.encodeToString(listOf(filterNarrowStream, filterNarrowTopic))
+        val currentAnchorMessage = anchorMessage?.toString() ?: ANCHOR_NEWEST
 
-        var anchor = "oldest"
-        if (anchorMessage != -1L) {
-            anchor = anchorMessage.toString()
-        }
-
-        var afterCount = 0
-        var beforeCount = 0
-
-        if (direction == 1) {
-            afterCount = step
-        } else {
-            beforeCount = step
-        }
+        val isAfterDirection = direction == DIRECTION_AFTER
+        val afterCount = if (isAfterDirection) limit else 0 // ¯\_(ツ)_/¯ Так же лучше чем растить скобки, если помещается по длине
+        val beforeCount = if (!isAfterDirection) limit else 0
 
         return chatApi.getAllMessages(
-            anchor = anchor,
-            numAfter = afterCount,
-            numBefore = beforeCount,
-            narrow = json.encodeToString(listOf(filterNarrow))
+            anchor = currentAnchorMessage,
+            numAfter = afterCount, numBefore = beforeCount,
+            narrow = narrowJson
         )
             .map { it.messages }
             .flatMapObservable(::fromIterable)
-            .filter {
-                it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT))
-            }
             .map { it.mapToDomain(USER_ID) }
             .toList()
     }
