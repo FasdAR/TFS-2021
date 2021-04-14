@@ -6,8 +6,16 @@ import ru.fasdev.tfs.domain.message.model.Message
 import ru.fasdev.tfs.domain.message.repo.MessageRepo
 
 class MessageInteractorImpl(private val messageRepo: MessageRepo) : MessageInteractor {
-    override fun getMessagesByTopic(nameStream: String, nameTopic: String, anchorMessage: Long, direction: Int): Single<List<Message>> {
-        return messageRepo.getMessagesByTopic(nameStream, nameTopic, anchorMessage, 20, direction)
+    private companion object {
+        const val LIMIT_PAGE = 20
+    }
+
+    override fun getMessagesByTopic(
+        nameStream: String, nameTopic: String, anchorMessage: Long, direction: Int
+    ): Single<List<Message>> {
+        return messageRepo.getMessagesByTopic(
+            nameStream, nameTopic, anchorMessage, LIMIT_PAGE, direction
+        )
     }
 
     override fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable {

@@ -16,6 +16,7 @@ import java.util.Locale
 class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : MessageRepo {
     companion object {
         private const val ANCHOR_NEWEST = "newest"
+        const val NULL_ANCHOR = -1L
 
         private const val OPERATOR_STREAM = "stream"
         private const val OPERATOR_TOPIC = "topic"
@@ -23,20 +24,20 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
         const val DIRECTION_BEFORE = -1
         const val DIRECTION_AFTER = 1
 
-        private const val USER_ID = 402233L
+        const val USER_ID = 402233L
     }
 
     override fun getMessagesByTopic(
-        nameStream: String, nameTopic: String, anchorMessage: Long?, limit: Int, direction: Int
+        nameStream: String, nameTopic: String, anchorMessage: Long, limit: Int, direction: Int
     ): Single<List<Message>> {
         val filterNarrowStream = FilterNarrow(operator = OPERATOR_STREAM, operand = nameStream)
         val filterNarrowTopic = FilterNarrow(operator = OPERATOR_TOPIC, operand = nameTopic)
         val narrowJson = json.encodeToString(listOf(filterNarrowStream, filterNarrowTopic))
-        val currentAnchorMessage = anchorMessage?.toString() ?: ANCHOR_NEWEST
+        val currentAnchorMessage = if (anchorMessage != NULL_ANCHOR) anchorMessage.toString() else ANCHOR_NEWEST
 
-        val isAfterDirection = direction == DIRECTION_AFTER
-        val afterCount = if (isAfterDirection) limit else 0 // ¯\_(ツ)_/¯ Так же лучше чем растить скобки, если помещается по длине
-        val beforeCount = if (!isAfterDirection) limit else 0
+        val isBeforeDirection = direction == DIRECTION_BEFORE
+        val afterCount = if (!isBeforeDirection) limit else 0 // ¯\_(ツ)_/¯ Так же лучше чем растить скобки, если помещается по длине
+        val beforeCount = if (isBeforeDirection) limit else 0
 
         return chatApi.getAllMessages(
             anchor = currentAnchorMessage,

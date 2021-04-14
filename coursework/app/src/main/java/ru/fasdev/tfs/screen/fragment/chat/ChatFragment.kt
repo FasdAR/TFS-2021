@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
@@ -28,6 +29,7 @@ import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.core.ext.getSystemInsets
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.data.mapper.mapToUiList
+import ru.fasdev.tfs.data.repo.MessageRepoImpl
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.di.module.ChatDomainModule
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
@@ -41,6 +43,7 @@ import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
+import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
 import java.util.concurrent.TimeUnit
 
 class ChatFragment :
@@ -52,6 +55,7 @@ class ChatFragment :
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
 
+        private const val LIMIT_UPDATE = 5
         private const val COLOR_TOOLBAR = R.color.teal_500
 
         private const val KEY_SELECTED_MESSAGE = "SELECTED_MESSAGE"
@@ -64,11 +68,13 @@ class ChatFragment :
             }
         }
 
-        fun getScreen(streamName: String, topicName: String) = FragmentScreen(TAG, newInstance(streamName, topicName))
+        fun getScreen(streamName: String, topicName: String) =
+            FragmentScreen(TAG, newInstance(streamName, topicName))
     }
 
     object ChatComponent {
-        val messageRepo = ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json)
+        val messageRepo =
+            ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json)
         val messageInteractor = MessageInteractorImpl(messageRepo)
     }
 
@@ -94,6 +100,7 @@ class ChatFragment :
     private var selectedMessageId: Int = 0
 
     private val compositeDisposable = CompositeDisposable()
+    private val pagingSubject: PublishSubject<Pair<Long, Int>> = PublishSubject.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +129,8 @@ class ChatFragment :
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        binding.toolbarLayout.title.text = resources.getString(R.string.main_topic_title, streamName)
+        binding.toolbarLayout.title.text =
+            resources.getString(R.string.main_topic_title, streamName)
         binding.topic.text = resources.getString(R.string.sub_topic_title, topicName)
 
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
@@ -157,9 +165,27 @@ class ChatFragment :
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
+        pagingSubject
+            .observeOn(Schedulers.io())
+            .flatMapSingle { pair ->
+                val idLast = pair.first
+                val direction = pair.second
+
+                interactor.getMessagesByTopic(streamName, topicName, idLast, direction)
+            }
+            .map {
+                it.mapToUiList(MessageRepoImpl.USER_ID.toInt())
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = {
+                    adapter.items = it
+                }
+            )
+
         initListenerScrollRv()
 
-        updateChatItems()
+        pagingSubject.onNext(MessageRepoImpl.NULL_ANCHOR to MessageRepoImpl.DIRECTION_BEFORE)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -210,11 +236,24 @@ class ChatFragment :
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-                val updateCount = (adapter.itemCount-1) - 5
+                val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager)
+                    .findLastVisibleItemPosition()
 
-                if (lastVisibleItem >= updateCount) {
-                    Log.d("SCROLL_TO_NEXT", "$updateCount $lastVisibleItem")
+                val isUpScroll = dy < 0
+
+                val updateCount = if (isUpScroll) {
+                    (adapter.itemCount - 1) - LIMIT_UPDATE
+                } else {
+                    LIMIT_UPDATE
+                }
+
+                if (isUpScroll && updateCount <= lastVisibleItem) {
+                    val item = adapter.items[lastVisibleItem]
+                    pagingSubject.onNext(item.uId.toLong() to MessageRepoImpl.DIRECTION_BEFORE)
+                }
+                else if (updateCount >= lastVisibleItem) {
+                    val item = adapter.items[lastVisibleItem]
+                    pagingSubject.onNext(item.uId.toLong() to MessageRepoImpl.DIRECTION_AFTER)
                 }
             }
         })
@@ -240,7 +279,11 @@ class ChatFragment :
         )
     }
 
-    private fun selectedReaction(idMessage: Int = selectedMessageId, emojiName: String, isSelected: Boolean) {
+    private fun selectedReaction(
+        idMessage: Int = selectedMessageId,
+        emojiName: String,
+        isSelected: Boolean
+    ) {
         compositeDisposable.add(
             interactor.setSelectionReaction(idMessage, emojiName, isSelected)
                 .subscribeOn(Schedulers.io())
@@ -255,18 +298,7 @@ class ChatFragment :
     }
 
     private fun updateChatItems() {
-        compositeDisposable.add(
-            Observable.interval(0, 10, TimeUnit.SECONDS)
-                .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName, -1, 1) }
-                .map { it.mapToUiList(402233) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
-                    onError = ::onError
-                )
-        )
+        //pagingSubject.onNext(MessageRepoImpl.NULL_ANCHOR to MessageRepoImpl.DIRECTION_BEFORE)
     }
     // #endregion
 }
