@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -102,7 +103,7 @@ class ChatFragment :
     private val compositeDisposable = CompositeDisposable()
     private val pagingSubject: PublishSubject<PagingItem> = PublishSubject.create()
 
-    var update: Boolean = false
+    private var isUpdated: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,6 +176,7 @@ class ChatFragment :
     private fun initSubject() {
         pagingSubject
             .observeOn(Schedulers.io())
+            .debounce(100, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .flatMapSingle { item ->
                 Log.d("ITEM", item.direction.toString() + " " + item.lastVisibleId)
@@ -185,7 +187,7 @@ class ChatFragment :
                     direction = item.direction
                 )
                 .map { newList ->
-                    newList.mapToUiList(MessageRepoImpl.USER_ID)
+                    newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
                 }
                 .map {
                     if (item.direction == MessageRepoImpl.DIRECTION_BEFORE) {
@@ -213,7 +215,6 @@ class ChatFragment :
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
-                update = false
                 adapter.items = it
             }
     }
@@ -252,8 +253,8 @@ class ChatFragment :
         currentList: MutableList<ViewType>
     ) {
         _binding?.let {
-            if (!it.rvList.canScrollVertically(1))
-                it.rvList.scrollToPosition(0)
+           // if (!it.rvList.canScrollVertically(1))
+           //     it.rvList.scrollToPosition(0)
         }
     }
 
@@ -271,23 +272,20 @@ class ChatFragment :
 
                 val isUpScroll = dy < 0
 
-                val isUpdate = if (isUpScroll) (lastVisibleItem - adapter.itemCount) < 5 else lastVisibleItem < 5
-                Log.d("LAST_VISIBLE_ITEM", "$lastVisibleItem ${adapter.itemCount} $isUpdate")
+                val isUpdate = if (isUpScroll) {
+                    (adapter.itemCount - lastVisibleItem) <= LIMIT_UPDATE
+                } else {
+                    lastVisibleItem - LIMIT_UPDATE <= LIMIT_UPDATE
+                }
 
-                if (isUpdate && !update) {
-                    val updateCount = Math.abs((adapter.itemCount - 1) - LIMIT_UPDATE)
-                    Log.d("INFO_SCROLL", "$lastVisibleItem ${adapter.itemCount} $isUpdate $updateCount")
-
-
+                if (isUpdate) {
                     val id = adapter.items[lastVisibleItem].uId.toLong()
 
-                    if (isUpScroll && updateCount <= lastVisibleItem) {
-                        update = true
+                    if (isUpScroll) {
                         val pagingItem = PagingItem(id, MessageRepoImpl.DIRECTION_BEFORE)
                         pagingSubject.onNext(pagingItem)
                     }
-                    else if (!isUpScroll && updateCount >= lastVisibleItem) {
-                        update = true
+                    else {
                         val pagingItem = PagingItem(id, MessageRepoImpl.DIRECTION_AFTER)
                         pagingSubject.onNext(pagingItem)
                     }
@@ -340,5 +338,5 @@ class ChatFragment :
     }
     // #endregion
 
-    class PagingItem(val lastVisibleId: Long, val direction: Int)
+    data class PagingItem(val lastVisibleId: Long, val direction: Int)
 }
