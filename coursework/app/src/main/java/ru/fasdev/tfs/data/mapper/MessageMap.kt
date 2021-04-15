@@ -17,11 +17,16 @@ fun Message.toInternalMessageUi(): InternalMessageUi {
     return InternalMessageUi(id.toInt(), text, this.reactions.mapToMessageReactionUi())
 }
 
-fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
-    val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-    val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
+fun List<Message>.mapToUiList(internalUserId: Long): List<ViewType> {
+    return map { message ->
+        if (message.sender.id == internalUserId) message.toInternalMessageUi()
+        message.toExternalMessageUi()
+    }
+    /*
+    //val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+   // val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
 
-    val mapMsgDate = groupBy { dateFormatKey.format(it.date) }
+   // val mapMsgDate = groupBy { dateFormatKey.format(it.date) }
     val resultList: MutableList<ViewType> = mutableListOf()
 
     mapMsgDate
@@ -41,5 +46,5 @@ fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
             }
         }
 
-    return resultList.reversed()
+    return resultList.reversed()*/
 }
