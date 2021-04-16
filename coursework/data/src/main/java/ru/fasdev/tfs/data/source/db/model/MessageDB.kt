@@ -13,7 +13,7 @@ import java.util.*
             entity = UserDB::class,
             parentColumns = ["id"],
             childColumns = ["id_sender"],
-            onDelete = ForeignKey.SET_NULL,
+            onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
     ]
@@ -21,6 +21,7 @@ import java.util.*
 class MessageDB(
     @PrimaryKey val id: Long,
     @ColumnInfo(name = "id_sender") val idSender: Long,
+    val topic: String,
     val text: String,
     val date: Date,
 )

@@ -10,6 +10,9 @@ import ru.fasdev.tfs.data.mapper.mapToDomain
 import ru.fasdev.tfs.data.source.db.dao.MessageDao
 import ru.fasdev.tfs.data.source.db.dao.ReactionDao
 import ru.fasdev.tfs.data.source.db.dao.UserDao
+import ru.fasdev.tfs.data.source.db.model.MessageDB
+import ru.fasdev.tfs.data.source.db.model.ReactionDB
+import ru.fasdev.tfs.data.source.db.model.UserDB
 import ru.fasdev.tfs.data.source.network.base.response.Result
 import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.chat.model.FilterNarrow
@@ -56,8 +59,6 @@ class MessageRepoImpl(
 
         val isActualData: Boolean = anchorMessage == NEWEST_ANCHOR
 
-        //TODO: ADD CACHE
-
         val networkSource = chatApi.getAllMessages(
             anchor = currentAnchorMessage,
             numAfter = afterCount, numBefore = beforeCount,
@@ -66,9 +67,33 @@ class MessageRepoImpl(
             .map { it.messages }
             .flatMapObservable(::fromIterable)
             .map { it.mapToDomain(USER_ID) }
+            .doOnNext{ message ->
+                val sizeTable = messageDao.getDataCount()
+                if (isActualData || sizeTable < 50) {
+                    val reactionsDB = message.reactions.map { reaction ->
+                        ReactionDB(idMessage = message.id, emoji = reaction.emoji,
+                            emojiName = reaction.emojiName, countSelection = reaction.countSelection,
+                            isSelected = reaction.isSelected)
+                    }
+
+                    val userDB = UserDB(id = message.sender.id, avatarUrl = message.sender.avatarUrl,
+                        fullName = message.sender.fullName, email = message.sender.email)
+
+                    val messageDB = MessageDB(message.id, message.sender.id, nameTopic, message.text, message.date)
+
+                    //userDao.insert(userDB)
+                    //messageDao.insert(messageDB)
+                    messageDao.transactionInsertMessage(messageDB, userDB, reactionsDB)
+                }
+
+                if (sizeTable > 50) {
+                    val differ = sizeTable - 50
+                    messageDao.deleteLastRow(differ)
+                }
+            }
             .toList()
 
-        val dbSource = messageDao.getAll()
+        val dbSource = messageDao.getAllByTopic(nameTopic)
             .flatMapObservable(::fromIterable)
             .map { message ->
                 val sender = User(

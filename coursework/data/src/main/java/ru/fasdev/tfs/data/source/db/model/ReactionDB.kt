@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
     ]
 )
 class ReactionDB(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long? = null,
     @ColumnInfo(name = "id_message") val idMessage: Long,
     val emoji: String,
     @ColumnInfo(name = "emoji_name") val emojiName: String,

@@ -331,10 +331,17 @@ class ChatFragment :
                         return@map it
                     }*/
             }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
-                adapter.items = it
+            .onErrorResumeNext {
+                onError(it)
+                Flowable.just(listOf())
             }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = {
+                    if (it.isNotEmpty()) adapter.items = it
+                },
+                onError = ::onError
+            )
     }
 
     private fun updateChatItems() {
@@ -360,10 +367,18 @@ class ChatFragment :
                     it.distinct()
                 }
             }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
-                adapter.items = it
+            .onErrorResumeNext {
+                onError(it)
+                Flowable.just(listOf())
             }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = {
+                    isFirstLoaded = false
+                    if (it.isNotEmpty()) adapter.items = it
+                },
+                onError = ::onError
+            )
     }
     // #endregion
 
