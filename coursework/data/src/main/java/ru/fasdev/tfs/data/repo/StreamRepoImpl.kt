@@ -6,10 +6,10 @@ import io.reactivex.rxjava3.core.Single
 import ru.fasdev.tfs.data.mapper.toConstHash
 import ru.fasdev.tfs.data.mapper.toStreamDomain
 import ru.fasdev.tfs.data.mapper.toTopicDomain
-import ru.fasdev.tfs.data.source.db.stream.dao.StreamDao
-import ru.fasdev.tfs.data.source.db.stream.dao.TopicDao
-import ru.fasdev.tfs.data.source.db.stream.model.StreamDB
-import ru.fasdev.tfs.data.source.db.stream.model.TopicDB
+import ru.fasdev.tfs.data.source.db.dao.StreamDao
+import ru.fasdev.tfs.data.source.db.dao.TopicDao
+import ru.fasdev.tfs.data.source.db.model.StreamDB
+import ru.fasdev.tfs.data.source.db.model.TopicDB
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic

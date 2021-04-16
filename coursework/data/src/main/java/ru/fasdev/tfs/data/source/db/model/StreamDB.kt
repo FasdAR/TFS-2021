@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.data.source.db.stream.model
+package ru.fasdev.tfs.data.source.db.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

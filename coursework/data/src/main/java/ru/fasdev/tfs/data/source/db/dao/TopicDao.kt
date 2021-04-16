@@ -1,11 +1,11 @@
-package ru.fasdev.tfs.data.source.db.stream.dao
+package ru.fasdev.tfs.data.source.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import io.reactivex.rxjava3.core.Single
 import ru.fasdev.tfs.data.source.db.base.BaseDao
-import ru.fasdev.tfs.data.source.db.stream.model.TopicDB
+import ru.fasdev.tfs.data.source.db.model.TopicDB
 
 @Dao
 abstract class TopicDao: BaseDao<TopicDB>

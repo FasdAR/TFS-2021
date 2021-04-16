@@ -20,7 +20,7 @@ fun Message.toInternalMessageUi(): InternalMessageUi {
 fun List<Message>.mapToUiList(internalUserId: Long): List<ViewType> {
     return map { message ->
         if (message.sender.id == internalUserId) message.toInternalMessageUi()
-        message.toExternalMessageUi()
+        else message.toExternalMessageUi()
     }
     /*
     //val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())

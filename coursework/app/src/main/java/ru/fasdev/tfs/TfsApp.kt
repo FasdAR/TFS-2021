@@ -1,11 +1,10 @@
 package ru.fasdev.tfs
 
 import android.app.Application
-import androidx.room.RoomDatabase
 import retrofit2.Retrofit
 import ru.fasdev.tfs.data.source.db.TfsDatabase
-import ru.fasdev.tfs.data.source.db.stream.dao.StreamDao
-import ru.fasdev.tfs.data.source.db.stream.dao.TopicDao
+import ru.fasdev.tfs.data.source.db.dao.StreamDao
+import ru.fasdev.tfs.data.source.db.dao.TopicDao
 import ru.fasdev.tfs.data.source.network.users.api.UserApi
 import ru.fasdev.tfs.di.module.RetrofitModule
 import ru.fasdev.tfs.di.module.RoomModule
@@ -23,6 +22,9 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
         lateinit var roomDb: TfsDatabase
         val streamDao by lazy { RoomModule.getStreamDao(roomDb) }
         val topicDao by lazy { RoomModule.getTopicDao(roomDb) }
+        val messageDao by lazy { RoomModule.getMessageDao(roomDb) }
+        val reactionDao by lazy { RoomModule.getReactionDao(roomDb) }
+        val userDao by lazy { RoomModule.getUserDao(roomDb) }
     }
 
     override fun onCreate() {

@@ -3,8 +3,7 @@ package ru.fasdev.tfs.di.module
 import android.content.Context
 import androidx.room.Room
 import ru.fasdev.tfs.data.source.db.TfsDatabase
-import ru.fasdev.tfs.data.source.db.stream.dao.StreamDao
-import ru.fasdev.tfs.data.source.db.stream.dao.TopicDao
+import ru.fasdev.tfs.data.source.db.dao.*
 
 
 class RoomModule
@@ -23,6 +22,18 @@ class RoomModule
 
         fun getTopicDao(appDatabase: TfsDatabase): TopicDao {
             return appDatabase.topicDao()
+        }
+
+        fun getMessageDao(appDatabase: TfsDatabase): MessageDao {
+            return appDatabase.messageDao()
+        }
+
+        fun getUserDao(appDatabase: TfsDatabase): UserDao {
+            return appDatabase.userDao()
+        }
+
+        fun getReactionDao(appDatabase: TfsDatabase): ReactionDao {
+            return appDatabase.reactionDao()
         }
     }
 }

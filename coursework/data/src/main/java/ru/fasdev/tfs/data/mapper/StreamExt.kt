@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.data.mapper
 
-import ru.fasdev.tfs.data.source.db.stream.model.StreamDB
+import ru.fasdev.tfs.data.source.db.model.StreamDB
 import ru.fasdev.tfs.data.source.network.stream.model.Stream
 import ru.fasdev.tfs.data.source.network.stream.model.Topic
 

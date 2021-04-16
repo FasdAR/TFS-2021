@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.di.module
 
 import ru.fasdev.tfs.data.repo.StreamRepoImpl
-import ru.fasdev.tfs.data.source.db.stream.dao.StreamDao
-import ru.fasdev.tfs.data.source.db.stream.dao.TopicDao
+import ru.fasdev.tfs.data.source.db.dao.StreamDao
+import ru.fasdev.tfs.data.source.db.dao.TopicDao
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
 import ru.fasdev.tfs.domain.stream.interactor.StreamInteractorImpl
