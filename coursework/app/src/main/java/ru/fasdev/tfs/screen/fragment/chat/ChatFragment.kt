@@ -214,7 +214,9 @@ class ChatFragment :
     }
 
     private fun onError(error: Throwable) {
-        Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+        _binding?.let {
+            Snackbar.make(it.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+        }
     }
 
     private fun initListenerScrollRv() {

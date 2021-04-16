@@ -19,8 +19,8 @@ abstract class MessageDao: BaseDao<MessageDB> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertReactions(entity: List<ReactionDB>)
 
-    @Query("SELECT COUNT(id) FROM message")
-    abstract fun getDataCount(): Int
+    @Query("SELECT COUNT(id) FROM message WHERE topic = :topic")
+    abstract fun getDataCount(topic: String): Int
 
     @Query("DELETE FROM message WHERE id IN (SELECT id FROM message ORDER BY date DESC LIMIT :numberDelete)")
     abstract fun deleteLastRow(numberDelete: Int)

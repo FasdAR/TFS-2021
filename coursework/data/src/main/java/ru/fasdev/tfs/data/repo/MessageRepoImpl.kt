@@ -68,7 +68,7 @@ class MessageRepoImpl(
             .flatMapObservable(::fromIterable)
             .map { it.mapToDomain(USER_ID) }
             .doOnNext{ message ->
-                val sizeTable = messageDao.getDataCount()
+                val sizeTable = messageDao.getDataCount(nameTopic)
                 if (isActualData || sizeTable < 50) {
                     val reactionsDB = message.reactions.map { reaction ->
                         ReactionDB(idMessage = message.id, emoji = reaction.emoji,
