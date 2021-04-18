@@ -82,4 +82,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.2.6"
     implementation "androidx.room:room-rxjava3:2.3.0-rc01"
     kapt "androidx.room:room-compiler:2.2.6"
+
+    //rxredux
+    implementation 'com.freeletics.rxredux:rxredux:1.0.1'
 }

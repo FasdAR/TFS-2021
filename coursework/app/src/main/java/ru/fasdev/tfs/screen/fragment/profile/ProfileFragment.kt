@@ -1,10 +1,12 @@
 package ru.fasdev.tfs.screen.fragment.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -24,15 +26,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
-    object ProfileComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
-        val userInteractor = UserInteractorImpl(userRepo)
-    }
-
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val usersInteractor = ProfileComponent.userInteractor
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -45,22 +42,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
-        usersInteractor.getOwnUser()
-            .subscribeOn(Schedulers.io())
-            .flatMap { user ->
-                usersInteractor.getStatusUser(user.email)
-                    .map { user.toUserUi(it) }
-            }
+        viewModel
+            .state
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    cardProfile.fullName = it.fullName
-                    cardProfile.avatarSrc = it.avatarSrc
-                    cardProfile.status = it.userStatus
-                },
-                onError = {
-                }
-            )
+            .subscribeBy {
+            if (it.error != null) {
+                Log.e("ERROR_PROFILE_FRAG", it.error.message.toString())
+            }
+            else if (it.isLoading) {
+                Log.d("LOADING", "LOAD_PROFILE_FRAG")
+            }
+            else if (it.userAvatar != null && it.userFullName != null) {
+                cardProfile.fullName = it.userFullName
+                cardProfile.avatarSrc = it.userAvatar
+                cardProfile.status = it.userStatus
+            }
+        }
     }
 
     override fun onDestroy() {
