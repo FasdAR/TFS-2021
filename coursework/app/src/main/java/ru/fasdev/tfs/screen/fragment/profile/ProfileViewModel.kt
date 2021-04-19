@@ -1,21 +1,13 @@
 package ru.fasdev.tfs.screen.fragment.profile
 
 import androidx.lifecycle.ViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.mvi.Middleware
-import ru.fasdev.tfs.mvi.Reducer
-import ru.fasdev.tfs.mvi.Store
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileState
 
-class ProfileViewModel : ViewModel(), Reducer<ProfileState, ProfileAction>,
-    Middleware<ProfileState, ProfileAction> {
+class ProfileViewModel : ViewModel() {
     object ProfileComponent {
         val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
         val userInteractor = UserInteractorImpl(userRepo)
@@ -23,19 +15,16 @@ class ProfileViewModel : ViewModel(), Reducer<ProfileState, ProfileAction>,
 
     private val usersInteractor = ProfileComponent.userInteractor
 
-    val actions: PublishSubject<ProfileAction> = PublishSubject.create()
+    /*
 
-    private val store = Store(
+    val store = Store(
         initState = ProfileState(),
-        actions = actions,
-        middlewares = this,
+        middleware = this,
         reducer = this
     )
 
-    val state = store.state
-
     init {
-        actions.onNext(ProfileAction.LoadUser)
+        store.procession(ProfileAction.LoadUser)
     }
 
     override fun reduce(action: ProfileAction, state: ProfileState): ProfileState {
@@ -52,29 +41,16 @@ class ProfileViewModel : ViewModel(), Reducer<ProfileState, ProfileAction>,
         }
     }
 
-    override fun middleware(action: ProfileAction, state: ProfileState) {
-        when (action) {
+    override fun middleware(action: ProfileAction, state: ProfileState): ProfileAction {
+        return when (action) {
             ProfileAction.LoadUser -> {
-                usersInteractor.getOwnUser()
-                    .flatMap { user ->
-                        usersInteractor.getStatusUser(user.email)
-                            .map { status ->
-                                ProfileAction.LoadedUser(
-                                    userFullName = user.fullName,
-                                    userAvatar = user.avatarUrl,
-                                    userStatus = status
-                                )
-                            }
-                    }
-                    .subscribeBy(
-                        onSuccess = {
-                            actions.onNext(it)
-                        },
-                        onError = {
-                            actions.onNext(ProfileAction.ErrorLoading(it))
-                        }
-                    )
+                ProfileAction.LoadedUser(
+                    userFullName = "USER USEROVICH",
+                    userAvatar = "",
+                    userStatus = UserStatus.OFFLINE
+                )
             }
+            else -> action
         }
-    }
+    }*/
 }

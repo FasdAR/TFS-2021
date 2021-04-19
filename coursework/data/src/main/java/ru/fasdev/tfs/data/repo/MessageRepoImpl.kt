@@ -1,9 +1,8 @@
 package ru.fasdev.tfs.data.repo
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable.fromIterable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Observable.fromIterable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.fasdev.tfs.data.mapper.mapToDomain

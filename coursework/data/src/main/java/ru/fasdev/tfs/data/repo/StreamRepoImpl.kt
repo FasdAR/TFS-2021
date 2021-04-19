@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.data.repo
 
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable.fromIterable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Flowable
+import io.reactivex.Observable.fromIterable
+import io.reactivex.Single
 import ru.fasdev.tfs.data.mapper.toConstHash
 import ru.fasdev.tfs.data.mapper.toStreamDomain
 import ru.fasdev.tfs.data.mapper.toTopicDomain

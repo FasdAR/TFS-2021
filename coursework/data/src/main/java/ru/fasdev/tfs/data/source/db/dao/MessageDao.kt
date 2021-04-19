@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.data.source.db.dao
 
 import androidx.room.*
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Single
 import ru.fasdev.tfs.data.source.db.base.BaseDao
 import ru.fasdev.tfs.data.source.db.model.MessageDB
 import ru.fasdev.tfs.data.source.db.model.ReactionDB

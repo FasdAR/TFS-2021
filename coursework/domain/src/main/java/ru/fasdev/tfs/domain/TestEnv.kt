@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.domain
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import ru.fasdev.tfs.domain.TestEnv.Companion.ERR_RANDOM_TITLE
 import ru.fasdev.tfs.domain.TestEnv.Companion.TIME_EMULATE_DELAY
 import java.util.concurrent.TimeUnit

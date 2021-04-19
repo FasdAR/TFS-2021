@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.di.module
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -11,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
 import retrofit2.Converter
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import ru.fasdev.tfs.BuildConfig
 import ru.fasdev.tfs.data.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.source.network.stream.api.StreamApi
@@ -47,7 +47,7 @@ class RetrofitModule {
                 }.build()
         }
 
-        fun getCallAdapter(): CallAdapter.Factory = RxJava3CallAdapterFactory.create()
+        fun getCallAdapter(): CallAdapter.Factory = RxJava2CallAdapterFactory.create()
 
         fun getJson(): Json {
             return Json { ignoreUnknownKeys = true }

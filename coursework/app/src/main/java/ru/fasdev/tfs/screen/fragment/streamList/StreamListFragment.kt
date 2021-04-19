@@ -9,18 +9,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observable.fromIterable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.Flowables
-import io.reactivex.rxjava3.kotlin.flatMapIterable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.Flowable
+import io.reactivex.Flowable.fromIterable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toStreamUi
@@ -149,10 +144,6 @@ class StreamListFragment :
         compositeDisposable.add(
             getStreamSource().subscribeOn(Schedulers.io())
                 .mapToDomain()
-                .onErrorResumeNext {
-                    onError(it)
-                    Flowable.just(listOf())
-                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = {
@@ -196,10 +187,6 @@ class StreamListFragment :
         compositeDisposable.add(
             streamInteractor.getAllTopics(idStream.toLong())
                 .subscribeOn(Schedulers.io())
-                .onErrorResumeNext {
-                    onError(it)
-                    Flowable.just(listOf())
-                }
                 .concatMap {
                     fromIterable(it)
                         .map {

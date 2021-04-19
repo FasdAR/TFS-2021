@@ -1,8 +1,7 @@
 package ru.fasdev.tfs.domain.message.repo
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import ru.fasdev.tfs.domain.message.model.Message
 
 interface MessageRepo {

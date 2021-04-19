@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.domain.message.interactor
 
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import ru.fasdev.tfs.domain.message.model.DirectionScroll
 import ru.fasdev.tfs.domain.message.model.Message
 import ru.fasdev.tfs.domain.message.repo.MessageRepo

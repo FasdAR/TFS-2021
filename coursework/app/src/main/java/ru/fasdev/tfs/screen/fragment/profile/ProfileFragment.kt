@@ -7,9 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toUserUi
@@ -41,23 +38,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
-
-        viewModel
-            .state
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
-            if (it.error != null) {
-                Log.e("ERROR_PROFILE_FRAG", it.error.message.toString())
-            }
-            else if (it.isLoading) {
-                Log.d("LOADING", "LOAD_PROFILE_FRAG")
-            }
-            else if (it.userAvatar != null && it.userFullName != null) {
-                cardProfile.fullName = it.userFullName
-                cardProfile.avatarSrc = it.userAvatar
-                cardProfile.status = it.userStatus
-            }
-        }
     }
 
     override fun onDestroy() {

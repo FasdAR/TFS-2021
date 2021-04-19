@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.domain.user.interactor
 
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Single
 import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.domain.user.model.UserStatus
 

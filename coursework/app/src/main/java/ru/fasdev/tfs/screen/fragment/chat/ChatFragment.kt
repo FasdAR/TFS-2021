@@ -15,15 +15,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.BackpressureStrategy
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
@@ -48,6 +46,7 @@ import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
 
 class ChatFragment :
     Fragment(R.layout.fragment_chat),
@@ -318,24 +317,6 @@ class ChatFragment :
                         }
                     }
                     .map { it.distinct() }
-                        /*
-                    .map {
-                        if (it.size > 50) {
-                            val different = Math.abs(it.size - 50)
-
-                            return@map if (item.direction == DirectionScroll.UP) {
-                                it.drop(different)
-                            } else {
-                                it.dropLast(different)
-                            }
-                        }
-
-                        return@map it
-                    }*/
-            }
-            .onErrorResumeNext {
-                onError(it)
-                Flowable.just(listOf())
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
@@ -368,10 +349,6 @@ class ChatFragment :
                 .map {
                     it.distinct()
                 }
-            }
-            .onErrorResumeNext {
-                onError(it)
-                Flowable.just(listOf())
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(

@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.data.repo
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Observable
+import io.reactivex.Single
 import ru.fasdev.tfs.data.mapper.toUserDomain
 import ru.fasdev.tfs.data.mapper.toUserStatus
 import ru.fasdev.tfs.data.source.network.users.api.UserApi

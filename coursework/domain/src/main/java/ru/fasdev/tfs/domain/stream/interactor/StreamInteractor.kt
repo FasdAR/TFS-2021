@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.domain.stream.interactor
 
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.Flowable
+import io.reactivex.Single
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.domain.stream.model.Topic
 
