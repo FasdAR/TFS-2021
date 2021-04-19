@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.TfsApp
@@ -18,6 +19,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
+import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileState
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
@@ -30,6 +32,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
+    private var dispose: Disposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -42,7 +45,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
-        viewModel.store
+        dispose = viewModel.store
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
                     when {
@@ -66,5 +69,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        dispose?.dispose()
     }
 }
