@@ -85,4 +85,5 @@ dependencies {
 
     //rxredux
     implementation 'com.freeletics.rxredux:rxredux:1.0.1'
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
 }
