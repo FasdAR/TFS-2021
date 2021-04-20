@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Flowable
 import io.reactivex.Flowable.fromIterable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -30,6 +32,7 @@ import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
+import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
@@ -55,21 +58,10 @@ class StreamListFragment :
         }
     }
 
-    object StreamComponent {
-        val streamRepo = StreamDomainModule.getStreamRepo(
-            TfsApp.AppComponent.streamApi,
-            TfsApp.AppComponent.streamDao,
-            TfsApp.AppComponent.topicDao
-        )
-        val streamInteractor = StreamDomainModule.getStreamInteractor(streamRepo)
-    }
-
     private var _binding: FragmentTopicListBinding? = null
     private val binding get() = _binding!!
 
     private val mode: Int get() = arguments?.getInt(MODE_KEY, ALL_MODE) ?: ALL_MODE
-
-    private val streamInteractor: StreamInteractor = StreamComponent.streamInteractor
 
     private val holderFactory by lazy { StreamHolderFactory(this, this) }
     private val adapter by lazy { RecyclerAdapter(holderFactory, StreamItemCallback()) }
@@ -79,8 +71,9 @@ class StreamListFragment :
 
     private val searchObservable get() = (parentFragment as ChannelsFragment).provideSearch
 
-    private val searchSubject = PublishSubject.create<String>()
-    private val compositeDisposable = CompositeDisposable()
+    private val viewModel: StreamListViewModel by viewModels()
+
+    private var disposable: Disposable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,16 +93,29 @@ class StreamListFragment :
         binding.rvTopics.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTopics.adapter = adapter
 
-        loadAllStreams()
-        observerSearch()
+        disposable = viewModel.store.subscribe {
+            when {
+                it.error != null -> {
+                    onError(it.error)
+                }
+                it.isLoading -> {
+                    Log.d("LOADING", "IS_LOADING")
+                }
+                else -> {
+                    adapter.items = it.itemsList
+                }
+            }
+        }
+
+        viewModel.input.accept(StreamListAction.SideEffectLoadAllStreams(mode))
     }
 
     fun searchStream(query: String) {
-        searchSubject.onNext(query)
+        viewModel.input.accept(StreamListAction.SideEffectSearchStreams(query, mode))
     }
 
     override fun onClickStream(idStream: Int, opened: Boolean) {
-        loadTopics(idStream, opened)
+        viewModel.input.accept(StreamListAction.SideEffectLoadTopics(idStream, opened))
     }
 
     override fun onClickTopic(nameTopic: String, streamName: String) {
@@ -118,106 +124,10 @@ class StreamListFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.dispose()
+        disposable?.dispose()
     }
 
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
     }
-
-    // #region Rx chains
-    private fun Flowable<List<Stream>>.mapToDomain(): Flowable<List<StreamUi>> {
-        return concatMap {
-            fromIterable(it)
-                .map { it.toStreamUi() }
-                .toList()
-                .flatMapPublisher { Flowable.just(it) }
-        }
-    }
-
-    private fun getStreamSource(): Flowable<List<Stream>> {
-        return if (mode == ALL_MODE) streamInteractor.getAllStreams()
-        else streamInteractor.getSubStreams()
-    }
-
-    private fun loadAllStreams() {
-        compositeDisposable.add(
-            getStreamSource().subscribeOn(Schedulers.io())
-                .mapToDomain()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = {
-                        Log.d("ON_NEXT", it.toString())
-                        if (it.isNotEmpty()) {
-                            adapter.items = it
-                        }
-                    }
-                )
-        )
-    }
-
-    private fun observerSearch() {
-        compositeDisposable.add(
-            searchSubject
-                .subscribeOn(Schedulers.io())
-                .filter { isVisible }
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMapSingle {
-                    val isSub = mode == SUBSCRIBED_MODE
-                    return@switchMapSingle streamInteractor.searchStream(it.trim().toLowerCase(), isSub)
-                }
-                .flatMapSingle {
-                    fromIterable(it)
-                        .map { it.toStreamUi() }
-                        .toList()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = { array ->
-                        adapter.items = array
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun loadTopics(idStream: Int, opened: Boolean) {
-        val selectedStream = adapter.items.filter { it is StreamUi }.map { it as StreamUi}.findLast { it.uId == idStream }
-        compositeDisposable.add(
-            streamInteractor.getAllTopics(idStream.toLong())
-                .subscribeOn(Schedulers.io())
-                .concatMap {
-                    fromIterable(it)
-                        .map {
-                            it.toTopicUi(selectedStream?.nameTopic.toString())
-                        }
-                        .toList()
-                        .map { topics ->
-                            val currentArray = adapter.items.toMutableList()
-
-                            val currentStreamIndex =
-                                currentArray.indexOfFirst { it.uId == idStream && it is StreamUi }
-                            val stream = currentArray[currentStreamIndex] as StreamUi
-                            currentArray[currentStreamIndex] = stream.copy(isOpen = opened)
-
-                            currentArray.removeAll(topics)
-
-                            if (opened) {
-                                currentArray.addAll(currentStreamIndex + 1, topics)
-                            }
-
-                            return@map currentArray
-                        }
-                        .flatMapPublisher { Flowable.just(it) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    if (it.isNotEmpty()) {
-                        adapter.items = it
-                    }
-                }
-        )
-    }
-    // #endregion
 }
