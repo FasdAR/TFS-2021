@@ -1,15 +1,18 @@
 package ru.fasdev.tfs.screen.fragment.profileAnother
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
@@ -24,6 +27,9 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
+import ru.fasdev.tfs.screen.fragment.profile.ProfileViewModel
+import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
+import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherAction
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
@@ -41,24 +47,19 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
         fun getScreen(idUser: Long) = FragmentScreen(TAG, newInstance(idUser))
     }
 
-    object ProfileAnotherComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
-        val userInteractor = UserInteractorImpl(userRepo)
-    }
-
     private var _binding: FragmentAnotherProfileBinding? = null
     private val binding get() = _binding!!
 
     private val rootRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    private val userInteractor: UserInteractor = ProfileAnotherComponent.userInteractor
-
     private val idUser: Long get() = arguments?.getLong(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
-    private val compositeDisposable = CompositeDisposable()
     private val cardProfile
         get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
+    private val viewModel: ProfileAnotherViewModel by viewModels()
+    private var disposable: Disposable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,38 +81,34 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
-        loadProfileData()
+        disposable = viewModel.store
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { state ->
+                when {
+                    state.error != null -> {
+                        onError(state.error)
+                    }
+                    state.isLoading -> {
+                        Log.d("LOADING", "LLOADING")
+                    }
+                    else -> {
+                        cardProfile.avatarSrc = state.userAvatar
+                        cardProfile.fullName = state.userFullName
+                        cardProfile.status = state.userStatus
+                    }
+                }
+            }
+
+        viewModel.input.accept(ProfileAnotherAction.SideEffectLoadUser(idUser))
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.dispose()
+        disposable?.dispose()
         _binding = null
     }
 
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
-
-    // #region Rx chains
-    private fun loadProfileData() {
-        compositeDisposable.addAll(
-            userInteractor.getUserById(idUser)
-                .subscribeOn(Schedulers.io())
-                .flatMap { user ->
-                    userInteractor.getStatusUser(user.email)
-                        .map { user.toUserUi(it) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        cardProfile.status = it.userStatus
-                        cardProfile.avatarSrc = it.avatarSrc
-                        cardProfile.fullName = it.fullName
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-    // #endregion
 }
