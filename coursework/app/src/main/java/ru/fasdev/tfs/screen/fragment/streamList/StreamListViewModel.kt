@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.streamList
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.freeletics.rxredux.StateAccessor
 import com.freeletics.rxredux.reduxStore
@@ -115,10 +116,10 @@ class StreamListViewModel : ViewModel() {
         action: Observable<StreamListAction>,
         state: StateAccessor<StreamListState>
     ): Observable<StreamListAction> {
-        val state = state()
         return action
             .ofType(StreamListAction.SideEffectLoadTopics::class.java)
             .switchMap { action ->
+                val state = state()
                 val selectedStream =
                     state.itemsList.filter { it is StreamUi }.map { it as StreamUi }
                         .findLast { it.uId == action.idStream }
@@ -132,6 +133,7 @@ class StreamListViewModel : ViewModel() {
                             .toList()
                             .map { topics ->
                                 val currentArray = state.itemsList.toMutableList()
+                                Log.d("CURRENT_STATE", state.toString())
 
                                 val currentStreamIndex =
                                     currentArray.indexOfFirst { it.uId == action.idStream && it is StreamUi }
