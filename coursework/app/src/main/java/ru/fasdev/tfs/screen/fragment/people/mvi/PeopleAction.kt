@@ -1,6 +1,5 @@
 package ru.fasdev.tfs.screen.fragment.people.mvi
 
-import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
 
 sealed class PeopleAction
@@ -9,5 +8,6 @@ sealed class PeopleAction
     class ErrorLoading(val error: Throwable): PeopleAction()
     class LoadedUsers(val users: List<UserUi>): PeopleAction()
 
+    class SideEffectSearchUsers(val query: String): PeopleAction()
     object SideEffectLoadUsers: PeopleAction()
 }

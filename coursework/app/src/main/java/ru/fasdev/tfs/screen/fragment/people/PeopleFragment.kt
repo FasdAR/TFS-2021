@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import io.reactivex.Observable.fromIterable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -31,6 +33,7 @@ import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
@@ -59,6 +62,7 @@ class PeopleFragment :
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
 
     private val viewModel: PeopleViewModel by viewModels()
+    private var disposable: Disposable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,16 +89,37 @@ class PeopleFragment :
         with(binding.searchLayout) {
             setSystemInsetsInTop()
             binding.searchLayout.attachToolbar = binding.toolbarLayout.root
-            textChangeListener = SearchToolbar.TextChangeListener { query -> viewModel.searchUser(query) }
+            textChangeListener = SearchToolbar.TextChangeListener { query ->
+                viewModel.input.accept(
+                    PeopleAction.SideEffectSearchUsers(query)
+                )
+            }
         }
 
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
+
+        disposable = viewModel.store.subscribe {
+            when {
+                it.error != null -> {
+                    onError(it.error)
+                }
+                it.isLoading -> {
+                    Log.d("IS_LOADING", "LOADING")
+                }
+                else -> {
+                    adapter.items = it.users
+                }
+            }
+        }
+
+        viewModel.input.accept(PeopleAction.SideEffectLoadUsers)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        disposable?.dispose()
     }
 
     override fun onClickUser(idUser: Int, email: String) {
