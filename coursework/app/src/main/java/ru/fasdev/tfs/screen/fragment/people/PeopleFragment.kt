@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
@@ -48,24 +49,16 @@ class PeopleFragment :
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
-    object PeopleComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
-        val userInteractor = UserInteractorImpl(userRepo)
-    }
-
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
 
     private val rootRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
-    private val usersInteractor = PeopleComponent.userInteractor
-
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
 
-    private val searchSubject = PublishSubject.create<String>()
-    private val compositeDisposable = CompositeDisposable()
+    private val viewModel: PeopleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -92,19 +85,15 @@ class PeopleFragment :
         with(binding.searchLayout) {
             setSystemInsetsInTop()
             binding.searchLayout.attachToolbar = binding.toolbarLayout.root
-            textChangeListener = SearchToolbar.TextChangeListener { query -> searchUser(query) }
+            textChangeListener = SearchToolbar.TextChangeListener { query -> viewModel.searchUser(query) }
         }
 
         binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
-
-        loadAllUsers()
-        observerSearch()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        compositeDisposable.dispose()
         _binding = null
     }
 
@@ -125,64 +114,4 @@ class PeopleFragment :
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
     }
-
-    // #region Rx chains
-    private fun searchUser(query: String = "") {
-        searchSubject.onNext(query)
-    }
-
-    private fun Single<List<User>>.mapToUiUser(): Single<List<UserUi>> {
-        return flatMapObservable(::fromIterable)
-            .concatMap {
-                Observable.just(it).delay(10, TimeUnit.MILLISECONDS)
-            }
-            .flatMapSingle { user ->
-                usersInteractor.getStatusUser(user.email)
-                    .map { status -> user.toUserUi(status) }
-                    .subscribeOn(Schedulers.io())
-            }
-            .toList()
-    }
-
-    private fun loadAllUsers() {
-        compositeDisposable.add(
-            usersInteractor.getAllUsers()
-                .subscribeOn(Schedulers.io())
-                .mapToUiUser()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = { array ->
-                        adapter.items = array
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
-    private fun observerSearch() {
-        compositeDisposable.add(
-            searchSubject
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
-                .switchMapSingle {
-                    if (it.isNotEmpty()) usersInteractor.searchUser(it)
-                    else usersInteractor.getAllUsers()
-                }
-                .flatMapSingle {
-                    Single.just(it)
-                        .mapToUiUser()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn { error ->
-                    onError(error)
-                    return@onErrorReturn listOf()
-                }
-                .subscribeBy(
-                    onNext = { array ->
-                        adapter.items = array
-                    }
-                )
-        )
-    }
-    // #endregion
 }
