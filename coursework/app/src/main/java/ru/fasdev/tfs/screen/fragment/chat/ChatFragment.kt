@@ -11,6 +11,8 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,6 +43,7 @@ import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
+import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
@@ -74,19 +77,13 @@ class ChatFragment :
             FragmentScreen(TAG, newInstance(streamName, topicName))
     }
 
-    object ChatComponent {
-        val messageRepo =
-            ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json, TfsApp.AppComponent.messageDao, TfsApp.AppComponent.userDao, TfsApp.AppComponent.reactionDao)
-        val messageInteractor = MessageInteractorImpl(messageRepo)
-    }
+    private val viewModel: ChatViewModel by viewModels()
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
     private val fragmentRouter: FragmentRouter
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
-
-    private val interactor: MessageInteractor = ChatComponent.messageInteractor
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
     private val adapter by lazy {
@@ -104,7 +101,7 @@ class ChatFragment :
     private val compositeDisposable = CompositeDisposable()
 
     private var isDown: Boolean = true
-    private var isFirstLoaded: Boolean = true
+    private var isFirstLoaded: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,7 +137,15 @@ class ChatFragment :
         setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
-            selectedEmoji?.let { selectedReaction(selectedMessageId, it, true) }
+            selectedEmoji?.let {
+                viewModel.input.accept(
+                    ChatAction.SideEffectSelectedReaction(
+                        selectedMessageId,
+                        it,
+                        true
+                    )
+                )
+            }
         }
 
         with(binding.toolbarLayout) {
@@ -162,16 +167,66 @@ class ChatFragment :
 
         binding.sendBtn.setOnClickListener {
             val msgText = binding.msgText.text.toString().trim()
-            sendMessage(msgText)
+            binding.msgText.text?.clear()
+            viewModel.input.accept(ChatAction.SideEffectSendMessage(msgText, streamName, topicName))
         }
 
         val rvList: RecyclerView = binding.rvList
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
-        updateChatItems()
+        compositeDisposable.add(
+            viewModel.store.subscribe {
+                when {
+                    it.error != null -> {
+                        onError(it.error)
+                    }
+                    it.isLoading -> {
+                        Log.d("LOADING", "IS_LOADING")
+                    }
+                    else -> {
+                        adapter.items = it.listItems
+                    }
+                }
+            }
+        )
+
+        viewModel.input.accept(
+            ChatAction.SideEffectLoadingPage(
+                topicName,
+                streamName,
+                MessageRepoImpl.NEWEST_ANCHOR,
+                DirectionScroll.UP
+            )
+        )
+
         initListenerScrollRv()
+        updateChatItems()
     }
+
+    // #region Rx chains
+    private fun updateChatItems() {
+        compositeDisposable.add(
+            Flowable.interval(0, 5, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .filter { isDown }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onNext = {
+                        viewModel.input.accept(
+                            ChatAction.SideEffectLoadingPage(
+                                topicName,
+                                streamName,
+                                MessageRepoImpl.NEWEST_ANCHOR,
+                                DirectionScroll.UP
+                            )
+                        )
+                    },
+                    onError = ::onError
+                )
+        )
+    }
+// #endregion
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -199,7 +254,7 @@ class ChatFragment :
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String, isSelected: Boolean) {
-        selectedReaction(uIdMessage, emoji, isSelected)
+        viewModel.input.accept(ChatAction.SideEffectSelectedReaction(uIdMessage, emoji, isSelected))
     }
 
     override fun onCurrentListChanged(
@@ -219,147 +274,58 @@ class ChatFragment :
     }
 
     private fun initListenerScrollRv() {
-        Observable.create<PagingItem> { emitter ->
-            val scrollListener = object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
+        compositeDisposable.add(
+            Observable.create<PagingItem> { emitter ->
+                val scrollListener = object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
 
-                    val layoutManager = (binding.rvList.layoutManager as LinearLayoutManager)
+                        val layoutManager = (binding.rvList.layoutManager as LinearLayoutManager)
 
-                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-                    val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager)
-                        .findLastVisibleItemPosition()
+                        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                        val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager)
+                            .findLastVisibleItemPosition()
 
-                    val isUpScroll = dy < 0
+                        val isUpScroll = dy < 0
 
-                    val isUpdate = if (isUpScroll) {
-                        (adapter.itemCount - lastVisibleItem) <= LIMIT_UPDATE
-                    } else {
-                        lastVisibleItem - LIMIT_UPDATE <= LIMIT_UPDATE
-                    }
-
-                    isDown = firstVisiblePosition == 0
-
-                    if (isUpdate) {
-                        val id = adapter.items[lastVisibleItem].uId.toLong()
-
-                        if (isUpScroll) {
-                            val pagingItem = PagingItem(id, DirectionScroll.UP)
-                            emitter.onNext(pagingItem)
+                        val isUpdate = if (isUpScroll) {
+                            (adapter.itemCount - lastVisibleItem) <= LIMIT_UPDATE
                         } else {
-                            val pagingItem = PagingItem(id, DirectionScroll.DOWN)
-                            emitter.onNext(pagingItem)
+                            lastVisibleItem - LIMIT_UPDATE <= LIMIT_UPDATE
+                        }
+
+                        isDown = firstVisiblePosition == 0
+
+                        if (isUpdate) {
+                            val id = adapter.items[lastVisibleItem].uId.toLong()
+
+                            if (isUpScroll) {
+                                val pagingItem = PagingItem(id, DirectionScroll.UP)
+                                emitter.onNext(pagingItem)
+                            } else {
+                                val pagingItem = PagingItem(id, DirectionScroll.DOWN)
+                                emitter.onNext(pagingItem)
+                            }
                         }
                     }
                 }
+
+                binding.rvList.addOnScrollListener(scrollListener)
             }
-
-            binding.rvList.addOnScrollListener(scrollListener)
-        }
-        .distinctUntilChanged()
-        .debounce(500, TimeUnit.MILLISECONDS)
-        .subscribeBy {
-            loadPaging(it)
-        }
-    }
-
-    // #region Rx chains
-    private fun sendMessage(messageText: String) {
-        compositeDisposable.add(
-            Single.just(messageText)
-                .filter { it.isNotEmpty() }
-                .doOnSuccess {
-                    binding.msgText.text?.clear()
+                .distinctUntilChanged()
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .subscribeBy {
+                    viewModel.input.accept(
+                        ChatAction.SideEffectLoadingPage(
+                            topicName,
+                            streamName,
+                            it.lastVisibleId,
+                            it.direction
+                        )
+                    )
                 }
-                .observeOn(Schedulers.io())
-                .flatMapCompletable { interactor.sendMessage(streamName, topicName, it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onError = ::onError
-                )
         )
     }
-
-    private fun selectedReaction(
-        idMessage: Int = selectedMessageId,
-        emojiName: String,
-        isSelected: Boolean
-    ) {
-        compositeDisposable.add(
-            interactor.setSelectionReaction(idMessage, emojiName, isSelected)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onError = ::onError
-                )
-        )
-    }
-
-
-    private fun loadPaging(pagingItem: PagingItem) {
-        Flowable.just(pagingItem)
-            .subscribeOn(Schedulers.io())
-            .flatMap { item ->
-                interactor.getMessagesByTopic(
-                    nameStream = streamName,
-                    nameTopic = topicName,
-                    anchorMessage = item.lastVisibleId,
-                    direction = item.direction
-                )
-                    .map { newList ->
-                        newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
-                    }
-                    .map {
-                        if (item.direction == DirectionScroll.UP) {
-                            adapter.items + it
-                        } else {
-                            it + adapter.items
-                        }
-                    }
-                    .map { it.distinct() }
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = {
-                    if (it.isNotEmpty()) adapter.items = it
-                },
-                onError = ::onError
-            )
-    }
-
-    private fun updateChatItems() {
-        Flowable.interval(0, 5, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.io())
-            .filter { isDown }
-            .flatMap {
-                interactor.getMessagesByTopic(
-                    nameStream = streamName,
-                    nameTopic = topicName,
-                    anchorMessage = MessageRepoImpl.NEWEST_ANCHOR,
-                    isFirstLoaded = isFirstLoaded,
-                    numAfter = 0,
-                    numBefore = 20
-                )
-                .map { newList ->
-                    newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
-                }
-                .map {
-                    it + adapter.items
-                }
-                .map {
-                    it.distinct()
-                }
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = {
-                    isFirstLoaded = false
-                    if (it.isNotEmpty()) adapter.items = it
-                },
-                onError = ::onError
-            )
-    }
-    // #endregion
 
     data class PagingItem(val lastVisibleId: Long, val direction: DirectionScroll)
 }
