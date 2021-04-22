@@ -1,11 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="78ad7f27-5126-472d-a5c7-940f6f1cc1c1" name="Default Changelist" comment="Merge remote-tracking branch 'origin/hw_2'&#10;&#10;# Conflicts:&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/background/service/SyncContactsService.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/data/contacts/model/Contact.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/FirstActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/SecondActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/adapter/contact/ContactsRvAdapter.kt&#10;#&#9;HomeWork_1/app/src/main/res/layout/activity_second.xml&#10;#&#9;coursework/.gitignore&#10;#&#9;coursework/.idea/.gitignore&#10;#&#9;coursework/.idea/compiler.xml&#10;#&#9;coursework/.idea/gradle.xml&#10;#&#9;coursework/.idea/jarRepositories.xml&#10;#&#9;coursework/.idea/misc.xml&#10;#&#9;coursework/.idea/vcs.xml" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1rXQIGfNj1HuDLtTJwU1xtcZFDE" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="android.sdk.path" value="/Volumes/Samsung 860 Evo/Cache/Android/Sdk" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.updates" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="78ad7f27-5126-472d-a5c7-940f6f1cc1c1" name="Default Changelist" comment="" />
+      <created>1619119872690</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1619119872690</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Merge remote-tracking branch 'origin/hw_2'&#10;&#10;# Conflicts:&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/background/service/SyncContactsService.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/data/contacts/model/Contact.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/FirstActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/SecondActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/adapter/contact/ContactsRvAdapter.kt&#10;#&#9;HomeWork_1/app/src/main/res/layout/activity_second.xml&#10;#&#9;coursework/.gitignore&#10;#&#9;coursework/.idea/.gitignore&#10;#&#9;coursework/.idea/compiler.xml&#10;#&#9;coursework/.idea/gradle.xml&#10;#&#9;coursework/.idea/jarRepositories.xml&#10;#&#9;coursework/.idea/misc.xml&#10;#&#9;coursework/.idea/vcs.xml">
+      <created>1619120175507</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1619120175507</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Merge remote-tracking branch 'origin/hw_2'&#10;&#10;# Conflicts:&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/background/service/SyncContactsService.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/data/contacts/model/Contact.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/FirstActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/SecondActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/adapter/contact/ContactsRvAdapter.kt&#10;#&#9;HomeWork_1/app/src/main/res/layout/activity_second.xml&#10;#&#9;coursework/.gitignore&#10;#&#9;coursework/.idea/.gitignore&#10;#&#9;coursework/.idea/compiler.xml&#10;#&#9;coursework/.idea/gradle.xml&#10;#&#9;coursework/.idea/jarRepositories.xml&#10;#&#9;coursework/.idea/misc.xml&#10;#&#9;coursework/.idea/vcs.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/hw_2'&#10;&#10;# Conflicts:&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/background/service/SyncContactsService.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/data/contacts/model/Contact.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/FirstActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/activity/SecondActivity.kt&#10;#&#9;HomeWork_1/app/src/main/java/ru/fasdev/homeworkone/ui/adapter/contact/ContactsRvAdapter.kt&#10;#&#9;HomeWork_1/app/src/main/res/layout/activity_second.xml&#10;#&#9;coursework/.gitignore&#10;#&#9;coursework/.idea/.gitignore&#10;#&#9;coursework/.idea/compiler.xml&#10;#&#9;coursework/.idea/gradle.xml&#10;#&#9;coursework/.idea/jarRepositories.xml&#10;#&#9;coursework/.idea/misc.xml&#10;#&#9;coursework/.idea/vcs.xml" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="0" y="0" width="3440" height="1440" key="MergeDialog" timestamp="1619120117681">
+      <screen x="0" y="0" width="3440" height="1440" />
+    </state>
+    <state x="0" y="0" width="3440" height="1440" key="MergeDialog/0.0.3440.1440@0.0.3440.1440" timestamp="1619120117681" />
+    <state x="1265" y="430" width="1766" height="579" key="MultipleFileMergeDialog" timestamp="1619120153397">
+      <screen x="0" y="0" width="3440" height="1440" />
+    </state>
+    <state x="1265" y="430" width="1766" height="579" key="MultipleFileMergeDialog/0.0.3440.1440@0.0.3440.1440" timestamp="1619120153397" />
+    <state x="1220" y="394" key="Vcs.Push.Dialog.v2" timestamp="1619120176962">
+      <screen x="0" y="0" width="3440" height="1440" />
+    </state>
+    <state x="1220" y="394" key="Vcs.Push.Dialog.v2/0.0.3440.1440@0.0.3440.1440" timestamp="1619120176962" />
   </component>
 </project>
