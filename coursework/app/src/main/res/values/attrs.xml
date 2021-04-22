@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MessageViewGroup">
+        <attr name="msgText" format="string"/>
+        <attr name="nameText" format="string"/>
+        <attr name="srcAvatar" format="reference|color"/>
+        <attr name="msgViewMaxSize" format="dimension|integer">
+            <enum name="match_parent" value="-1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FlexboxLayout">
+        <attr name="android:verticalSpacing"/>
+        <attr name="android:horizontalSpacing"/>
+    </declare-styleable>
+
+    <declare-styleable name="ReactionView">
+        <attr name="rvSelectedTextColor" format="reference|color"/>
+        <attr name="rvUnselectedTextColor" format="reference|color"/>
+
+        <attr name="rvEmoji" format="string"/>
+        <attr name="rvCountReaction" format="integer"/>
+    </declare-styleable>
+</resources>
