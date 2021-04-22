@@ -14,13 +14,13 @@ abstract class MessageViewHolder<T : MessageUi>(
     val view: View,
     private val reactionListener: OnClickReactionListener,
     private val messageLongListener: OnLongClickMessageListener
-) :
-    BaseViewHolder<T>(view), MessageViewGroup.OnClickReactionListener, View.OnLongClickListener {
+) : BaseViewHolder<T>(view), MessageViewGroup.OnClickReactionListener, View.OnLongClickListener {
+
     companion object {
         const val KEY_REACTION_PAYLOADS = "REACTIONS"
     }
-    private var currentMessageId: Int = -1
 
+    private var currentMessageId: Int = -1
     private val message: MessageViewGroupRoot = view.findViewById(R.id.message)
 
     override fun bind(item: T) {

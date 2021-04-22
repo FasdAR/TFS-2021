@@ -42,7 +42,7 @@ class ChatFragment :
     private val interactor: MessageInteractor = MessageInteractorImpl(testMessageRepoImpl)
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { BaseAdapter<ViewType>(holderFactory, ChatDiffUtilCallback(), asyncListDiffer = this) }
+    private val adapter by lazy { BaseAdapter(holderFactory, ChatDiffUtilCallback(), asyncListDiffer = this) }
 
     private val currentChatId = 1
     private val currentUserId = 1
@@ -67,7 +67,7 @@ class ChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { requestKey, bundle ->
+        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val selectedEmoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
 
             selectedEmoji?.let {

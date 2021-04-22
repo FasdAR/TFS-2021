@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.databinding.ViewInternalMessageBinding
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
@@ -38,11 +39,11 @@ class InternalMessageViewGroup
     // #endregion
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_internal_message, this, true)
+        ViewInternalMessageBinding.inflate(LayoutInflater.from(context), this)
 
         messageTextView = findViewById(R.id.message_text)
         reactionsLayout = findViewById(R.id.reaction_layout)
-        reactionsLayout.gravity = Gravity.RIGHT
+        reactionsLayout.gravity = Gravity.END
 
         context.obtainStyledAttributes(attributeSet, R.styleable.InternalMessageViewGroup).apply {
             message = getString(R.styleable.InternalMessageViewGroup_mvMessage) ?: ""

@@ -9,5 +9,5 @@
     android:paddingBottom="6dp"
     android:paddingTop="6dp"
     android:id="@+id/emoji"
-    android:gravity="center"
+    android:textAlignment="center"
     tools:text="😎" />
