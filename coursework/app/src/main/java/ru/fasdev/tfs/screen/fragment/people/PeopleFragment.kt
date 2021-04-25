@@ -27,7 +27,7 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
+import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
@@ -37,13 +37,9 @@ import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
 
-class PeopleFragment :
-    Fragment(R.layout.fragment_people),
-    UserViewHolder.OnClickUserListener,
-    ProviderBackPressed {
-
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, OnBackPressedListener {
     companion object {
-        val TAG: String = PeopleFragment::class.java.simpleName
+        private val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
@@ -127,6 +123,19 @@ class PeopleFragment :
     }
 
     // #region Rx chains
+    private fun loadAllUsers() {
+        compositeDisposable.add(
+            usersInteractor.getAllUsers()
+                .subscribeOn(Schedulers.io())
+                .mapToUiUser()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { array -> adapter.items = array },
+                    onError = ::onError
+                )
+        )
+    }
+
     private fun searchUser(query: String = "") {
         searchSubject.onNext(query)
     }
@@ -144,43 +153,27 @@ class PeopleFragment :
             .toList()
     }
 
-    private fun loadAllUsers() {
-        compositeDisposable.add(
-            usersInteractor.getAllUsers()
-                .subscribeOn(Schedulers.io())
-                .mapToUiUser()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = { array ->
-                        adapter.items = array
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-
     private fun observerSearch() {
         compositeDisposable.add(
             searchSubject
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
-                    if (it.isNotEmpty()) usersInteractor.searchUser(it)
-                    else usersInteractor.getAllUsers()
+                    if (it.isNotEmpty()) {
+                        usersInteractor.searchUser(it)
+                    }
+                    else {
+                        usersInteractor.getAllUsers()
+                    }
                 }
-                .flatMapSingle {
-                    Single.just(it)
-                        .mapToUiUser()
-                }
+                .flatMapSingle { Single.just(it).mapToUiUser() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .onErrorReturn { error ->
                     onError(error)
                     return@onErrorReturn listOf()
                 }
                 .subscribeBy(
-                    onNext = { array ->
-                        adapter.items = array
-                    }
+                    onNext = { array -> adapter.items = array }
                 )
         )
     }

@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
-import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
+import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
-import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
 import ru.fasdev.tfs.screen.fragment.profile.ProfileFragment
+import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
 
-class MainFragment : Fragment(R.layout.fragment_main), ProviderBackPressed {
+class MainFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
     companion object {
         fun newInstance(): MainFragment = MainFragment()
     }
@@ -71,7 +71,7 @@ class MainFragment : Fragment(R.layout.fragment_main), ProviderBackPressed {
 
     override fun onBackPressed(): Boolean {
         val fragment = fragmentRouter.getCurrentFragment()
-        return if (fragment is ProviderBackPressed) {
+        return if (fragment is OnBackPressedListener) {
             fragment.onBackPressed()
         } else {
             false

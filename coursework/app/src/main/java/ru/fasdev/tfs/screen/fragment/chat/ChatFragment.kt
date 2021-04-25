@@ -50,6 +50,7 @@ class ChatFragment :
 
     companion object {
         private val TAG: String = ChatFragment::class.java.simpleName
+        private const val CURRENT_USER_ID = 402233
 
         private const val COLOR_TOOLBAR = R.color.teal_500
 
@@ -207,16 +208,12 @@ class ChatFragment :
         compositeDisposable.add(
             Single.just(messageText)
                 .filter { it.isNotEmpty() }
-                .doOnSuccess {
-                    binding.msgText.text?.clear()
-                }
+                .doOnSuccess { binding.msgText.text?.clear() }
                 .observeOn(Schedulers.io())
                 .flatMapCompletable { interactor.sendMessage(streamName, topicName, it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onComplete = {
-                        updateChatItems()
-                    },
+                    onComplete = { updateChatItems() },
                     onError = ::onError
                 )
         )
@@ -228,24 +225,19 @@ class ChatFragment :
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onComplete = {
-                        updateChatItems()
-                    },
+                    onComplete = { updateChatItems() },
                     onError = ::onError
                 )
         )
     }
-
     private fun updateChatItems() {
         compositeDisposable.add(
             Observable.interval(0, 10, TimeUnit.SECONDS)
                 .flatMapSingle { interactor.getMessagesByTopic(streamName, topicName) }
-                .map { it.mapToUiList(402233) }
+                .map { it.mapToUiList(CURRENT_USER_ID) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
+                    onNext = { adapter.items = it },
                     onError = ::onError
                 )
         )

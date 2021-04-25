@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -29,12 +28,12 @@ import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
-import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import java.util.concurrent.TimeUnit
 
 class StreamListFragment :
@@ -107,8 +106,8 @@ class StreamListFragment :
         loadTopics(idStream, opened)
     }
 
-    override fun onClickTopic(nameTopic: String, streamName: String) {
-        fragmentRouter.navigateTo(ChatFragment.getScreen(streamName, nameTopic))
+    override fun onClickTopic(nameTopic: String, nameStream: String) {
+        fragmentRouter.navigateTo(ChatFragment.getScreen(nameStream, nameTopic))
     }
 
     override fun onDestroy() {
@@ -138,9 +137,7 @@ class StreamListFragment :
                 .mapToDomain()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        adapter.items = it
-                    }
+                    onSuccess = { adapter.items = it }
                 )
         )
     }
@@ -152,8 +149,12 @@ class StreamListFragment :
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
-                    if (it.isNotEmpty()) streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
-                    else getStreamSource()
+                    if (it.isNotEmpty()) {
+                        streamInteractor.searchStream(it, mode == SUBSCRIBED_MODE)
+                    }
+                    else {
+                        getStreamSource()
+                    }
                 }
                 .subscribeOn(Schedulers.io())
                 .flatMapSingle {
@@ -165,9 +166,7 @@ class StreamListFragment :
                     return@onErrorReturn listOf()
                 }
                 .subscribeBy(
-                    onNext = { array ->
-                        adapter.items = array
-                    }
+                    onNext = { array -> adapter.items = array }
                 )
         )
     }
@@ -176,7 +175,7 @@ class StreamListFragment :
         compositeDisposable.add(
             streamInteractor.getAllTopics(idStream.toLong())
                 .subscribeOn(Schedulers.io())
-                .flatMapObservable { Observable.fromIterable(it) }
+                .flatMapObservable(::fromIterable)
                 .map {
                     val streamName = adapter.items
                         .filterIsInstance<StreamUi>()
@@ -202,9 +201,9 @@ class StreamListFragment :
                     return@map currentArray
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    adapter.items = it
-                }
+                .subscribeBy(
+                    onSuccess = { adapter.items = it }
+                )
         )
     }
     // #endregion

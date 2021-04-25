@@ -57,8 +57,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     cardProfile.fullName = it.fullName
                     cardProfile.avatarSrc = it.avatarSrc
                     cardProfile.status = it.userStatus
-                },
-                onError = {
                 }
             )
     }

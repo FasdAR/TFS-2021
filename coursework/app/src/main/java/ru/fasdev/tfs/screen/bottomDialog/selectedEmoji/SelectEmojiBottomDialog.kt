@@ -29,9 +29,9 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
         const val KEY_SELECTED_EMOJI = "SELECTED_EMOJI"
 
-        fun newInstance() = SelectEmojiBottomDialog()
-        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog =
-            newInstance().also { it.show(fragmentManager, TAG) }
+        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog {
+            return SelectEmojiBottomDialog().also { it.show(fragmentManager, TAG) }
+        }
     }
 
     private var _binding: BottomDialogSelectEmojiBinding? = null
@@ -40,7 +40,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
     private val holderFactory by lazy { EmojiHolderFactory(this) }
     private val adapter by lazy { return@lazy RecyclerAdapter<ViewType>(holderFactory) }
 
-    private var disposeEmojiLoad: Disposable? = null
+    private var disposeEmojiLoad: Disposable = Disposable.empty()
 
     override fun getTheme(): Int = R.style.Theme_TFS_BottomSheetDialog
 
@@ -65,7 +65,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     override fun onDestroy() {
         super.onDestroy()
-        disposeEmojiLoad?.dispose()
+        disposeEmojiLoad.dispose()
         _binding = null
     }
 
@@ -82,9 +82,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
             .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { array ->
-                adapter.items = array
-            }
+            .subscribe { array -> adapter.items = array }
     }
     // #endregion
 }
