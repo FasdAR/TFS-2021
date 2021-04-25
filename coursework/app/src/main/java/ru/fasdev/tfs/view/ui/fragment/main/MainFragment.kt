@@ -10,10 +10,10 @@ import ru.fasdev.tfs.databinding.FragmentMainBinding
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.view.ui.fragment.people.PeopleFragment
 import ru.fasdev.tfs.view.ui.fragment.profile.ProfileFragment
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 
-class MainFragment : Fragment(R.layout.fragment_main), ImplBackPressed {
+class MainFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
     companion object {
         fun newInstance(): MainFragment = MainFragment()
     }
@@ -71,7 +71,7 @@ class MainFragment : Fragment(R.layout.fragment_main), ImplBackPressed {
 
     override fun onBackPressed(): Boolean {
         val fragment = fragmentRouter.getCurrentFragment()
-        return if (fragment is ImplBackPressed) {
+        return if (fragment is OnBackPressedListener) {
             fragment.onBackPressed()
         } else {
             false

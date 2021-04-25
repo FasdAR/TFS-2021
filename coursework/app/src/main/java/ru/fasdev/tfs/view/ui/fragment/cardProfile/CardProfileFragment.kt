@@ -1,11 +1,15 @@
 package ru.fasdev.tfs.view.ui.fragment.cardProfile
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
@@ -98,7 +102,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
 
     private fun updateStatusText(userStatus: UserStatus?) {
         userStatus?.let {
-            binding.status.visibility = View.VISIBLE
+            binding.status.isGone = false
 
             val text = when (userStatus) {
                 UserStatus.MEETING -> resources.getString(R.string.status_meeting)
@@ -107,7 +111,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
 
             binding.status.text = text
         } ?: kotlin.run {
-            binding.status.visibility = View.GONE
+            binding.status.isGone = true
         }
     }
 

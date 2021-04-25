@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
 import ru.fasdev.tfs.R
+import ru.fasdev.tfs.databinding.ViewExternalMessageBinding
 import ru.fasdev.tfs.view.feature.util.getHeightMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.getWidthMeasuredMargin
 import ru.fasdev.tfs.view.feature.util.layout
@@ -67,7 +68,7 @@ class ExternalMessageViewGroup
     // #endregion
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_external_message, this, true)
+        ViewExternalMessageBinding.inflate(LayoutInflater.from(context), this)
 
         // #region FindView
         avatarImageView = findViewById(R.id.avatar)

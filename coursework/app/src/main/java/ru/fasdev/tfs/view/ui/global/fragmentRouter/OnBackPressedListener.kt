@@ -1,5 +1,5 @@
 package ru.fasdev.tfs.view.ui.global.fragmentRouter
 
-interface ImplBackPressed {
+interface OnBackPressedListener {
     fun onBackPressed(): Boolean
 }

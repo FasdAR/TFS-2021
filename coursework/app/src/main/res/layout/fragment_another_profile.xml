@@ -10,7 +10,7 @@
         layout="@layout/layout_toolbar_center"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/card_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -20,7 +20,6 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
 import ru.fasdev.tfs.view.di.ProvideFragmentRouter
-import ru.fasdev.tfs.view.feature.mapper.mapToUserUi
 import ru.fasdev.tfs.view.feature.mapper.toUserUi
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.people.adapter.PeopleHolderFactory
@@ -29,18 +28,15 @@ import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewType.UserUi
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 import java.util.concurrent.TimeUnit
 
-class PeopleFragment :
-    Fragment(R.layout.fragment_people),
-    UserViewHolder.OnClickUserListener,
-    ImplBackPressed {
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, OnBackPressedListener {
     companion object {
-        val TAG: String = PeopleFragment::class.java.simpleName
+        private val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }

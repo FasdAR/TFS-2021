@@ -7,12 +7,16 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
+import ru.fasdev.tfs.domain.model.UserStatus
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
@@ -24,7 +28,7 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
-        val TAG: String = ProfileAnotherFragment::class.java.simpleName
+        private val TAG: String = ProfileAnotherFragment::class.java.simpleName
 
         private const val NULL_USER = -1
         private const val KEY_ID_USER = "id_user"
@@ -34,7 +38,6 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
                 arguments = bundleOf(KEY_ID_USER to idUser)
             }
         }
-
         fun getScreen(idUser: Int) = FragmentScreen(TAG, newInstance(idUser))
     }
 
@@ -52,6 +55,20 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     private val compositeDisposable = CompositeDisposable()
     private val cardProfile
         get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        childFragmentManager.addFragmentOnAttachListener { _, fragment ->
+            val cardProfile = fragment as CardProfileFragment
+            cardProfile.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                fun onResume() {
+                    loadProfileData()
+                }
+            })
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,8 +89,6 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.isVisible = true
             btnNav.setOnClickListener { rootRouter.back() }
         }
-
-        loadProfileData()
     }
 
     override fun onDestroy() {

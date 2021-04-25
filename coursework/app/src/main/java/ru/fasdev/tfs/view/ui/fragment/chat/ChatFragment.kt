@@ -50,7 +50,7 @@ class ChatFragment :
     AsyncListDiffer.ListListener<ViewType> {
 
     companion object {
-        val TAG: String = ChatFragment::class.java.simpleName
+        private val TAG: String = ChatFragment::class.java.simpleName
 
         private const val COLOR_TOOLBAR = R.color.teal_500
 

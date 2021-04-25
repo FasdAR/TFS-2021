@@ -13,13 +13,13 @@ import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.view.feature.util.setSystemInsetsInTop
 import ru.fasdev.tfs.view.ui.fragment.channels.viewPage.TopicFragmentFactory
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 import ru.fasdev.tfs.view.ui.global.viewPager.base.ViewPagerFragmentAdapter
 
-class ChannelsFragment : Fragment(R.layout.fragment_channels), ImplBackPressed {
+class ChannelsFragment : Fragment(R.layout.fragment_channels), OnBackPressedListener {
     companion object {
-        val TAG: String = ChannelsFragment::class.java.simpleName
+        private val TAG: String = ChannelsFragment::class.java.simpleName
         fun newInstance(): ChannelsFragment = ChannelsFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
