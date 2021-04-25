@@ -97,15 +97,30 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     private fun updateStatusText(userStatus: UserStatus?) {
         when (userStatus) {
             ONLINE -> {
-                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), ONLINE_COLOR))
+                binding.onlineStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        ONLINE_COLOR
+                    )
+                )
                 binding.onlineStatus.text = resources.getString(R.string.online)
             }
             OFFLINE -> {
-                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), OFFLINE_COLOR))
+                binding.onlineStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        OFFLINE_COLOR
+                    )
+                )
                 binding.onlineStatus.text = resources.getString(R.string.offline)
             }
             IDLE -> {
-                binding.onlineStatus.setTextColor(ContextCompat.getColor(requireContext(), IDLE_COLOR))
+                binding.onlineStatus.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        IDLE_COLOR
+                    )
+                )
                 binding.onlineStatus.text = resources.getString(R.string.idle)
             }
         }

@@ -19,13 +19,13 @@ import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
-        val TAG: String = ProfileFragment::class.java.simpleName
+        private val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
     object ProfileComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        private val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
         val userInteractor = UserInteractorImpl(userRepo)
     }
 

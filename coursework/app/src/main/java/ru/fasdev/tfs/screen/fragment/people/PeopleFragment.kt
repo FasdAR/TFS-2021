@@ -49,7 +49,7 @@ class PeopleFragment :
     }
 
     object PeopleComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        private val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
         val userInteractor = UserInteractorImpl(userRepo)
     }
 

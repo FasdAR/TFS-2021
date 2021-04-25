@@ -24,7 +24,7 @@ class MessageRepoImpl(private val chatApi: ChatApi, private val json: Json) : Me
         return chatApi.getAllMessages(narrow = json.encodeToString(listOf(filterNarrow)))
             .map { it.messages }
             .flatMapObservable(::fromIterable)
-            .filter { it.subject.toLowerCase(Locale.ROOT).equals(nameTopic.toLowerCase(Locale.ROOT)) }
+            .filter { it.subject.equals(nameTopic, ignoreCase = true) }
             .map { it.mapToDomain(USER_ID) }
             .toList()
     }

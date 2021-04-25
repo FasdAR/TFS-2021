@@ -55,7 +55,7 @@ class StreamListFragment :
     }
 
     object StreamComponent {
-        val streamRepo = StreamDomainModule.getStreamRepo(TfsApp.AppComponent.streamApi)
+        private val streamRepo = StreamDomainModule.getStreamRepo(TfsApp.AppComponent.streamApi)
         val streamInteractor = StreamDomainModule.getStreamInteractor(streamRepo)
     }
 
@@ -99,7 +99,7 @@ class StreamListFragment :
         observerSearch()
     }
 
-    fun searchStream(query: String) {
+    private fun searchStream(query: String) {
         searchSubject.onNext(query)
     }
 
@@ -179,8 +179,7 @@ class StreamListFragment :
                 .flatMapObservable { Observable.fromIterable(it) }
                 .map {
                     val streamName = adapter.items
-                        .filter { it is StreamUi }
-                        .map { it as StreamUi }
+                        .filterIsInstance<StreamUi>()
                         .findLast { it.uId == idStream }?.nameTopic.toString()
 
                     it.toTopicUi(streamName)

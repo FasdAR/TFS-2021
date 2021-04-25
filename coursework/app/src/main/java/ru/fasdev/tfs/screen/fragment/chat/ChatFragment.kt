@@ -49,7 +49,7 @@ class ChatFragment :
     AsyncListDiffer.ListListener<ViewType> {
 
     companion object {
-        val TAG: String = ChatFragment::class.java.simpleName
+        private val TAG: String = ChatFragment::class.java.simpleName
 
         private const val COLOR_TOOLBAR = R.color.teal_500
 
@@ -67,7 +67,7 @@ class ChatFragment :
     }
 
     object ChatComponent {
-        val messageRepo = ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json)
+        private val messageRepo = ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json)
         val messageInteractor = MessageInteractorImpl(messageRepo)
     }
 
