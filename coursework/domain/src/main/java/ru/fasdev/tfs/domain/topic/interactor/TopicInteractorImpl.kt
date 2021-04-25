@@ -21,10 +21,10 @@ class TopicInteractorImpl(private val topicRepo: TopicRepo) : TopicInteractor {
     }
 
     override fun searchStream(query: String): List<Stream> {
-        return if (query.isNotEmpty()) {
-            getAllStreams().filter { it.name.toLowerCase().contains(query.trim().toLowerCase()) }
-        } else {
-            getAllStreams()
+        return getAllStreams().apply {
+            if (query.isNotEmpty()) {
+                filter { it.name.toLowerCase().contains(query.trim().toLowerCase()) }
+            }
         }
     }
 }

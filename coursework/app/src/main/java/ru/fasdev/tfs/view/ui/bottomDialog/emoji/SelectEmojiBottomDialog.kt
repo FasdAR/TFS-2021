@@ -21,7 +21,7 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 
 class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnSelectedListener {
     companion object {
-        val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
+        private val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
         const val KEY_SELECTED_EMOJI = "SELECTED_EMOJI"
 
         fun newInstance() = SelectEmojiBottomDialog()

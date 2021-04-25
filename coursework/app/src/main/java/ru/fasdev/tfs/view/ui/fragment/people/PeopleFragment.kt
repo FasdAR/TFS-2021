@@ -20,14 +20,14 @@ import ru.fasdev.tfs.view.ui.fragment.people.adapter.viewHolder.UserViewHolder
 import ru.fasdev.tfs.view.ui.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.view.ui.global.recycler.base.BaseAdapter
 import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import ru.fasdev.tfs.view.ui.global.view.viewGroup.toolbar.SearchToolbar
 
-class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, ImplBackPressed {
+class PeopleFragment : Fragment(R.layout.fragment_people), UserViewHolder.OnClickUserListener, OnBackPressedListener {
     companion object {
-        val TAG: String = PeopleFragment::class.java.simpleName
+        private val TAG: String = PeopleFragment::class.java.simpleName
         fun newInstance(): PeopleFragment = PeopleFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }

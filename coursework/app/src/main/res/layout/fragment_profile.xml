@@ -19,7 +19,7 @@
         android:id="@+id/guideline_bottom_btn"
         app:layout_constraintGuide_percent="0.92"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/card_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

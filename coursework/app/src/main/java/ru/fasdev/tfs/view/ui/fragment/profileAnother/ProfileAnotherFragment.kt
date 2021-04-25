@@ -20,7 +20,7 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
     companion object {
-        val TAG: String = ProfileAnotherFragment::class.java.simpleName
+        private val TAG: String = ProfileAnotherFragment::class.java.simpleName
 
         private const val NULL_USER = -1
         private const val KEY_ID_USER = "id_user"

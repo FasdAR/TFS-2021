@@ -13,7 +13,7 @@ import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentScreen
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
-        val TAG: String = ProfileFragment::class.java.simpleName
+        private val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }

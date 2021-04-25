@@ -6,7 +6,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.di.ProvideFragmentRouter
 import ru.fasdev.tfs.view.feature.util.initEdgeToEdge
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.view.ui.global.fragmentRouter.ImplBackPressed
+import ru.fasdev.tfs.view.ui.global.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.view.ui.global.fragmentRouter.base.BaseFragmentRouter
 
 class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(), ProvideFragmentRouter {
     override fun onBackPressed() {
         val fragment = fragmentRouter.getCurrentFragment()
 
-        if (fragment is ImplBackPressed) {
+        if (fragment is OnBackPressedListener) {
             if (fragment.onBackPressed()) return
         }
 
