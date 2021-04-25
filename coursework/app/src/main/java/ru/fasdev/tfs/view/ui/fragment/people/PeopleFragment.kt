@@ -138,8 +138,12 @@ class PeopleFragment :
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
                 .switchMapSingle {
-                    if (it.isNotEmpty()) usersInteractor.searchUser(it)
-                    else usersInteractor.getAllUsers()
+                    if (it.isNotEmpty()) {
+                        usersInteractor.searchUser(it)
+                    }
+                    else {
+                        usersInteractor.getAllUsers()
+                    }
                 }
                 .flatMapSingle { items ->
                     Observable.fromIterable(items)
@@ -148,9 +152,7 @@ class PeopleFragment :
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
+                    onNext = { adapter.items = it },
                     onError = ::onError
                 )
         )
@@ -164,9 +166,7 @@ class PeopleFragment :
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = { array ->
-                        adapter.items = array
-                    },
+                    onSuccess = { array -> adapter.items = array },
                     onError = ::onError
                 )
         )

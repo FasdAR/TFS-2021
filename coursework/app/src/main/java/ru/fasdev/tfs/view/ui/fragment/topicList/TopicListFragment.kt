@@ -139,9 +139,7 @@ class TopicListFragment :
         compositeDisposable.add(
             topicInteractor.getAllStreams()
                 .testEnv("test")
-                .doOnSubscribe {
-                    loadingState()
-                }
+                .doOnSubscribe { loadingState() }
                 .flatMapObservable { Observable.fromIterable(it) }
                 .map { it.toStreamUi() }
                 .toList()
@@ -174,9 +172,7 @@ class TopicListFragment :
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onNext = {
-                        adapter.items = it
-                    },
+                    onNext = { adapter.items = it },
                     onError = ::onError
                 )
         )
@@ -185,12 +181,8 @@ class TopicListFragment :
     private fun loadedTopics(idStream: Int, opened: Boolean) {
         compositeDisposable.addAll(
             topicInteractor.getTopicsInStream(idStream)
-                .flatMapObservable {
-                    Observable.fromIterable(it)
-                }
-                .map {
-                    it.toTopicUi()
-                }
+                .flatMapObservable { Observable.fromIterable(it) }
+                .map { it.toTopicUi() }
                 .toList()
                 .map { topics ->
                     val currentArray = mutableListOf<ViewType>().apply { addAll(adapter.items) }
@@ -210,9 +202,7 @@ class TopicListFragment :
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        adapter.items = it
-                    },
+                    onSuccess = { adapter.items = it },
                     onError = ::onError
                 )
         )

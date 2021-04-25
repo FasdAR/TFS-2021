@@ -210,15 +210,11 @@ class ChatFragment :
         compositeDisposable.add(
             Single.just(messageText)
                 .filter { it.isNotEmpty() }
-                .doOnSuccess {
-                    binding.msgText.text?.clear()
-                }
+                .doOnSuccess { binding.msgText.text?.clear() }
                 .flatMapCompletable { interactor.sendMessage(currentChatId, it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onComplete = {
-                        updateChatItems()
-                    },
+                    onComplete = { updateChatItems() },
                     onError = ::onError
                 )
         )
@@ -229,9 +225,7 @@ class ChatFragment :
             topicInteractor
                 .getTopic(idSubTopic)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    binding.topic.text = resources.getString(R.string.sub_topic_title, it.name)
-                }
+                .doOnSuccess { binding.topic.text = resources.getString(R.string.sub_topic_title, it.name) }
                 .observeOn(Schedulers.io())
                 .flatMap { topicInteractor.getStream(it.idStream) }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -251,9 +245,7 @@ class ChatFragment :
                 .changeSelectedReaction(currentChatId, idMessage, emoji)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onComplete = {
-                        updateChatItems()
-                    },
+                    onComplete = { updateChatItems() },
                     onError = ::onError
                 )
         )
@@ -263,13 +255,13 @@ class ChatFragment :
         compositeDisposable.add(
             interactor.getMessageByChat(currentChatId)
                 .doOnSubscribe {
-                    if (isLoading) loadingState()
+                    if (isLoading) {
+                        loadingState()
+                    }
                 }
                 .map { it.mapToUiList(currentUserId) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    selectedMessageId = 0
-                }
+                .doOnSuccess { selectedMessageId = 0 }
                 .subscribeBy(
                     onSuccess = {
                         adapter.items = it

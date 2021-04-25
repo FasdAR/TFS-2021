@@ -71,6 +71,10 @@ class MainFragment : Fragment(R.layout.fragment_main), ImplBackPressed {
 
     override fun onBackPressed(): Boolean {
         val fragment = fragmentRouter.getCurrentFragment()
-        return if (fragment is ImplBackPressed) fragment.onBackPressed() else false
+        return if (fragment is ImplBackPressed) {
+            fragment.onBackPressed()
+        } else {
+            false
+        }
     }
 }

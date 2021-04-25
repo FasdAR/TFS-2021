@@ -92,25 +92,19 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             userInteractor.getUserById(idUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        cardProfile.fullName = it.fullName
-                    },
+                    onSuccess = { cardProfile.fullName = it.fullName },
                     onError = ::onError
                 ),
             userInteractor.getStatusUser(idUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        cardProfile.status = it
-                    },
+                    onSuccess = { cardProfile.status = it },
                     onError = ::onError
                 ),
             userInteractor.getIsOnlineStatusUser(idUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        cardProfile.isOnline = it
-                    },
+                    onSuccess = { cardProfile.isOnline = it },
                     onError = ::onError
                 )
         )
