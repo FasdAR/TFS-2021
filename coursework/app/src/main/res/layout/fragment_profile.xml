@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment"
+        android:tag="ass"
         app:layout_constraintTop_toTopOf="@id/guideline_top_card"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

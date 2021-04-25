@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
+import ru.fasdev.tfs.domain.model.UserStatus
 import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.domain.user.repo.TestUserRepoImpl
@@ -44,6 +48,24 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     private val idUser: Int get() = arguments?.getInt(KEY_ID_USER, NULL_USER) ?: NULL_USER
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        childFragmentManager.addFragmentOnAttachListener { fragmentManager, fragment ->
+            val cardProfile = fragment as CardProfileFragment
+            cardProfile.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                fun onResume() {
+                    userInteractor.getUserById(idUser)?.let { user ->
+                        cardProfile.fullName = user.fullName
+                        cardProfile.status = userInteractor.getStatusUser(user.id)
+                        cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
+                    }
+                }
+            })
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentAnotherProfileBinding.bind(this)
@@ -58,13 +80,6 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             title.text = resources.getString(R.string.profile)
             btnNav.isVisible = true
             btnNav.setOnClickListener { rootRouter.back() }
-        }
-
-        userInteractor.getUserById(idUser)?.let { user ->
-            val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
-            cardProfile.fullName = user.fullName
-            cardProfile.status = userInteractor.getStatusUser(user.id)
-            cardProfile.isOnline = userInteractor.getIsOnlineStatusUser(user.id)
         }
     }
 

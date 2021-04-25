@@ -1,6 +1,8 @@
 package ru.fasdev.tfs.view.ui.fragment.cardProfile
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
