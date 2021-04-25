@@ -11,4 +11,8 @@ open class ViewType {
         val type = (other as ViewType)
         return uId == type.uId && viewType == type.viewType
     }
+
+    override fun hashCode(): Int {
+        return viewType + uId
+    }
 }

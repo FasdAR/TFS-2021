@@ -7,39 +7,40 @@ import ru.fasdev.tfs.view.ui.global.recycler.base.ViewType
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-fun Message.toExternalMessageUi(): ExternalMessageUi {
-    return ExternalMessageUi(
-        id, sender.fullName, sender.avatarUrl, text, this.reactions.mapToMessageReactionUi()
-    )
-}
+private const val FORMAT_DATE_YYYY_MM_DD = "yyyyMMdd"
+private const val FORMAT_DATE_DD_MMM = "dd MMM"
 
-fun Message.toInternalMessageUi(): InternalMessageUi {
-    return InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
-}
+fun Message.toExternalMessageUi() =
+    ExternalMessageUi(
+        id, sender.fullName, sender.avatarUrl, text,
+        this.reactions.mapToMessageReactionUi()
+    )
+
+fun Message.toInternalMessageUi() =
+    InternalMessageUi(id, text, this.reactions.mapToMessageReactionUi())
 
 fun List<Message>.mapToUiList(internalUserId: Int): List<ViewType> {
-    val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-    val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
+    val dateFormatKey = SimpleDateFormat(FORMAT_DATE_YYYY_MM_DD, Locale.getDefault())
+    val dateFormatUi = SimpleDateFormat(FORMAT_DATE_DD_MMM, Locale.getDefault())
 
     val mapMsgDate = groupBy { dateFormatKey.format(it.date) }
-    val resultList: MutableList<ViewType> = mutableListOf()
 
-    mapMsgDate
+    return mapMsgDate
         .keys
         .sorted()
-        .forEach { key ->
+        .flatMap { key ->
             val date = dateFormatKey.parse(key)
-            val items = mapMsgDate[key]
+            val items = mapMsgDate[key]?.map {
+                val isInternal = it.sender.id == internalUserId
+                if (isInternal) {
+                    it.toInternalMessageUi()
+                } else {
+                    it.toExternalMessageUi()
+                }
+            } ?: emptyList()
 
-            date?.let { date ->
-                resultList.add(date.toDateUi(dateFormatUi))
-            }
-
-            items?.forEach { message ->
-                if (message.sender.id == internalUserId) resultList.add(message.toInternalMessageUi())
-                else resultList.add(message.toExternalMessageUi())
-            }
+            val list = date?.let { listOf(date.toDateUi(dateFormatUi)) } ?: emptyList()
+            list + items
         }
-
-    return resultList.reversed()
+        .reversed()
 }

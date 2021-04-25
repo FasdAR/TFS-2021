@@ -13,9 +13,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.view.feature.util.toDp
 import ru.fasdev.tfs.view.feature.util.toSp
 
-class ReactionView
-@JvmOverloads
-constructor(
+class ReactionView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -75,12 +73,12 @@ constructor(
             }
         }
 
-    var selectedTextColor: Int = DEFAULT_TEXT_COLOR
+    private var selectedTextColor: Int = DEFAULT_TEXT_COLOR
         set(value) {
             field = value
             updateSelectedState()
         }
-    var unSelectedTextColor: Int = DEFAULT_TEXT_COLOR
+    private var unSelectedTextColor: Int = DEFAULT_TEXT_COLOR
         set(value) {
             field = value
             updateSelectedState()
@@ -141,10 +139,5 @@ constructor(
         else textPaint.color = unSelectedTextColor
 
         invalidate()
-    }
-
-    fun selectedReaction() {
-        isSelectedReaction = !isSelectedReaction
-        if (isSelected) reactionCount += 1 else reactionCount -= 1
     }
 }

@@ -24,9 +24,9 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         private val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
         const val KEY_SELECTED_EMOJI = "SELECTED_EMOJI"
 
-        fun newInstance() = SelectEmojiBottomDialog()
-        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog =
-            newInstance().also { it.show(fragmentManager, TAG) }
+        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog {
+            return SelectEmojiBottomDialog().also { it.show(fragmentManager, TAG) }
+        }
     }
 
     private var _binding: BottomDialogSelectEmojiBinding? = null
