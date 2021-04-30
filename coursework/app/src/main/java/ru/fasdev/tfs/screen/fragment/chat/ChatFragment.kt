@@ -77,7 +77,14 @@ class ChatFragment :
 
     object ChatComponent {
         val messageRepo =
-            ChatDomainModule.getMessageRepo(TfsApp.AppComponent.chatApi, TfsApp.AppComponent.json, TfsApp.AppComponent.messageDao, TfsApp.AppComponent.userDao, TfsApp.AppComponent.reactionDao)
+            ChatDomainModule.getMessageRepo(
+                TfsApp.AppComponent.chatApi,
+                TfsApp.AppComponent.json,
+                TfsApp.AppComponent.roomDb,
+                TfsApp.AppComponent.messageDao,
+                TfsApp.AppComponent.userDao,
+                TfsApp.AppComponent.reactionDao
+            )
         val messageInteractor = MessageInteractorImpl(messageRepo)
     }
 
@@ -257,11 +264,11 @@ class ChatFragment :
 
             binding.rvList.addOnScrollListener(scrollListener)
         }
-        .distinctUntilChanged()
-        .debounce(500, TimeUnit.MILLISECONDS)
-        .subscribeBy {
-            loadPaging(it)
-        }
+            .distinctUntilChanged()
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .subscribeBy {
+                loadPaging(it)
+            }
     }
 
     // #region Rx chains
@@ -318,20 +325,6 @@ class ChatFragment :
                         }
                     }
                     .map { it.distinct() }
-                        /*
-                    .map {
-                        if (it.size > 50) {
-                            val different = Math.abs(it.size - 50)
-
-                            return@map if (item.direction == DirectionScroll.UP) {
-                                it.drop(different)
-                            } else {
-                                it.dropLast(different)
-                            }
-                        }
-
-                        return@map it
-                    }*/
             }
             .onErrorResumeNext {
                 onError(it)
@@ -359,15 +352,15 @@ class ChatFragment :
                     numAfter = 0,
                     numBefore = 20
                 )
-                .map { newList ->
-                    newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
-                }
-                .map {
-                    it + adapter.items
-                }
-                .map {
-                    it.distinct()
-                }
+                    .map { newList ->
+                        newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
+                    }
+                    .map {
+                        it + adapter.items
+                    }
+                    .map {
+                        it.distinct()
+                    }
             }
             .onErrorResumeNext {
                 onError(it)

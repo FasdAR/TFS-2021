@@ -22,29 +22,4 @@ fun List<Message>.mapToUiList(internalUserId: Long): List<ViewType> {
         if (message.sender.id == internalUserId) message.toInternalMessageUi()
         else message.toExternalMessageUi()
     }
-    /*
-    //val dateFormatKey = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-   // val dateFormatUi = SimpleDateFormat("dd MMM", Locale.getDefault())
-
-   // val mapMsgDate = groupBy { dateFormatKey.format(it.date) }
-    val resultList: MutableList<ViewType> = mutableListOf()
-
-    mapMsgDate
-        .keys
-        .sorted()
-        .forEach { key ->
-            val date = dateFormatKey.parse(key)
-            val items = mapMsgDate[key]
-
-            date?.let { date ->
-                resultList.add(date.toDateUi(dateFormatUi))
-            }
-
-            items?.forEach { message ->
-                if (message.sender.id.toInt() == internalUserId) resultList.add(message.toInternalMessageUi())
-                else resultList.add(message.toExternalMessageUi())
-            }
-        }
-
-    return resultList.reversed()*/
 }

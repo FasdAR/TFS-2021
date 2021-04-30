@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.di.module
 
+import androidx.room.RoomDatabase
 import kotlinx.serialization.json.Json
 import ru.fasdev.tfs.data.repo.MessageRepoImpl
 import ru.fasdev.tfs.data.source.db.dao.MessageDao
@@ -12,7 +13,16 @@ import ru.fasdev.tfs.domain.message.repo.MessageRepo
 
 class ChatDomainModule {
     companion object {
-        fun getMessageRepo(chatApi: ChatApi, json: Json, messageDao: MessageDao, userDao: UserDao, reactionDao: ReactionDao): MessageRepo = MessageRepoImpl(chatApi, json, messageDao, userDao, reactionDao)
-        fun getMessageInteractor(messageRepo: MessageRepo): MessageInteractor = MessageInteractorImpl(messageRepo)
+        fun getMessageRepo(
+            chatApi: ChatApi,
+            json: Json,
+            roomDatabase: RoomDatabase,
+            messageDao: MessageDao,
+            userDao: UserDao,
+            reactionDao: ReactionDao
+        ): MessageRepo = MessageRepoImpl(chatApi, json, roomDatabase, messageDao, userDao, reactionDao)
+
+        fun getMessageInteractor(messageRepo: MessageRepo): MessageInteractor =
+            MessageInteractorImpl(messageRepo)
     }
 }
