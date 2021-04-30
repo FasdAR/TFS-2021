@@ -1,21 +1,18 @@
 package ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder
 
-import android.view.View
-import ru.fasdev.tfs.R
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.InternalMessageUi
-import ru.fasdev.tfs.view.message.base.InternalMessageView
+import ru.fasdev.tfs.databinding.ItemInternalMessageBinding
 
 class InternalMessageViewHolder(
-    view: View,
-    private val reactionListener: OnClickReactionListener,
-    private val messageLongListener: OnLongClickMessageListener
-) : MessageViewHolder<InternalMessageUi>(view, reactionListener, messageLongListener) {
-    private val message: InternalMessageView = view.findViewById(R.id.message)
+    private val viewBinding: ItemInternalMessageBinding,
+    reactionListener: OnClickReactionListener,
+    messageLongListener: OnLongClickMessageListener
+) : MessageViewHolder<InternalMessageUi>(viewBinding.root, reactionListener, messageLongListener) {
 
     override fun bind(item: InternalMessageUi) {
         super.bind(item)
 
-        message.message = item.message
-        message.reactions = item.reactions
+        viewBinding.message.message = item.message
+        viewBinding.message.reactions = item.reactions
     }
 }

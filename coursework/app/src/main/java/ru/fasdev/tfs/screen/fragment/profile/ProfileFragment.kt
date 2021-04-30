@@ -15,7 +15,7 @@ import ru.fasdev.tfs.databinding.FragmentProfileBinding
 import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
+import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
