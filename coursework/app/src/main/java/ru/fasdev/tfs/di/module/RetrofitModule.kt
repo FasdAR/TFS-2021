@@ -18,25 +18,32 @@ import ru.fasdev.tfs.data.source.network.users.api.UserApi
 
 class RetrofitModule {
     companion object {
-        const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
+        private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
+        private const val TOKEN_AUTH = "Basic YW5kcmV5cmVkbmlrb3ZAZ21haWwuY29tOk5ud3lUakNVZEpnc0s4Sm1QbWo2YVdIdHJMNWZjUktn"
+        private const val HEADER_AUTH = "Authorization"
+        private const val JSON_MEDIA_TYPE = "application/json"
 
-        fun getLoggingInterceptor(): HttpLoggingInterceptor {
+        private fun getLoggingInterceptor(): HttpLoggingInterceptor {
             return HttpLoggingInterceptor().apply {
-                if (BuildConfig.DEBUG) setLevel(HttpLoggingInterceptor.Level.BODY)
-                else setLevel(HttpLoggingInterceptor.Level.BASIC)
+                if (BuildConfig.DEBUG) {
+                    setLevel(HttpLoggingInterceptor.Level.BODY)
+                }
+                else {
+                    setLevel(HttpLoggingInterceptor.Level.BASIC)
+                }
             }
         }
 
-        fun getAuthInterceptor(): Interceptor = Interceptor { chain ->
-            val token = "Basic YW5kcmV5cmVkbmlrb3ZAZ21haWwuY29tOk5ud3lUakNVZEpnc0s4Sm1QbWo2YVdIdHJMNWZjUktn"
+        private fun getAuthInterceptor(): Interceptor = Interceptor { chain ->
+            val token = TOKEN_AUTH
             val request: Request = chain.request()
             val authRequest: Request = request.newBuilder()
-                .header("Authorization", token).build()
+                .header(HEADER_AUTH, token).build()
 
             return@Interceptor chain.proceed(authRequest)
         }
 
-        fun getOkHttpClient(
+        private fun getOkHttpClient(
             loggingInterceptor: HttpLoggingInterceptor = getLoggingInterceptor(),
             authInterceptor: Interceptor? = getAuthInterceptor()
         ): OkHttpClient {
@@ -47,14 +54,14 @@ class RetrofitModule {
                 }.build()
         }
 
-        fun getCallAdapter(): CallAdapter.Factory = RxJava3CallAdapterFactory.create()
+        private fun getCallAdapter(): CallAdapter.Factory = RxJava3CallAdapterFactory.create()
 
         fun getJson(): Json {
             return Json { ignoreUnknownKeys = true }
         }
 
-        fun getConverterFactory(json: Json = getJson()): Converter.Factory {
-            return json.asConverterFactory("application/json".toMediaType())
+        private fun getConverterFactory(json: Json = getJson()): Converter.Factory {
+            return json.asConverterFactory(JSON_MEDIA_TYPE.toMediaType())
         }
 
         fun getRetrofit(

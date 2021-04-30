@@ -12,8 +12,7 @@ import ru.fasdev.tfs.view.message.MessageViewGroup
 import ru.fasdev.tfs.view.message.base.model.MessageReactionUi
 import ru.fasdev.tfs.view.reaction.ReactionView
 
-abstract class BaseMessageView
-@JvmOverloads constructor(
+abstract class BaseMessageView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,

@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -19,13 +22,13 @@ import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     companion object {
-        val TAG: String = ProfileFragment::class.java.simpleName
+        private val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
     object ProfileComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        private val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
         val userInteractor = UserInteractorImpl(userRepo)
     }
 
@@ -33,6 +36,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     private val usersInteractor = ProfileComponent.userInteractor
+    private val cardProfile
+        get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        childFragmentManager.addFragmentOnAttachListener { _, fragment ->
+            val cardProfile = fragment as CardProfileFragment
+            cardProfile.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                fun onResume() {
+                    loadProfileData()
+                }
+            })
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -40,11 +59,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
-
+    fun loadProfileData() {
         usersInteractor.getOwnUser()
             .subscribeOn(Schedulers.io())
             .flatMap { user ->
@@ -57,8 +72,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     cardProfile.fullName = it.fullName
                     cardProfile.avatarSrc = it.avatarSrc
                     cardProfile.status = it.userStatus
-                },
-                onError = {
                 }
             )
     }
