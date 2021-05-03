@@ -12,21 +12,19 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.layout
 import ru.fasdev.tfs.core.ext.toDp
 
-class FlexBoxLayout
-@JvmOverloads
-constructor(
+class FlexBoxLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
-    companion object {
-        private val DEFAULT_VERTICAL_SPACE = 7.toDp
-        private val DEFAULT_HORIZONTAL_SPACE = 10.toDp
-        private const val DEFAULT_GRAVITY = Gravity.LEFT
+    private companion object {
+        val DEFAULT_VERTICAL_SPACE = 7.toDp
+        val DEFAULT_HORIZONTAL_SPACE = 10.toDp
+        const val DEFAULT_GRAVITY = Gravity.START
     }
 
-    var verticalSpace = DEFAULT_VERTICAL_SPACE
+    private var verticalSpace = DEFAULT_VERTICAL_SPACE
         set(value) {
             if (field != value) {
                 field = value
@@ -34,7 +32,7 @@ constructor(
             }
         }
 
-    var horizontalSpace = DEFAULT_HORIZONTAL_SPACE
+    private var horizontalSpace = DEFAULT_HORIZONTAL_SPACE
         set(value) {
             if (field != value) {
                 field = value
@@ -124,22 +122,22 @@ constructor(
     @SuppressLint("DrawAllocation")
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val maxXPos = measuredWidth
-        val isLeft = gravity == Gravity.LEFT
+        val isStart = gravity == Gravity.START
 
         var cursorY = 0
-        var cursorX = if (isLeft) 0 else maxXPos
+        var cursorX = if (isStart) 0 else maxXPos
 
         var maxHeightRow = 0
 
         childrenRows.forEach { childRow ->
-            val newRows = if (isLeft) childRow else childRow.reversed()
+            val newRows = if (isStart) childRow else childRow.reversed()
             newRows.forEach { child ->
                 val rectChild = Rect()
 
                 rectChild.top = cursorY
                 rectChild.bottom = rectChild.top + child.measuredHeight
 
-                if (isLeft) {
+                if (isStart) {
                     rectChild.left = cursorX
                     rectChild.right = rectChild.left + child.measuredWidth
 
@@ -156,7 +154,7 @@ constructor(
                 if (child.measuredHeight > maxHeightRow) maxHeightRow = child.measuredHeight
             }
 
-            cursorX = if (isLeft) 0 else maxXPos
+            cursorX = if (isStart) 0 else maxXPos
             cursorY += maxHeightRow + verticalSpace
             maxHeightRow = 0
         }

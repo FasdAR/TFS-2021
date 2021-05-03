@@ -29,8 +29,6 @@ import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
-import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
@@ -40,6 +38,7 @@ import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHo
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 import ru.fasdev.tfs.view.MviView
+import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 

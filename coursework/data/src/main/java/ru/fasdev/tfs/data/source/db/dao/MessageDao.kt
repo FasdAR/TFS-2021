@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.data.source.db.dao
 
 import androidx.room.*
+import io.reactivex.Maybe
 import io.reactivex.Single
 import ru.fasdev.tfs.data.source.db.base.BaseDao
 import ru.fasdev.tfs.data.source.db.model.MessageDB
@@ -11,7 +12,7 @@ import ru.fasdev.tfs.data.source.db.relation.MessageRelation
 @Dao
 abstract class MessageDao: BaseDao<MessageDB> {
     @Query("SELECT * FROM message WHERE topic = :topic")
-    abstract fun getAllByTopic(topic: String): Single<List<MessageRelation>>
+    abstract fun getAllByTopic(topic: String): Maybe<List<MessageRelation>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertUser(entity: UserDB)
@@ -24,15 +25,4 @@ abstract class MessageDao: BaseDao<MessageDB> {
 
     @Query("DELETE FROM message WHERE id IN (SELECT id FROM message ORDER BY date DESC LIMIT :numberDelete)")
     abstract fun deleteLastRow(numberDelete: Int)
-
-    @Transaction
-    open fun transactionInsertMessage(
-        messageDB: MessageDB,
-        userDB: UserDB,
-        reactions: List<ReactionDB>
-    ) {
-        insertUser(userDB)
-        insert(messageDB)
-        if (reactions.isNotEmpty()) insertReactions(reactions)
-    }
 }

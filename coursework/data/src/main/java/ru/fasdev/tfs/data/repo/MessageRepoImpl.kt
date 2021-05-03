@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.data.repo
 
+import androidx.room.RoomDatabase
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable.fromIterable
@@ -24,6 +25,7 @@ import java.util.Locale
 class MessageRepoImpl(
     private val chatApi: ChatApi,
     private val json: Json,
+    private val roomDatabase: RoomDatabase,
     private val messageDao: MessageDao,
     private val userDao: UserDao,
     private val reactionDao: ReactionDao
@@ -80,9 +82,11 @@ class MessageRepoImpl(
 
                     val messageDB = MessageDB(message.id, message.sender.id, nameTopic, message.text, message.date)
 
-                    //userDao.insert(userDB)
-                    //messageDao.insert(messageDB)
-                    messageDao.transactionInsertMessage(messageDB, userDB, reactionsDB)
+                    roomDatabase.runInTransaction {
+                        userDao.insert(userDB)
+                        messageDao.insert(messageDB)
+                        if (reactionsDB.isNotEmpty()) reactionDao.insert(reactionsDB)
+                    }
                 }
 
                 if (sizeTable > 50) {

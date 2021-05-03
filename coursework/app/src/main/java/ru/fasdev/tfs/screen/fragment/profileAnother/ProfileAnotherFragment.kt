@@ -26,16 +26,16 @@ import ru.fasdev.tfs.domain.user.interactor.UserInteractor
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.profile.ProfileViewModel
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherState
 import ru.fasdev.tfs.view.MviView
+import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviView<ProfileAnotherState> {
     companion object {
-        val TAG: String = ProfileAnotherFragment::class.java.simpleName
+        private val TAG: String = ProfileAnotherFragment::class.java.simpleName
 
         private const val NULL_USER = -1L
         private const val KEY_ID_USER = "id_user"
@@ -72,7 +72,6 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviV
             _binding = FragmentAnotherProfileBinding.bind(this)
         }
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,4 +113,5 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviV
             }
         }
     }
+    // #endregion
 }

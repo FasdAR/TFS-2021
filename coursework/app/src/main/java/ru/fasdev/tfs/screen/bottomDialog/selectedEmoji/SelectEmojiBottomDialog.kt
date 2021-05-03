@@ -13,7 +13,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables.empty
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.data.mapper.Emoji
@@ -29,9 +32,9 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
         val TAG: String = SelectEmojiBottomDialog::class.java.simpleName
         const val KEY_SELECTED_EMOJI = "SELECTED_EMOJI"
 
-        fun newInstance() = SelectEmojiBottomDialog()
-        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog =
-            newInstance().also { it.show(fragmentManager, TAG) }
+        fun show(fragmentManager: FragmentManager): SelectEmojiBottomDialog {
+            return SelectEmojiBottomDialog().also { it.show(fragmentManager, TAG) }
+        }
     }
 
     private var _binding: BottomDialogSelectEmojiBinding? = null
@@ -40,7 +43,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
     private val holderFactory by lazy { EmojiHolderFactory(this) }
     private val adapter by lazy { return@lazy RecyclerAdapter<ViewType>(holderFactory) }
 
-    private var disposeEmojiLoad: Disposable? = null
+    private var disposeEmojiLoad: CompositeDisposable = CompositeDisposable()
 
     override fun getTheme(): Int = R.style.Theme_TFS_BottomSheetDialog
 
@@ -65,7 +68,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     override fun onDestroy() {
         super.onDestroy()
-        disposeEmojiLoad?.dispose()
+        disposeEmojiLoad.dispose()
         _binding = null
     }
 
@@ -76,15 +79,13 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     // #region Rx chains
     private fun loadEmoji() {
-        disposeEmojiLoad = Single.just(Emoji.values())
+        disposeEmojiLoad += Single.just(Emoji.values())
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
             .map { EmojiUi(it.index, it.value.unicode, it.value.nameInZulip) }
             .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { array ->
-                adapter.items = array
-            }
+            .subscribe { array -> adapter.items = array }
     }
     // #endregion
 }

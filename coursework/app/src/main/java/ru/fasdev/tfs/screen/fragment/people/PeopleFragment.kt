@@ -16,7 +16,7 @@ import ru.fasdev.tfs.databinding.FragmentPeopleBinding
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
+import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
@@ -29,8 +29,7 @@ import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 
 class PeopleFragment : Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
-    ProviderBackPressed,
-    MviView<PeopleState> {
+    OnBackPressedListener, MviView<PeopleState> {
 
     companion object {
         val TAG: String = PeopleFragment::class.java.simpleName
@@ -125,4 +124,5 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
             }
         }
     }
+    // #endregion
 }

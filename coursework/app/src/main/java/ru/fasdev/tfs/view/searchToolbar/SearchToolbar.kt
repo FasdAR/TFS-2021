@@ -17,14 +17,12 @@ import ru.fasdev.tfs.core.ext.hideKeyboard
 import ru.fasdev.tfs.core.ext.showKeyboard
 import ru.fasdev.tfs.core.ext.toDp
 
-class SearchToolbar @JvmOverloads
-constructor(
+class SearchToolbar @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0
-) :
-    LinearLayout(context, attributeSet, defStyleAttr, defStyleRes) {
+) : LinearLayout(context, attributeSet, defStyleAttr, defStyleRes) {
     fun interface TextChangeListener {
         fun newText(query: String)
     }
@@ -64,14 +62,14 @@ constructor(
     }
 
     fun openSearch() {
-        attachToolbar?.visibility = INVISIBLE
+        attachToolbar?.isVisible = false
         isVisible = true
         editText.showKeyboard()
     }
 
     fun closeSearch() {
         if (isSearch) {
-            attachToolbar?.visibility = VISIBLE
+            attachToolbar?.isVisible = true
             isVisible = false
             editText.hideKeyboard()
         }

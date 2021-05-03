@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.screen.fragment.channels
+package ru.fasdev.tfs.view.ui.fragment.channels
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,14 +12,14 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.fragmentRouter.ProviderBackPressed
+import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.pager.ViewPagerFragmentAdapter
 import ru.fasdev.tfs.screen.fragment.channels.pager.StreamFragmentFactory
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 
-class ChannelsFragment : Fragment(R.layout.fragment_channels), ProviderBackPressed {
+class ChannelsFragment : Fragment(R.layout.fragment_channels), OnBackPressedListener {
     companion object {
-        val TAG: String = ChannelsFragment::class.java.simpleName
+        private val TAG: String = ChannelsFragment::class.java.simpleName
         fun newInstance(): ChannelsFragment = ChannelsFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }

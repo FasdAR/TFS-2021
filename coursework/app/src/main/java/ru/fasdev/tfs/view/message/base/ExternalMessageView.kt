@@ -14,9 +14,9 @@ import ru.fasdev.tfs.core.ext.getHeightMeasuredMargin
 import ru.fasdev.tfs.core.ext.getWidthMeasuredMargin
 import ru.fasdev.tfs.core.ext.layout
 import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
+import ru.fasdev.tfs.databinding.ViewExternalMessageBinding
 
-class ExternalMessageView
-@JvmOverloads constructor(
+class ExternalMessageView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -68,7 +68,7 @@ class ExternalMessageView
     // #endregion
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_external_message, this, true)
+        ViewExternalMessageBinding.inflate(LayoutInflater.from(context), this)
 
         // #region FindView
         avatarImageView = findViewById(R.id.avatar)

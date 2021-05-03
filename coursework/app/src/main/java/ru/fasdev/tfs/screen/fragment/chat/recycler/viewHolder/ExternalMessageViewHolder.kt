@@ -1,24 +1,20 @@
 package ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder
 
-import android.view.View
-import ru.fasdev.tfs.R
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
-import ru.fasdev.tfs.view.message.base.ExternalMessageView
+import ru.fasdev.tfs.databinding.ItemExternalMessageBinding
 
 class ExternalMessageViewHolder(
-    view: View,
-    private val reactionListener: OnClickReactionListener,
-    private val messageLongListener: OnLongClickMessageListener
-) : MessageViewHolder<ExternalMessageUi>(view, reactionListener, messageLongListener) {
-
-    val message: ExternalMessageView = view.findViewById(R.id.message)
+    private val viewBinding: ItemExternalMessageBinding,
+    reactionListener: OnClickReactionListener,
+    messageLongListener: OnLongClickMessageListener
+) : MessageViewHolder<ExternalMessageUi>(viewBinding.root, reactionListener, messageLongListener) {
 
     override fun bind(item: ExternalMessageUi) {
         super.bind(item)
 
-        message.avatarSrc = item.avatarSrc
-        message.name = item.nameSender
-        message.message = item.message
-        message.reactions = item.reactions
+        viewBinding.message.avatarSrc = item.avatarSrc
+        viewBinding.message.name = item.nameSender
+        viewBinding.message.message = item.message
+        viewBinding.message.reactions = item.reactions
     }
 }

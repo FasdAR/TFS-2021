@@ -16,24 +16,14 @@ class RoomModule
             ).build()
         }
 
-        fun getStreamDao(appDatabase: TfsDatabase): StreamDao {
-            return appDatabase.streamDao()
-        }
+        fun getStreamDao(appDatabase: TfsDatabase): StreamDao = appDatabase.streamDao()
 
-        fun getTopicDao(appDatabase: TfsDatabase): TopicDao {
-            return appDatabase.topicDao()
-        }
+        fun getTopicDao(appDatabase: TfsDatabase): TopicDao = appDatabase.topicDao()
 
-        fun getMessageDao(appDatabase: TfsDatabase): MessageDao {
-            return appDatabase.messageDao()
-        }
+        fun getMessageDao(appDatabase: TfsDatabase): MessageDao = appDatabase.messageDao()
 
-        fun getUserDao(appDatabase: TfsDatabase): UserDao {
-            return appDatabase.userDao()
-        }
+        fun getUserDao(appDatabase: TfsDatabase): UserDao = appDatabase.userDao()
 
-        fun getReactionDao(appDatabase: TfsDatabase): ReactionDao {
-            return appDatabase.reactionDao()
-        }
+        fun getReactionDao(appDatabase: TfsDatabase): ReactionDao = appDatabase.reactionDao()
     }
 }

@@ -11,9 +11,9 @@ import ru.fasdev.tfs.core.ext.getHeightMeasuredMargin
 import ru.fasdev.tfs.core.ext.getWidthMeasuredMargin
 import ru.fasdev.tfs.core.ext.layout
 import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
+import ru.fasdev.tfs.databinding.ViewInternalMessageBinding
 
-class InternalMessageView
-@JvmOverloads constructor(
+class InternalMessageView @JvmOverloads constructor(
     context: Context,
     attributeSet: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -38,11 +38,11 @@ class InternalMessageView
     // #endregion
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_internal_message, this, true)
+        ViewInternalMessageBinding.inflate(LayoutInflater.from(context), this)
 
         messageTextView = findViewById(R.id.message_text)
         reactionsLayout = findViewById(R.id.reaction_layout)
-        reactionsLayout.gravity = Gravity.RIGHT
+        reactionsLayout.gravity = Gravity.END
 
         context.obtainStyledAttributes(attributeSet, R.styleable.InternalMessageViewGroup).apply {
             message = getString(R.styleable.InternalMessageViewGroup_mvMessage) ?: ""

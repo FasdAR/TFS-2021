@@ -27,6 +27,7 @@ class ChatViewModel : ViewModel() {
             ChatDomainModule.getMessageRepo(
                 TfsApp.AppComponent.chatApi,
                 TfsApp.AppComponent.json,
+                TfsApp.AppComponent.roomDb,
                 TfsApp.AppComponent.messageDao,
                 TfsApp.AppComponent.userDao,
                 TfsApp.AppComponent.reactionDao
