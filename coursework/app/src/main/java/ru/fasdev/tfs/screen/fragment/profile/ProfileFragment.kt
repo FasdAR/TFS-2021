@@ -20,8 +20,9 @@ import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileState
+import ru.fasdev.tfs.view.MviView
 
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+class ProfileFragment : Fragment(R.layout.fragment_profile), MviView<ProfileState> {
     companion object {
         val TAG: String = ProfileFragment::class.java.simpleName
         fun newInstance(): ProfileFragment = ProfileFragment()
@@ -32,7 +33,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
-    private var dispose: Disposable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -43,25 +43,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
-
-        dispose = viewModel.store
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { state ->
-                    when {
-                        state.error != null -> {
-                            Log.e("ERROE", state.error.message.toString())
-                        }
-                        state.isLoading -> {
-                            Log.d("LOADING", "LLOADING")
-                        }
-                        else -> {
-                            cardProfile.avatarSrc = state.userAvatar
-                            cardProfile.fullName = state.userFullName
-                            cardProfile.status = state.userStatus
-                        }
-                    }
-                }
+        viewModel.attachView(this)
 
         viewModel.input.accept(ProfileAction.SideEffectLoadUser)
     }
@@ -69,6 +51,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        dispose?.dispose()
+    }
+
+    override fun render(state: ProfileState) {
+        when {
+            state.error != null -> {
+                Log.e("ERROE", state.error.message.toString())
+            }
+            state.isLoading -> {
+                Log.d("LOADING", "LLOADING")
+            }
+            else -> {
+                val cardProfile = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+                cardProfile.avatarSrc = state.userAvatar
+                cardProfile.fullName = state.userFullName
+                cardProfile.status = state.userStatus
+            }
+        }
     }
 }

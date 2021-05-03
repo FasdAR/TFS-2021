@@ -6,7 +6,10 @@ import com.freeletics.rxredux.reduxStore
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jakewharton.rxrelay2.Relay
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import ru.fasdev.tfs.TfsApp
@@ -15,6 +18,7 @@ import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileState
+import ru.fasdev.tfs.view.MviView
 
 class ProfileViewModel : ViewModel() {
     object ProfileComponent {
@@ -27,11 +31,21 @@ class ProfileViewModel : ViewModel() {
     private val inputRelay: Relay<ProfileAction> = PublishRelay.create()
     val input: Consumer<ProfileAction> get() = inputRelay
 
+    private val compositeDisposable = CompositeDisposable()
     val store = inputRelay.reduxStore(
         initialState = ProfileState(),
         sideEffects = listOf(::loadUserSideEffect),
         reducer = ::reducer
     )
+
+    fun attachView(mviView: MviView<ProfileState>) {
+        compositeDisposable += store.subscribeOn(AndroidSchedulers.mainThread()).subscribe { mviView.render(it) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 
     fun reducer(state: ProfileState, action: ProfileAction): ProfileState
     {

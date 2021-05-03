@@ -33,18 +33,21 @@ import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
+import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.view.MviView
 import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 
 class StreamListFragment :
     Fragment(R.layout.fragment_topic_list),
     StreamViewHolder.OnClickStreamListener,
-    TopicViewHolder.OnClickTopicListener {
+    TopicViewHolder.OnClickTopicListener,
+    MviView<StreamListState> {
     companion object {
         const val ALL_MODE = 1
         const val SUBSCRIBED_MODE = 2
@@ -93,19 +96,7 @@ class StreamListFragment :
         binding.rvTopics.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTopics.adapter = adapter
 
-        disposable = viewModel.store.subscribe {
-            when {
-                it.error != null -> {
-                    onError(it.error)
-                }
-                it.isLoading -> {
-                    Log.d("LOADING", "IS_LOADING")
-                }
-                else -> {
-                    adapter.items = it.itemsList
-                }
-            }
-        }
+        viewModel.attachView(this)
 
         viewModel.input.accept(StreamListAction.SideEffectLoadAllStreams(mode))
     }
@@ -129,5 +120,19 @@ class StreamListFragment :
 
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, "ERROR: ${error.message}", Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun render(state: StreamListState) {
+        when {
+            state.error != null -> {
+                onError(state.error)
+            }
+            state.isLoading -> {
+                Log.d("LOADING", "IS_LOADING")
+            }
+            else -> {
+                adapter.items = state.itemsList
+            }
+        }
     }
 }

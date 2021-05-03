@@ -8,12 +8,10 @@ import com.jakewharton.rxrelay2.Relay
 import io.reactivex.Observable
 import io.reactivex.Observable.fromIterable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.di.module.UserDomainModule
@@ -22,6 +20,7 @@ import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
+import ru.fasdev.tfs.view.MviView
 import java.util.concurrent.TimeUnit
 
 class PeopleViewModel : ViewModel()
@@ -33,14 +32,25 @@ class PeopleViewModel : ViewModel()
 
     private val usersInteractor = PeopleComponent.userInteractor
 
+    private var disposable: CompositeDisposable = CompositeDisposable()
+
     private val inputRelay: Relay<PeopleAction> = PublishRelay.create()
     val input: Consumer<PeopleAction> get() = inputRelay
 
-    val store = inputRelay.reduxStore(
+    private val store = inputRelay.reduxStore(
         initialState = PeopleState(),
         sideEffects = listOf(::loadAllUsersSideEffect, ::searchUsersSideEffect),
         reducer = ::reducer
     )
+
+    fun attachView(mviView: MviView<PeopleState>) {
+        disposable += store.subscribe { mviView.render(it) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 
     private fun reducer(state: PeopleState, action: PeopleAction): PeopleState {
         return when(action) {

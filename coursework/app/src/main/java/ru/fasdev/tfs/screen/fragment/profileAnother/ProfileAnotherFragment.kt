@@ -30,8 +30,10 @@ import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.profile.ProfileViewModel
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherAction
+import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherState
+import ru.fasdev.tfs.view.MviView
 
-class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
+class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviView<ProfileAnotherState> {
     companion object {
         val TAG: String = ProfileAnotherFragment::class.java.simpleName
 
@@ -71,6 +73,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
         }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -81,23 +84,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
             btnNav.setOnClickListener { rootRouter.back() }
         }
 
-        disposable = viewModel.store
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { state ->
-                when {
-                    state.error != null -> {
-                        onError(state.error)
-                    }
-                    state.isLoading -> {
-                        Log.d("LOADING", "LLOADING")
-                    }
-                    else -> {
-                        cardProfile.avatarSrc = state.userAvatar
-                        cardProfile.fullName = state.userFullName
-                        cardProfile.status = state.userStatus
-                    }
-                }
-            }
+        viewModel.attachView(this)
 
         viewModel.input.accept(ProfileAnotherAction.SideEffectLoadUser(idUser))
     }
@@ -110,5 +97,21 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile) {
 
     private fun onError(error: Throwable) {
         Snackbar.make(binding.root, error.message.toString(), Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun render(state: ProfileAnotherState) {
+        when {
+            state.error != null -> {
+                onError(state.error)
+            }
+            state.isLoading -> {
+                Log.d("LOADING", "LLOADING")
+            }
+            else -> {
+                cardProfile.avatarSrc = state.userAvatar
+                cardProfile.fullName = state.userFullName
+                cardProfile.status = state.userStatus
+            }
+        }
     }
 }

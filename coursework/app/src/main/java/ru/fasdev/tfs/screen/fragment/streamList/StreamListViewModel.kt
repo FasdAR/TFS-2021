@@ -9,7 +9,9 @@ import com.jakewharton.rxrelay2.Relay
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Observable.fromIterable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toStreamUi
@@ -20,6 +22,7 @@ import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
+import ru.fasdev.tfs.view.MviView
 import java.util.concurrent.TimeUnit
 
 class StreamListViewModel : ViewModel() {
@@ -34,6 +37,7 @@ class StreamListViewModel : ViewModel() {
 
     private val streamInteractor: StreamInteractor = StreamComponent.streamInteractor
 
+    private val compositeDisposable = CompositeDisposable()
     private val inputRelay: Relay<StreamListAction> = PublishRelay.create()
     val input: Consumer<StreamListAction> get() = inputRelay
 
@@ -42,6 +46,15 @@ class StreamListViewModel : ViewModel() {
         sideEffects = listOf(::loadAllStreamsSideEffect, ::searchSideEffect, ::loadTopicsSideEffect),
         reducer = ::reducer
     )
+
+    fun attachView(mviView: MviView<StreamListState>) {
+        compositeDisposable += store.subscribe { mviView.render(it) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 
     fun reducer(state: StreamListState, action: StreamListAction): StreamListState {
         return when (action) {

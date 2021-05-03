@@ -6,7 +6,10 @@ import com.freeletics.rxredux.reduxStore
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jakewharton.rxrelay2.Relay
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toUserUi
@@ -17,6 +20,7 @@ import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileState
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherState
+import ru.fasdev.tfs.view.MviView
 
 class ProfileAnotherViewModel : ViewModel()
 {
@@ -27,6 +31,7 @@ class ProfileAnotherViewModel : ViewModel()
 
     private val userInteractor: UserInteractor = ProfileAnotherComponent.userInteractor
 
+    private val compositeDisposable = CompositeDisposable()
     private val inputRelay: Relay<ProfileAnotherAction> = PublishRelay.create()
     val input: Consumer<ProfileAnotherAction> get() = inputRelay
 
@@ -35,6 +40,10 @@ class ProfileAnotherViewModel : ViewModel()
         sideEffects = listOf(::loadUserSideEffect),
         reducer = ::reducer
     )
+
+    fun attachView(mviView: MviView<ProfileAnotherState>) {
+        compositeDisposable += store.observeOn(AndroidSchedulers.mainThread()).subscribe { mviView.render(it) }
+    }
 
     fun reducer(state: ProfileAnotherState, action: ProfileAnotherAction): ProfileAnotherState {
         return when (action) {
@@ -74,25 +83,3 @@ class ProfileAnotherViewModel : ViewModel()
             }
     }
 }
-
-/*
-    private fun loadProfileData() {
-        compositeDisposable.addAll(
-            userInteractor.getUserById(idUser)
-                .subscribeOn(Schedulers.io())
-                .flatMap { user ->
-                    userInteractor.getStatusUser(user.email)
-                        .map { user.toUserUi(it) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        cardProfile.status = it.userStatus
-                        cardProfile.avatarSrc = it.avatarSrc
-                        cardProfile.fullName = it.fullName
-                    },
-                    onError = ::onError
-                )
-        )
-    }
- */

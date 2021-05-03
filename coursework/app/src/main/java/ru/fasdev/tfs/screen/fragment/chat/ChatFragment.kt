@@ -12,31 +12,24 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.core.ext.getSystemInsets
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
-import ru.fasdev.tfs.data.mapper.mapToUiList
 import ru.fasdev.tfs.data.repo.MessageRepoImpl
 import ru.fasdev.tfs.databinding.FragmentChatBinding
-import ru.fasdev.tfs.di.module.ChatDomainModule
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
 import ru.fasdev.tfs.domain.message.model.DirectionScroll
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
@@ -44,18 +37,18 @@ import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
+import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
+import ru.fasdev.tfs.view.MviView
 import java.util.concurrent.TimeUnit
-import java.util.function.Function
 
-class ChatFragment :
-    Fragment(R.layout.fragment_chat),
+class ChatFragment : Fragment(R.layout.fragment_chat),
     MessageViewHolder.OnLongClickMessageListener,
     MessageViewHolder.OnClickReactionListener,
-    AsyncListDiffer.ListListener<ViewType> {
+    AsyncListDiffer.ListListener<ViewType>,
+    MviView<ChatState> {
 
     companion object {
         val TAG: String = ChatFragment::class.java.simpleName
@@ -98,10 +91,10 @@ class ChatFragment :
 
     private var selectedMessageId: Int = 0
 
-    private val compositeDisposable = CompositeDisposable()
-
     private var isDown: Boolean = true
     private var isFirstLoaded: Boolean = false
+
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,22 +168,7 @@ class ChatFragment :
         rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         rvList.adapter = adapter
 
-        compositeDisposable.add(
-            viewModel.store.subscribe {
-                when {
-                    it.error != null -> {
-                        onError(it.error)
-                    }
-                    it.isLoading -> {
-                        Log.d("LOADING", "IS_LOADING")
-                    }
-                    else -> {
-                        adapter.items = it.listItems
-                    }
-                }
-            }
-        )
-
+        viewModel.attachView(this)
         viewModel.input.accept(
             ChatAction.SideEffectLoadingPage(
                 topicName,
@@ -328,4 +306,19 @@ class ChatFragment :
     }
 
     data class PagingItem(val lastVisibleId: Long, val direction: DirectionScroll)
+
+    override fun render(state: ChatState) {
+        when {
+            state.error != null -> {
+                onError(state.error)
+            }
+            state.isLoading -> {
+                //TODO: В курсовой добавлю шиммер
+                Log.d("LOADING", "IS_LOADING")
+            }
+            else -> {
+                adapter.items = state.listItems
+            }
+        }
+    }
 }
