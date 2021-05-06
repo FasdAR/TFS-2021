@@ -25,8 +25,7 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile) {
     private var _binding: FragmentOwnProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val cardProfile
-        get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+    private val cardProfile get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -39,6 +38,10 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile) {
 
         viewModel.errorState.observe(viewLifecycleOwner) {
             Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+        }
+
+        viewModel.networkErrorState.observe(viewLifecycleOwner) {
+
         }
 
         viewModel.isLoadingState.observe(viewLifecycleOwner) { isLoading ->

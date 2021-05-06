@@ -11,6 +11,7 @@ import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.newPck.repository.users.UsersRepository
 import ru.fasdev.tfs.data.newPck.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.domain.newPck.user.model.User
+import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
 class OwnProfileViewModel : ViewModel() {
@@ -26,6 +27,7 @@ class OwnProfileViewModel : ViewModel() {
 
     val userState: MutableLiveData<User?> = MutableLiveData()
     val errorState: MutableLiveData<String> = MutableLiveData()
+    val networkErrorState: MutableLiveData<String> = MutableLiveData()
     val isLoadingState: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
@@ -40,8 +42,15 @@ class OwnProfileViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy (
-                onError = {
-                    errorState.postValue(it.toString())
+                onError = {error ->
+                    when (error) {
+                        is UnknownHostException -> {
+                            networkErrorState.postValue("Проверьте наличие интернета")
+                        }
+                        else -> {
+                            errorState.postValue(error.message.toString())
+                        }
+                    }
                     isLoadingState.postValue(false)
                 },
                 onSuccess = {
