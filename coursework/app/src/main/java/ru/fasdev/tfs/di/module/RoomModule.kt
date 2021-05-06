@@ -2,8 +2,8 @@ package ru.fasdev.tfs.di.module
 
 import android.content.Context
 import androidx.room.Room
-import ru.fasdev.tfs.data.source.db.TfsDatabase
-import ru.fasdev.tfs.data.source.db.dao.*
+import ru.fasdev.tfs.data.old.source.db.TfsDatabase
+import ru.fasdev.tfs.data.old.source.db.dao.*
 
 
 class RoomModule

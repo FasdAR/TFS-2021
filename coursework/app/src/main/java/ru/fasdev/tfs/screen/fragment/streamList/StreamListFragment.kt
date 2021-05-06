@@ -10,23 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Flowable
-import io.reactivex.Flowable.fromIterable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.mapper.toStreamUi
-import ru.fasdev.tfs.data.mapper.toTopicUi
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
-import ru.fasdev.tfs.di.module.StreamDomainModule
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
-import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
@@ -36,11 +23,8 @@ import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diuff.StreamItemCallback
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 import ru.fasdev.tfs.view.MviView
 import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
-import java.util.concurrent.Flow
-import java.util.concurrent.TimeUnit
 
 class StreamListFragment :
     Fragment(R.layout.fragment_topic_list),

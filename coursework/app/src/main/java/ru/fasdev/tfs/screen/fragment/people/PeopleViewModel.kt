@@ -13,10 +13,10 @@ import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.mapper.toUserUi
+import ru.fasdev.tfs.data.old.mapper.toUserUi
 import ru.fasdev.tfs.di.module.UserDomainModule
-import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.domain.user.model.User
+import ru.fasdev.tfs.domain.old.user.interactor.UserInteractorImpl
+import ru.fasdev.tfs.domain.old.user.model.User
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi

@@ -11,12 +11,12 @@ import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.mapper.mapToUiList
-import ru.fasdev.tfs.data.repo.MessageRepoImpl
+import ru.fasdev.tfs.data.old.mapper.mapToUiList
+import ru.fasdev.tfs.data.old.repo.MessageRepoImpl
 import ru.fasdev.tfs.di.module.ChatDomainModule
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractor
-import ru.fasdev.tfs.domain.message.interactor.MessageInteractorImpl
-import ru.fasdev.tfs.domain.message.model.DirectionScroll
+import ru.fasdev.tfs.domain.old.message.interactor.MessageInteractor
+import ru.fasdev.tfs.domain.old.message.interactor.MessageInteractorImpl
+import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.view.MviView

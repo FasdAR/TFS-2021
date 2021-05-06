@@ -27,10 +27,10 @@ import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.core.ext.getSystemInsets
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
-import ru.fasdev.tfs.data.repo.MessageRepoImpl
+import ru.fasdev.tfs.data.old.repo.MessageRepoImpl
 import ru.fasdev.tfs.databinding.FragmentChatBinding
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.domain.message.model.DirectionScroll
+import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter

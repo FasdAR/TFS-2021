@@ -14,11 +14,11 @@ import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.mapper.toStreamUi
-import ru.fasdev.tfs.data.mapper.toTopicUi
+import ru.fasdev.tfs.data.old.mapper.toStreamUi
+import ru.fasdev.tfs.data.old.mapper.toTopicUi
 import ru.fasdev.tfs.di.module.StreamDomainModule
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
-import ru.fasdev.tfs.domain.stream.model.Stream
+import ru.fasdev.tfs.domain.old.stream.interactor.StreamInteractor
+import ru.fasdev.tfs.domain.old.stream.model.Stream
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi

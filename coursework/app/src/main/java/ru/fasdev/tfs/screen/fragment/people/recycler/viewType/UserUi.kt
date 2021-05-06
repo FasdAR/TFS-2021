@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.people.recycler.viewType
 
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.domain.user.model.UserStatus
+import ru.fasdev.tfs.domain.old.user.model.UserStatus
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 
 data class UserUi(

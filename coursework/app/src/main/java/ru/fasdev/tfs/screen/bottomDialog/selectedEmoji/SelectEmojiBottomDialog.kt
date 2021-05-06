@@ -14,12 +14,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables.empty
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.data.mapper.Emoji
+import ru.fasdev.tfs.data.old.mapper.Emoji
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
 import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.viewHolder.ViewType

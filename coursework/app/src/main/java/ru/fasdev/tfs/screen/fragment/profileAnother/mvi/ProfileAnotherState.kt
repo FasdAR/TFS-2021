@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.profileAnother.mvi
 
-import ru.fasdev.tfs.domain.user.model.UserStatus
+import ru.fasdev.tfs.domain.old.user.model.UserStatus
 
 data class ProfileAnotherState (
     val isLoading: Boolean = false,

@@ -1,19 +1,19 @@
-package ru.fasdev.tfs.view.ui.fragment.cardProfile
+package ru.fasdev.tfs.screen.fragment.cardProfile
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
-import ru.fasdev.tfs.domain.user.model.UserStatus
-import ru.fasdev.tfs.domain.user.model.UserStatus.IDLE
-import ru.fasdev.tfs.domain.user.model.UserStatus.OFFLINE
-import ru.fasdev.tfs.domain.user.model.UserStatus.ONLINE
+import ru.fasdev.tfs.domain.old.user.model.UserStatus
+import ru.fasdev.tfs.domain.old.user.model.UserStatus.IDLE
+import ru.fasdev.tfs.domain.old.user.model.UserStatus.OFFLINE
+import ru.fasdev.tfs.domain.old.user.model.UserStatus.ONLINE
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {
@@ -26,19 +26,6 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
         private const val IDLE_COLOR = R.color.yellow_200
 
         private const val DEFAULT_IMAGE = R.drawable.ic_launcher_background
-
-        fun newInstance(
-            avatarSrc: String,
-            fullName: String,
-            status: String
-        ): CardProfileFragment {
-            return CardProfileFragment().apply {
-                arguments = bundleOf(
-                    KEY_AVATAR_SRC to avatarSrc, KEY_FULL_NAME to fullName,
-                    KEY_STATUS to status
-                )
-            }
-        }
     }
 
     private var _binding: FragmentCardProfileBinding? = null
@@ -80,14 +67,24 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
         status = arguments?.getSerializable(KEY_STATUS) as UserStatus?
     }
 
+    fun startShimmer() {
+        binding.dataLayer.isGone = true
+        binding.shimmerLayer.isGone = false
+        binding.shimmerLayer.startShimmer()
+    }
+
+    fun stopShimmer() {
+        binding.shimmerLayer.stopShimmer()
+        binding.dataLayer.isGone = false
+        binding.shimmerLayer.isGone = true
+    }
+
     private fun updateAvatarSrc(avatarSrc: String?) {
         avatarSrc?.let {
             binding.avatar.load(it) {
                 crossfade(true)
             }
-        } ?: kotlin.run {
-            binding.avatar.setImageResource(DEFAULT_IMAGE)
-        }
+        } ?: binding.avatar.setImageResource(DEFAULT_IMAGE)
     }
 
     private fun updateFullName(fullName: String?) {

@@ -11,7 +11,7 @@ import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
-import ru.fasdev.tfs.screen.fragment.profile.ProfileFragment
+import ru.fasdev.tfs.screen.fragment.ownProfile.OwnProfileFragment
 
 class MainFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
     companion object {
@@ -59,7 +59,7 @@ class MainFragment : Fragment(R.layout.fragment_main), OnBackPressedListener {
                 fragmentRouter.replaceTo(PeopleFragment.getScreen())
             }
             R.id.action_profile -> {
-                fragmentRouter.replaceTo(ProfileFragment.getScreen())
+                fragmentRouter.replaceTo(OwnProfileFragment.getScreen())
             }
         }
     }

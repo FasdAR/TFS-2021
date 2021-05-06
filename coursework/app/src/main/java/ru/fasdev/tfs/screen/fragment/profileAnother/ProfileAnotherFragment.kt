@@ -10,28 +10,17 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
-import ru.fasdev.tfs.data.mapper.toUserUi
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
-import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
-import ru.fasdev.tfs.domain.user.interactor.UserInteractor
-import ru.fasdev.tfs.domain.user.interactor.UserInteractorImpl
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.screen.fragment.profile.ProfileViewModel
-import ru.fasdev.tfs.screen.fragment.profile.mvi.ProfileAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherAction
 import ru.fasdev.tfs.screen.fragment.profileAnother.mvi.ProfileAnotherState
 import ru.fasdev.tfs.view.MviView
-import ru.fasdev.tfs.view.ui.fragment.cardProfile.CardProfileFragment
+import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 
 class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviView<ProfileAnotherState> {
     companion object {

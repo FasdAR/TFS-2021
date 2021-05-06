@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.chat.mvi
 
-import ru.fasdev.tfs.domain.message.model.DirectionScroll
+import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
 import ru.fasdev.tfs.recycler.viewHolder.ViewType
 
 sealed class ChatAction {
