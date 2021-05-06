@@ -1,18 +1,14 @@
 package ru.fasdev.tfs.screen.fragment.ownProfile
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.newPck.repository.users.UsersRepository
 import ru.fasdev.tfs.data.newPck.repository.users.UsersRepositoryImpl
-import ru.fasdev.tfs.domain.newPck.user.model.User
-import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileStore
 
 class OwnProfileViewModel : ViewModel() {
     //#region Test DI
@@ -21,47 +17,21 @@ class OwnProfileViewModel : ViewModel() {
     }
     //#ednregion
 
-    private val userRepository: UsersRepository = ProfileComponent.usersRepository
+    private val store: OwnProfileStore = OwnProfileStore(ProfileComponent.usersRepository)
 
-    private val compositeDisposable = CompositeDisposable()
-
-    val userState: MutableLiveData<User?> = MutableLiveData()
-    val errorState: MutableLiveData<String> = MutableLiveData()
-    val networkErrorState: MutableLiveData<String> = MutableLiveData()
-    val isLoadingState: MutableLiveData<Boolean> = MutableLiveData()
-
-    init {
-        loadOwnUser()
-    }
-
-    fun loadOwnUser() {
-        isLoadingState.postValue(true)
-
-        compositeDisposable += userRepository.getOwnUser()
-            .delay(1000L, TimeUnit.MILLISECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy (
-                onError = {error ->
-                    when (error) {
-                        is UnknownHostException -> {
-                            networkErrorState.postValue("Проверьте наличие интернета")
-                        }
-                        else -> {
-                            errorState.postValue(error.message.toString())
-                        }
-                    }
-                    isLoadingState.postValue(false)
-                },
-                onSuccess = {
-                    userState.postValue(it)
-                    isLoadingState.postValue(false)
-                }
-            )
-    }
+    private val wiring = store.wire()
+    private var viewBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.clear()
+        wiring.dispose()
+    }
+
+    fun bind(view: MviView<Action, OwnProfileState>) {
+        viewBinding = store.bind(view)
+    }
+
+    fun unBind() {
+        viewBinding.dispose()
     }
 }

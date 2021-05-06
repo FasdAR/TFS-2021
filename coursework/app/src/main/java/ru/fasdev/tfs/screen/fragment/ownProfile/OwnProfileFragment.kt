@@ -7,19 +7,25 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxrelay2.PublishRelay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentOwnProfileBinding
 import ru.fasdev.tfs.domain.old.user.model.UserStatus
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
 
-class OwnProfileFragment : Fragment(R.layout.fragment_own_profile) {
+class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Action, OwnProfileState> {
     companion object {
         private val TAG: String = OwnProfileFragment::class.java.simpleName
         private fun newInstance(): OwnProfileFragment = OwnProfileFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
 
+    override val actions: PublishRelay<Action> = PublishRelay.create()
     private val viewModel: OwnProfileViewModel by viewModels()
 
     private var _binding: FragmentOwnProfileBinding? = null
@@ -35,33 +41,33 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.bind(this)
+    }
 
-        viewModel.errorState.observe(viewLifecycleOwner) {
-            Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
-        }
+    override fun render(state: OwnProfileState) {
+        if (state.isLoading) {
+            cardProfile.startShimmer()
+        } else {
+            cardProfile.stopShimmer()
 
-        viewModel.networkErrorState.observe(viewLifecycleOwner) {
-
-        }
-
-        viewModel.isLoadingState.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                cardProfile.startShimmer()
+            if (state.error != null) {
+                Snackbar.make(binding.root, state.error.message.toString(), Snackbar.LENGTH_LONG).show()
             }
             else {
-                cardProfile.stopShimmer()
+                if (state.user != null) {
+                    cardProfile.avatarSrc = state.user.avatarUrl
+                    cardProfile.fullName = state.user.fullName
+                    cardProfile.status = UserStatus.ONLINE
+                } else {
+                    actions.accept(OwnProfileAction.Ui.LoadUser)
+                }
             }
-        }
-
-        viewModel.userState.observe(viewLifecycleOwner) { user ->
-            cardProfile.avatarSrc = user?.avatarUrl
-            cardProfile.fullName = user?.fullName
-            cardProfile.status = UserStatus.ONLINE
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        viewModel.unBind()
     }
 }
