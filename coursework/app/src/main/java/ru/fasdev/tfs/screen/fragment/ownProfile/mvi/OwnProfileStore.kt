@@ -15,7 +15,7 @@ import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.middleware.LoadUserMiddleware
 
-class OwnProfileStore(private val usersRepository: UsersRepository): Store<Action, OwnProfileState>
+class OwnProfileStore(usersRepository: UsersRepository): Store<Action, OwnProfileState>
 {
     override val initialState: OwnProfileState = OwnProfileState()
     override val reducer: Reducer<OwnProfileState, Action> = OwnProfileReducer()
@@ -25,20 +25,28 @@ class OwnProfileStore(private val usersRepository: UsersRepository): Store<Actio
     private val actions = PublishRelay.create<Action>()
 
     fun wire(): Disposable {
-        val disposable = CompositeDisposable()
+        return CompositeDisposable().apply {
+            add(
+                actions
+                    .withLatestFrom(state) { action, state ->
+                        reducer.reduce(state, action)
+                    }
+                    .distinctUntilChanged()
+                    .subscribe(state::accept)
+            )
 
-        disposable += actions
-            .withLatestFrom(state) { action, state ->
-                reducer.reduce(state, action)
-            }
-            .distinctUntilChanged()
-            .subscribe(state::accept)
+            add(
+                actions
+                    .publish { published ->
+                        Observable.merge(
+                            middlewares.map { it.handle(published, state) }
+                        )
+                    }
+                    .subscribe(actions::accept)
+            )
 
-        disposable += Observable.merge<Action> {
-            middlewares.map { it.handle(actions, state) }
-        }.subscribe(actions::accept)
-
-        return disposable
+            actions.accept(OwnProfileAction.Ui.LoadUser)
+        }
     }
 
     fun bind(view: MviView<Action, OwnProfileState>): Disposable {

@@ -58,8 +58,6 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
                     cardProfile.avatarSrc = state.user.avatarUrl
                     cardProfile.fullName = state.user.fullName
                     cardProfile.status = UserStatus.ONLINE
-                } else {
-                    actions.accept(OwnProfileAction.Ui.LoadUser)
                 }
             }
         }
