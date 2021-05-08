@@ -1,6 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -128,11 +129,12 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
             infoFragment.handleErrorState(state.error)
         }
         else {
-            binding.infoPlaceholder.isGone = true
-            binding.usersRv.isGone = false
-
-            if (!state.isLoading) {
+            if (state.isLoading) {
+                binding.infoPlaceholder.isGone = true
+            }
+            else {
                 if (!state.users.isNullOrEmpty()) {
+                    binding.infoPlaceholder.isGone = true
                     binding.usersRv.isGone = false
                 }
                 else {
