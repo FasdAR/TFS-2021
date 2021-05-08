@@ -1,6 +1,8 @@
 package ru.fasdev.tfs
 
 import android.app.Application
+import android.util.Log
+import io.reactivex.plugins.RxJavaPlugins
 import retrofit2.Retrofit
 import ru.fasdev.tfs.data.old.source.db.TfsDatabase
 import ru.fasdev.tfs.data.old.source.db.dao.StreamDao
@@ -10,6 +12,7 @@ import ru.fasdev.tfs.di.module.RetrofitModule
 import ru.fasdev.tfs.di.module.RoomModule
 import ru.fasdev.tfs.di.provide.ProvideRetrofit
 import ru.fasdev.tfs.di.provide.ProvideRoom
+
 
 class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
     object AppComponent {
@@ -33,6 +36,7 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
     override fun onCreate() {
         super.onCreate()
         AppComponent.roomDb = RoomModule.getAppDatabase(this)
+        RxJavaPlugins.setErrorHandler { e: Throwable? -> Log.e("RxDisposeError", e?.message.toString())}
     }
 
     override fun getRetrofit(): Retrofit = AppComponent.retrofit
