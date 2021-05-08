@@ -7,7 +7,7 @@ import ru.fasdev.tfs.data.newPck.source.network.base.response.BaseResponse
 import ru.fasdev.tfs.data.newPck.source.network.users.model.BaseUser
 
 @Serializable
-class OwnUserResponse(
+class UsersMeResponse(
     override val code: String? = null,
     override val msg: String,
     override val result: ZulipResult,

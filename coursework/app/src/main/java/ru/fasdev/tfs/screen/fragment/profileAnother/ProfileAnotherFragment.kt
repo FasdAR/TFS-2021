@@ -98,7 +98,7 @@ class ProfileAnotherFragment : Fragment(R.layout.fragment_another_profile), MviV
             else -> {
                 cardProfile.avatarSrc = state.userAvatar
                 cardProfile.fullName = state.userFullName
-                cardProfile.status = state.userStatus
+                //cardProfile.status = state.userStatus
             }
         }
     }

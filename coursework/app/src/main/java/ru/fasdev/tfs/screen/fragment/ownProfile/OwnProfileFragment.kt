@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import com.jakewharton.rxrelay2.PublishRelay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentOwnProfileBinding
-import ru.fasdev.tfs.domain.old.user.model.UserStatus
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.entity.action.Action
@@ -78,7 +77,7 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
                 cardProfileFragment.apply {
                     avatarSrc = state.user?.avatarUrl
                     fullName = state.user?.fullName
-                    status = UserStatus.ONLINE // TODO: GET IN NETWORK
+                    status = state.user?.onlineStatus
                 }
             }
         }

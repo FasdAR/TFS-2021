@@ -10,17 +10,10 @@ import androidx.fragment.app.Fragment
 import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
-import ru.fasdev.tfs.domain.old.user.model.UserStatus
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.IDLE
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.OFFLINE
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.ONLINE
+import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {
-        private const val KEY_AVATAR_SRC = "avatarSrc"
-        private const val KEY_FULL_NAME = "fullName"
-        private const val KEY_STATUS = "status"
-
         private const val ONLINE_COLOR = R.color.green_500
         private const val OFFLINE_COLOR = R.color.red_500
         private const val IDLE_COLOR = R.color.yellow_200
@@ -43,7 +36,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
             updateFullName(value)
         }
 
-    var status: UserStatus? = null
+    var status: UserOnlineStatus? = null
         set(value) {
             field = value
             updateStatusText(value)
@@ -57,14 +50,6 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             _binding = FragmentCardProfileBinding.bind(this)
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        avatarSrc = arguments?.getString(KEY_AVATAR_SRC)
-        fullName = arguments?.getString(KEY_FULL_NAME)
-        status = arguments?.getSerializable(KEY_STATUS) as UserStatus?
     }
 
     fun startShimmer() {
@@ -91,9 +76,9 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
         binding.fullName.text = fullName
     }
 
-    private fun updateStatusText(userStatus: UserStatus?) {
+    private fun updateStatusText(userStatus: UserOnlineStatus?) {
         when (userStatus) {
-            ONLINE -> {
+            UserOnlineStatus.ONLINE -> {
                 binding.onlineStatus.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -102,7 +87,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
                 )
                 binding.onlineStatus.text = resources.getString(R.string.online)
             }
-            OFFLINE -> {
+            UserOnlineStatus.OFFLINE -> {
                 binding.onlineStatus.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -111,7 +96,7 @@ class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
                 )
                 binding.onlineStatus.text = resources.getString(R.string.offline)
             }
-            IDLE -> {
+            UserOnlineStatus.IDLE -> {
                 binding.onlineStatus.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
