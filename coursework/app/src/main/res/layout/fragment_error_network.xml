@@ -27,6 +27,15 @@
         android:layout_marginRight="16dp"
         tools:text="Не удалось загрузить данные"/>
 
-    <!-- TOOD: ADD POSITIVE BUTTON -->
+    <Button
+        style="@style/Widget.TFS.Button.Main"
+        android:id="@+id/positive_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="28dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        tools:text="Повторить"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

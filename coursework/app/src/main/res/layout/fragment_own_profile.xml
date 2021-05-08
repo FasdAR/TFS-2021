@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true">
 
     <androidx.constraintlayout.widget.Guideline
         android:layout_width="wrap_content"
@@ -20,28 +21,29 @@
         app:layout_constraintGuide_percent="0.92"/>
 
     <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/error_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:name="ru.fasdev.tfs.screen.fragment.error.ErrorFragment"/>
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/card_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:name="ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment"
         app:layout_constraintTop_toTopOf="@id/guideline_top_card"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
     <Button
-        style="@style/Widget.TFS.Button.UnelevatedButton"
+        style="@style/Widget.TFS.Button.Main"
         android:id="@+id/logout_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingTop="14dp"
-        android:paddingBottom="14dp"
-        android:paddingRight="56dp"
-        android:paddingLeft="56dp"
-        android:backgroundTint="@color/grey_930"
         android:text="@string/log_out"
         android:visibility="gone"
-        app:cornerRadius="31dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/guideline_bottom_btn"/>

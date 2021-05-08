@@ -13,33 +13,30 @@ import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 
 class ErrorFragment: Fragment(R.layout.fragment_error_network)
 {
-    companion object {
-        private val TAG: String = ErrorFragment::class.java.simpleName
-        private const val KEY_ICON = "icon"
-        private const val KEY_DESCRIPTION = "desc"
-        private const val KEY_BUTTON = "btn"
-
-        private fun newInstance(
-            iconRes: Int? = null,
-            descriptionText: String,
-            buttonText: String? = null
-        ): ErrorFragment = ErrorFragment().apply {
-            arguments = bundleOf(KEY_ICON to iconRes, KEY_DESCRIPTION to descriptionText, KEY_BUTTON to buttonText)
-        }
-
-        fun getScreen(
-            iconRes: Int? = null,
-            descriptionText: String,
-            buttonText: String? = null
-        ) = FragmentScreen(TAG, newInstance(iconRes, descriptionText, buttonText))
+    fun interface Listener {
+        fun onClickPositiveBtn()
     }
 
     private var _binding: FragmentErrorNetworkBinding? = null
     private val binding get() = _binding!!
 
-    private val iconRes get() = arguments?.getInt(KEY_ICON)
-    private val descriptionText get() = arguments?.getString(KEY_DESCRIPTION)
-    private val buttonText get() = arguments?.getString(KEY_BUTTON)
+    var iconRes: Int? = null
+        set(value) {
+            field = value
+            updateIcon(value)
+        }
+
+    var descriptionText: String? = null
+        set(value) {
+            field = value
+            updateDescription(value)
+        }
+
+    var positiveBtnText: String? = null
+        set(value) {
+            field = value
+            updatePositiveBtn(value)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,19 +51,38 @@ class ErrorFragment: Fragment(R.layout.fragment_error_network)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.positiveBtn.setOnClickListener {
+            if (parentFragment is Listener) {
+                (parentFragment as Listener).onClickPositiveBtn()
+            }
+        }
+    }
+
+    private fun updateIcon(iconRes: Int?) {
         iconRes?.let {
+            binding.icon.isGone = false
             binding.icon.setImageResource(it)
         } ?: kotlin.run {
-            binding.icon.isGone = false
+            binding.icon.isGone = true
         }
+    }
 
+    private fun updateDescription(descriptionText: String?) {
         descriptionText?.let {
+            binding.icon.isGone = false
             binding.text.text = it
         } ?: kotlin.run {
-            binding.text.isGone = false
+            binding.text.isGone = true
         }
+    }
 
-        //TODO: ADD BUTTON
+    private fun updatePositiveBtn(btnText: String?) {
+        btnText?.let {
+            binding.icon.isGone = false
+            binding.positiveBtn.text = it
+        } ?: kotlin.run {
+            binding.positiveBtn.isGone = true
+        }
     }
 
     override fun onDestroy() {
