@@ -6,9 +6,12 @@ import io.reactivex.disposables.Disposables
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.newPck.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileReducer
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
-import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileStore
+import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.middleware.LoadUserMiddleware
 
 class OwnProfileViewModel : ViewModel() {
     //#region Test DI
@@ -17,9 +20,13 @@ class OwnProfileViewModel : ViewModel() {
     }
     //#ednregion
 
-    private val store: OwnProfileStore = OwnProfileStore(ProfileComponent.usersRepository)
+    private val store: Store<Action, OwnProfileState> = Store(
+        OwnProfileState(),
+        OwnProfileReducer(),
+        listOf(LoadUserMiddleware(ProfileComponent.usersRepository))
+    )
 
-    private val wiring = store.wire()
+    private val wiring = store.wire { actions -> actions.accept(OwnProfileAction.Ui.LoadUser) }
     private var viewBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
