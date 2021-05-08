@@ -8,10 +8,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.mviCore.entity.state.UiState
-import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
 
 open class Store<A : Action, S : UiState>(
-    private val initialState: S,
+    initialState: S,
     private val reducer: Reducer<S, A>,
     private val middlewares: List<Middleware<A, S>>
 ) {
@@ -23,7 +22,7 @@ open class Store<A : Action, S : UiState>(
             add(
                 actionsFlow
                     .withLatestFrom(stateFlow) { action, state ->
-                        reducer.reduce(state, action)
+                        reducer(state, action)
                     }
                     .distinctUntilChanged()
                     .subscribe(stateFlow::accept)
@@ -32,7 +31,7 @@ open class Store<A : Action, S : UiState>(
                 actionsFlow
                     .publish { published ->
                         Observable.merge(
-                            middlewares.map { it.handle(published, stateFlow) }
+                            middlewares.map { it(published, stateFlow) }
                         )
                     }
                     .subscribe(actionsFlow::accept)
