@@ -55,7 +55,7 @@ class SearchToolbar @JvmOverloads constructor(
         }
 
         gravity = Gravity.CENTER
-        updatePadding(left = 22.toDp, right = 19.toDp)
+        updatePadding(left = 22.toDp, right = 19.toDp, top = 19.toDp, bottom = 19.toDp)
         setBackgroundColor(ContextCompat.getColor(context, R.color.grey_910))
     }
 

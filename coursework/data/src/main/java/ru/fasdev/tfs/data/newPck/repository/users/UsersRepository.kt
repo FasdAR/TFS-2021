@@ -9,4 +9,5 @@ interface UsersRepository
     fun getOwnUser(): Single<User>
     fun getStatusUser(email: String): Single<UserOnlineStatus>
     fun getAllUsers(): Single<List<User>>
+    fun searchUsers(query: String): Single<List<User>>
 }

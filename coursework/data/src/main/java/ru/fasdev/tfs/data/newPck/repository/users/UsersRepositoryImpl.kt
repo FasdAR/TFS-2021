@@ -9,6 +9,9 @@ import ru.fasdev.tfs.data.newPck.source.network.users.api.UserApi
 import ru.fasdev.tfs.data.newPck.source.network.users.model.BaseUser
 import ru.fasdev.tfs.domain.newPck.user.model.User
 import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
+import java.lang.ref.SoftReference
+import java.lang.ref.WeakReference
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
@@ -16,6 +19,9 @@ class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
     private companion object {
         const val DELAY_QUERY = 10L
     }
+
+    //Временный кэш списка всех пользователей
+    private var temporaryCacheAllUsers: SoftReference<List<User>> = SoftReference(listOf())
 
     private fun getOnlineStatus(user: User): Single<User> {
         return getStatusUser(user.email)
@@ -50,5 +56,21 @@ class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
                     }
                     .toSortedList { item1, item2 -> item1.fullName.compareTo(item2.fullName)  }
             }
+            .doOnSuccess {
+                temporaryCacheAllUsers = SoftReference(it)
+            }
+    }
+
+    override fun searchUsers(query: String): Single<List<User>> {
+        return Single.just(temporaryCacheAllUsers.get())
+            .flatMapObservable { Observable.fromIterable(it) }
+            .filter {
+                val readyQuery = query.trim().toLowerCase(Locale.ROOT)
+                val userFullName = it.fullName.toLowerCase(Locale.ROOT)
+                val userEmail = it.email.toLowerCase(Locale.ROOT)
+
+                return@filter userFullName.contains(readyQuery) || userEmail.contains(readyQuery)
+            }
+            .toList()
     }
 }

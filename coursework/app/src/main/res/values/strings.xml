@@ -26,4 +26,6 @@
     <string name="try_again">Try again</string>
     <string name="update">Update</string>
     <string name="empty_users_list">The list of users is empty</string>
+
+    <string name="empty_res_search">Nothing was found for your search</string>
 </resources>
