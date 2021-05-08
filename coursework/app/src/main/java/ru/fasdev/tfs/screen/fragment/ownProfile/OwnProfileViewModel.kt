@@ -66,7 +66,7 @@ class OwnProfileViewModel : ViewModel() {
             .ofType(OwnProfileAction.Ui.LoadUser.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                return@flatMap ProfileComponent.usersRepository.getOwnUser()
+                ProfileComponent.usersRepository.getOwnUser()
                     .toObservable()
                     .map<OwnProfileAction.Internal> { OwnProfileAction.Internal.LoadedUser(it) }
                     .onErrorReturn { OwnProfileAction.Internal.LoadedError(it) }

@@ -6,11 +6,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.di.module.UserDomainModule
-import ru.fasdev.tfs.domain.old.user.interactor.UserInteractorImpl
+import ru.fasdev.tfs.data.newPck.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.recycler.item.user.UserItem
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 
@@ -18,15 +18,14 @@ class PeopleViewModel : ViewModel()
 {
     //#region Test Di
     object PeopleComponent {
-        private val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
-        val userInteractor = UserInteractorImpl(userRepo)
+        val usersRepository = UsersRepositoryImpl(TfsApp.AppComponent.newUserApi)
     }
     //#endregion
 
     private val store: Store<Action, PeopleState> = Store(
         initialState = PeopleState(),
         reducer = ::reducer,
-        middlewares = listOf(::sideActionLoadUsers, ::sideActionSearchUsers)
+        middlewares = listOf(::sideActionLoadUsers)
     )
 
     private val wiring = store.wire { actionsFlow -> actionsFlow.accept(PeopleAction.Ui.LoadUsers) }
@@ -54,11 +53,12 @@ class PeopleViewModel : ViewModel()
             )
             is PeopleAction.Internal.LoadedError -> state.copy(
                 isLoading = false,
-                error = action.error
+                error = action.error,
+                users = emptyList()
             )
             is PeopleAction.Internal.LoadingUsers -> state.copy(
                 isLoading = true,
-                error = null
+                error = null,
             )
             else -> state
         }
@@ -72,7 +72,24 @@ class PeopleViewModel : ViewModel()
             .ofType(PeopleAction.Ui.LoadUsers.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                TODO("ADD FLAT MAP")
+                PeopleComponent.usersRepository.getAllUsers()
+                    .flatMap {
+                        Observable.fromIterable(it)
+                            .map { user ->
+                                UserItem(
+                                    uId = user.id.toInt(),
+                                    avatarSrc = user.avatarUrl,
+                                    fullName = user.fullName,
+                                    email = user.email,
+                                    userStatus = user.onlineStatus,
+                                )
+                            }
+                            .toList()
+                    }
+                    .toObservable()
+                    .map<PeopleAction.Internal> { PeopleAction.Internal.LoadedUsers(it) }
+                    .onErrorReturn { PeopleAction.Internal.LoadedError(it) }
+                    .startWith (PeopleAction.Internal.LoadingUsers)
             }
     }
 

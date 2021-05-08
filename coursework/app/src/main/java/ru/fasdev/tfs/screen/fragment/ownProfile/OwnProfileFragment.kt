@@ -14,12 +14,15 @@ import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
-import ru.fasdev.tfs.screen.fragment.error.ErrorFragment
+import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
+import ru.fasdev.tfs.screen.fragment.info.handleErrorState
+import ru.fasdev.tfs.screen.fragment.info.networkErrorState
+import ru.fasdev.tfs.screen.fragment.info.otherErrorState
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
 import java.net.UnknownHostException
 
-class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Action, OwnProfileState>, ErrorFragment.Listener {
+class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Action, OwnProfileState>, InfoPlaceholderFragment.Listener {
     companion object {
         private val TAG: String = OwnProfileFragment::class.java.simpleName
         private fun newInstance(): OwnProfileFragment = OwnProfileFragment()
@@ -32,7 +35,7 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
     private var _binding: FragmentOwnProfileBinding? = null
     private val binding get() = _binding!!
 
-    private val errorFragment get() = childFragmentManager.findFragmentById(R.id.error_placeholder) as ErrorFragment
+    private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
     private val cardProfileFragment get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,23 +52,12 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
     override fun render(state: OwnProfileState) {
         if (state.error != null) {
             binding.cardProfile.isGone = true
-            binding.errorPlaceholder.isGone = false
+            binding.infoPlaceholder.isGone = false
 
-            when (state.error) {
-                is UnknownHostException -> {
-                    errorFragment.iconRes = R.drawable.ic_cloud_off
-                    errorFragment.descriptionText = resources.getString(R.string.check_network_connection)
-                    errorFragment.positiveBtnText = resources.getString(R.string.try_again)
-                }
-                else -> {
-                    errorFragment.iconRes = R.drawable.ic_error
-                    errorFragment.descriptionText = resources.getString(R.string.error_occurred, state.error.message.toString())
-                    errorFragment.positiveBtnText = resources.getString(R.string.try_again)
-                }
-            }
+            infoFragment.handleErrorState(state.error)
         }
         else {
-            binding.errorPlaceholder.isGone = true
+            binding.infoPlaceholder.isGone = true
             binding.cardProfile.isGone = false
 
             if (state.isLoading) {
@@ -83,13 +75,17 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
         }
     }
 
+    override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {
+        when (buttonType) {
+            InfoPlaceholderFragment.ButtonType.POSITIVE -> {
+                actions.accept(OwnProfileAction.Ui.LoadUser)
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
         viewModel.unBind()
-    }
-
-    override fun onClickPositiveBtn() {
-        actions.accept(OwnProfileAction.Ui.LoadUser)
     }
 }

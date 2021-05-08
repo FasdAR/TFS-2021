@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersMeResponse
 import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersPresenceResponse
+import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersResponse
 
 interface UserApi
 {
@@ -13,4 +14,7 @@ interface UserApi
 
     @GET("users/{email}/presence")
     fun getUserPresence(@Path("email") email: String): Single<UsersPresenceResponse>
+
+    @GET("users")
+    fun getAllUsers(): Single<UsersResponse>
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,12 +25,13 @@ import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.recycler.item.user.UserViewHolder
+import ru.fasdev.tfs.screen.fragment.info.*
 import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 
 class PeopleFragment : Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
-    OnBackPressedListener, MviView<Action, PeopleState> {
+    OnBackPressedListener, MviView<Action, PeopleState>, InfoPlaceholderFragment.Listener {
 
     companion object {
         private val TAG: String = PeopleFragment::class.java.simpleName
@@ -48,6 +50,8 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
 
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
+
+    private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,8 +83,16 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
             }
         }
 
-        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvUsers.adapter = adapter
+        binding.usersRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.usersRv.adapter = adapter
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (binding.searchLayout.isSearch) {
+                actions.accept(PeopleAction.Ui.SearchUsers(binding.searchLayout.text))
+            } else {
+                actions.accept(PeopleAction.Ui.LoadUsers)
+            }
+        }
 
         viewModel.bind(this)
     }
@@ -106,6 +118,36 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
     }
 
     override fun render(state: PeopleState) {
-        //TODO: ADD RENDER
+        binding.swipeRefreshLayout.isRefreshing = state.isLoading
+        adapter.items = state.users ?: emptyList()
+
+        if (state.error != null) {
+            binding.usersRv.isGone = true
+            binding.infoPlaceholder.isGone = false
+
+            infoFragment.handleErrorState(state.error)
+        }
+        else {
+            binding.infoPlaceholder.isGone = true
+            binding.usersRv.isGone = false
+
+            if (!state.isLoading) {
+                if (!state.users.isNullOrEmpty()) {
+                    binding.usersRv.isGone = false
+                }
+                else {
+                    binding.usersRv.isGone = true
+                    binding.infoPlaceholder.isGone = false
+
+                    infoFragment.emptyListState(resources.getString(R.string.empty_users_list))
+                }
+            }
+        }
+    }
+
+    override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {
+        when (buttonType) {
+            InfoPlaceholderFragment.ButtonType.POSITIVE -> actions.accept(PeopleAction.Ui.LoadUsers)
+        }
     }
 }

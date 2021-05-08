@@ -35,6 +35,8 @@ class SearchToolbar @JvmOverloads constructor(
     var attachToolbar: View? = null
     var textChangeListener: TextChangeListener? = null
 
+    val text: String get() = editText.text.toString()
+
     init {
         LayoutInflater.from(context).inflate(
             R.layout.layout_toolbar_search,

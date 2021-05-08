@@ -1,20 +1,52 @@
-package ru.fasdev.tfs.screen.fragment.error
+package ru.fasdev.tfs.screen.fragment.info
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentErrorNetworkBinding
-import ru.fasdev.tfs.fragmentRouter.FragmentScreen
+import java.net.UnknownHostException
 
-class ErrorFragment: Fragment(R.layout.fragment_error_network)
+fun InfoPlaceholderFragment.handleErrorState(error: Throwable) {
+    when (error) {
+        is UnknownHostException -> {
+            networkErrorState()
+        }
+        else -> {
+            otherErrorState(error.message.toString())
+        }
+    }
+}
+
+fun InfoPlaceholderFragment.networkErrorState() {
+    iconRes = R.drawable.ic_cloud_off
+    descriptionText = resources.getString(R.string.check_network_connection)
+    positiveBtnText = resources.getString(R.string.try_again)
+}
+
+fun InfoPlaceholderFragment.otherErrorState(error: String) {
+    iconRes = R.drawable.ic_error
+    descriptionText = resources.getString(R.string.error_occurred, error.trim().replace(".", ""))
+    positiveBtnText = resources.getString(R.string.try_again)
+}
+
+fun InfoPlaceholderFragment.emptyListState(description: String) {
+    iconRes = R.drawable.ic_list
+    descriptionText = description
+    positiveBtnText = resources.getString(R.string.update)
+}
+
+class InfoPlaceholderFragment: Fragment(R.layout.fragment_error_network)
 {
+    enum class ButtonType {
+        POSITIVE
+    }
+
     fun interface Listener {
-        fun onClickPositiveBtn()
+        fun onBtnClickInfoPlaceholder(buttonType: ButtonType)
     }
 
     private var _binding: FragmentErrorNetworkBinding? = null
@@ -53,7 +85,7 @@ class ErrorFragment: Fragment(R.layout.fragment_error_network)
 
         binding.positiveBtn.setOnClickListener {
             if (parentFragment is Listener) {
-                (parentFragment as Listener).onClickPositiveBtn()
+                (parentFragment as Listener).onBtnClickInfoPlaceholder(ButtonType.POSITIVE)
             }
         }
     }

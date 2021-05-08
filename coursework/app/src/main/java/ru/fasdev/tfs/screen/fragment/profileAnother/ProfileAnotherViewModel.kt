@@ -69,11 +69,13 @@ class ProfileAnotherViewModel : ViewModel()
                     }
                     .toObservable()
                     .map { userUi ->
+                        TODO("ADD MAP")
+                        /*
                         ProfileAnotherAction.LoadedUser(
                             userFullName = userUi.fullName,
                             userStatus = userUi.userStatus,
                             userAvatar = userUi.avatarSrc
-                        )
+                        )*/
                     }
                     .map { it as ProfileAnotherAction }
                     .onErrorReturn { error -> ProfileAnotherAction.ErrorLoading(error)}

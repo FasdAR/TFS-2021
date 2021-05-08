@@ -6,9 +6,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.ItemUserBinding
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.IDLE
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.OFFLINE
-import ru.fasdev.tfs.domain.old.user.model.UserStatus.ONLINE
+import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 
 class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : ViewHolder<UserItem>(view) {
@@ -39,9 +37,9 @@ class UserViewHolder(val view: View, private val clickUser: OnClickUserListener)
         }
 
         val indicatorOnline = when (item.userStatus) {
-            ONLINE -> R.drawable.sh_indicator_online
-            OFFLINE -> R.drawable.sh_indicator_offline
-            IDLE -> R.drawable.sh_indicator_idle
+            UserOnlineStatus.ONLINE -> R.drawable.sh_indicator_online
+            UserOnlineStatus.OFFLINE -> R.drawable.sh_indicator_offline
+            UserOnlineStatus.IDLE -> R.drawable.sh_indicator_idle
         }
 
         binding.onlineStatus.setImageResource(indicatorOnline)
