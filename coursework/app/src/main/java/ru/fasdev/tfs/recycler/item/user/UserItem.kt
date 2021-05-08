@@ -1,10 +1,10 @@
-package ru.fasdev.tfs.screen.fragment.people.recycler.viewType
+package ru.fasdev.tfs.recycler.item.user
 
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.domain.old.user.model.UserStatus
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
-data class UserUi(
+data class UserItem(
     override val uId: Int,
     val avatarSrc: String,
     val fullName: String,

@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder
+package ru.fasdev.tfs.recycler.item.user
 
 import android.view.View
 import androidx.core.text.isDigitsOnly
@@ -9,23 +9,22 @@ import ru.fasdev.tfs.databinding.ItemUserBinding
 import ru.fasdev.tfs.domain.old.user.model.UserStatus.IDLE
 import ru.fasdev.tfs.domain.old.user.model.UserStatus.OFFLINE
 import ru.fasdev.tfs.domain.old.user.model.UserStatus.ONLINE
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 
-class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : ViewHolder<UserUi>(view) {
+class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : ViewHolder<UserItem>(view) {
     fun interface OnClickUserListener {
         fun onClickUser(idUser: Int, email: String)
     }
 
     private val binding = ItemUserBinding.bind(view)
 
-    private var item: UserUi? = null
+    private var item: UserItem? = null
 
     init {
         binding.root.setOnClickListener { clickUser.onClickUser(item?.uId ?: -1, item?.email.toString()) }
     }
 
-    override fun bind(item: UserUi) {
+    override fun bind(item: UserItem) {
         this.item = item
 
         binding.fullName.text = item.fullName

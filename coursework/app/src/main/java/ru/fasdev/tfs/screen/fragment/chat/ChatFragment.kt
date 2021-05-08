@@ -33,8 +33,8 @@ import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState

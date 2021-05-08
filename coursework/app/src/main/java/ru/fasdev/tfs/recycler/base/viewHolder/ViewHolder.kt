@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.recycler.viewHolder
+package ru.fasdev.tfs.recycler.base.viewHolder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

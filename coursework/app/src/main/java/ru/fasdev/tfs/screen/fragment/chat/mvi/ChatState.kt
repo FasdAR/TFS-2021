@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.chat.mvi
 
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 data class ChatState (
     val isLoading: Boolean = false,

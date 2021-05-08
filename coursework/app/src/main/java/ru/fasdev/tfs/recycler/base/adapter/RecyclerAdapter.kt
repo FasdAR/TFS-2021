@@ -1,13 +1,13 @@
-package ru.fasdev.tfs.recycler.adapter
+package ru.fasdev.tfs.recycler.base.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import ru.fasdev.tfs.recycler.diff.ItemCallback
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolderFactory
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.diff.ItemCallback
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolderFactory
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 class RecyclerAdapter<T : ViewType>(
     private val holderFactory: ViewHolderFactory,

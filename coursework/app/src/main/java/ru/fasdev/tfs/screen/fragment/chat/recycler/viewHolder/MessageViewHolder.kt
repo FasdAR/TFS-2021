@@ -3,7 +3,7 @@ package ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder
 import android.os.Bundle
 import android.view.View
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.MessageUi
 import ru.fasdev.tfs.view.message.MessageViewGroup
 import ru.fasdev.tfs.view.message.base.BaseMessageView

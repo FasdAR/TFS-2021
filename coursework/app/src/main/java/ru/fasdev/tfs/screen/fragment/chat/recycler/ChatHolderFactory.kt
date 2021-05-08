@@ -5,8 +5,8 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.ItemDateSeparationBinding
 import ru.fasdev.tfs.databinding.ItemExternalMessageBinding
 import ru.fasdev.tfs.databinding.ItemInternalMessageBinding
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolderFactory
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.DateViewHolder
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.ExternalMessageViewHolder
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.InternalMessageViewHolder

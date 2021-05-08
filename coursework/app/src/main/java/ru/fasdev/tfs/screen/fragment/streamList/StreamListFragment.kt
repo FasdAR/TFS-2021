@@ -15,7 +15,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState

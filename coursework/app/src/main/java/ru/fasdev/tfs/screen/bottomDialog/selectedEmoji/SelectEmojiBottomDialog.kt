@@ -19,8 +19,8 @@ import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.data.old.mapper.Emoji
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewHolder.EmojiViewHolder
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi

@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.chat.recycler.viewType
 
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 class DateUi(
     override val uId: Int,

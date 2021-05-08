@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.recycler.viewHolder
+package ru.fasdev.tfs.recycler.base.viewHolder
 
 open class ViewType {
     open val viewType: Int

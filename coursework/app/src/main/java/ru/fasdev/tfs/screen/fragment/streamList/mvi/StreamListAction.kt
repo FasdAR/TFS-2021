@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.streamList.mvi
 
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 sealed class StreamListAction {
     object LoadData: StreamListAction()

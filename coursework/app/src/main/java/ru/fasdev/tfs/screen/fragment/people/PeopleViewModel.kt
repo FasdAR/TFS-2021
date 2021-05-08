@@ -1,67 +1,95 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import androidx.lifecycle.ViewModel
-import com.freeletics.rxredux.StateAccessor
-import com.freeletics.rxredux.reduxStore
-import com.jakewharton.rxrelay2.PublishRelay
-import com.jakewharton.rxrelay2.Relay
 import io.reactivex.Observable
-import io.reactivex.Observable.fromIterable
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.old.mapper.toUserUi
 import ru.fasdev.tfs.di.module.UserDomainModule
 import ru.fasdev.tfs.domain.old.user.interactor.UserInteractorImpl
-import ru.fasdev.tfs.domain.old.user.model.User
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.Store
+import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewType.UserUi
-import ru.fasdev.tfs.view.MviView
-import java.util.concurrent.TimeUnit
 
 class PeopleViewModel : ViewModel()
 {
+    //#region Test Di
     object PeopleComponent {
-        val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
+        private val userRepo = UserDomainModule.getUserRepo(TfsApp.AppComponent.userApi)
         val userInteractor = UserInteractorImpl(userRepo)
     }
+    //#endregion
 
-    private val usersInteractor = PeopleComponent.userInteractor
-
-    private var disposable: CompositeDisposable = CompositeDisposable()
-
-    private val inputRelay: Relay<PeopleAction> = PublishRelay.create()
-    val input: Consumer<PeopleAction> get() = inputRelay
-
-    private val store = inputRelay.reduxStore(
+    private val store: Store<Action, PeopleState> = Store(
         initialState = PeopleState(),
-        sideEffects = listOf(::loadAllUsersSideEffect, ::searchUsersSideEffect),
-        reducer = ::reducer
+        reducer = ::reducer,
+        middlewares = listOf(::sideActionLoadUsers, ::sideActionSearchUsers)
     )
 
-    fun attachView(mviView: MviView<PeopleState>) {
-        disposable += store.subscribe { mviView.render(it) }
-    }
+    private val wiring = store.wire { actionsFlow -> actionsFlow.accept(PeopleAction.Ui.LoadUsers) }
+    private var viewBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
         super.onCleared()
-        disposable.clear()
+        wiring.dispose()
     }
 
-    private fun reducer(state: PeopleState, action: PeopleAction): PeopleState {
-        return when(action) {
-            is PeopleAction.LoadUsers -> state.copy(isLoading = true, error = null)
-            is PeopleAction.LoadedUsers -> state.copy(isLoading = false, error = null, users = action.users)
-            is PeopleAction.ErrorLoading -> state.copy(isLoading = false, error = action.error)
+    fun bind(view: MviView<Action, PeopleState>) {
+        viewBinding = store.bind(view)
+    }
+
+    fun unBind() {
+        viewBinding.dispose()
+    }
+
+    private fun reducer(state: PeopleState, action: Action): PeopleState {
+        return when (action) {
+            is PeopleAction.Internal.LoadedUsers -> state.copy(
+                isLoading = false,
+                error = null,
+                users = action.users
+            )
+            is PeopleAction.Internal.LoadedError -> state.copy(
+                isLoading = false,
+                error = action.error
+            )
+            is PeopleAction.Internal.LoadingUsers -> state.copy(
+                isLoading = true,
+                error = null
+            )
             else -> state
         }
     }
 
-    private fun Single<List<User>>.mapToUiUser(): Single<List<UserUi>> {
+    private fun sideActionLoadUsers(
+        actions: Observable<Action>,
+        state: Observable<PeopleState>
+    ): Observable<Action> {
+        return actions
+            .ofType(PeopleAction.Ui.LoadUsers.javaClass)
+            .observeOn(Schedulers.io())
+            .flatMap { _ ->
+                TODO("ADD FLAT MAP")
+            }
+    }
+
+    private fun sideActionSearchUsers(
+        actions: Observable<Action>,
+        state: Observable<PeopleState>
+    ): Observable<Action> {
+        return actions
+            .ofType(PeopleAction.Ui.SearchUsers::class.java)
+            .observeOn(Schedulers.io())
+            .flatMap { _ ->
+                TODO("ADD FLAT MAP")
+            }
+    }
+
+    /*
+    private fun Single<List<User>>.mapToUiUser(): Single<List<UserItem>> {
         return flatMapObservable(::fromIterable)
             .concatMap {
                 //Delay for query
@@ -113,5 +141,5 @@ class PeopleViewModel : ViewModel()
                     .onErrorReturn { error -> PeopleAction.ErrorLoading(error) }
                     .startWith(PeopleAction.LoadUsers)
             }
-    }
+    }*/
 }

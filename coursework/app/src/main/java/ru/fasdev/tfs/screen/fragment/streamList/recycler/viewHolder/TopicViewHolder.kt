@@ -4,7 +4,7 @@ import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.databinding.ItemSubTopicBinding
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.TopicUi
 
 class TopicViewHolder(val view: View, private val onClickSubTopicListener: OnClickTopicListener) : ViewHolder<TopicUi>(view) {

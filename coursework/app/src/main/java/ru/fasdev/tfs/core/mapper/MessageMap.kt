@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.data.old.mapper
 
 import ru.fasdev.tfs.domain.old.message.model.Message
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.ExternalMessageUi
 import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.InternalMessageUi
 

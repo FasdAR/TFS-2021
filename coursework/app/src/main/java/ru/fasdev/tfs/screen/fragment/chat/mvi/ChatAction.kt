@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.screen.fragment.chat.mvi
 
 import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 sealed class ChatAction {
     object LoadData : ChatAction()
