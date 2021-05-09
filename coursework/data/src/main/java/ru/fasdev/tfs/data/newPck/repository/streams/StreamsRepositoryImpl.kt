@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import ru.fasdev.tfs.data.newPck.mapper.toStreamDb
 import ru.fasdev.tfs.data.newPck.mapper.toStreamDomain
+import ru.fasdev.tfs.data.newPck.mapper.toTopicDb
 import ru.fasdev.tfs.data.newPck.mapper.toTopicDomain
 import ru.fasdev.tfs.data.newPck.source.database.TfsDatabase
 import ru.fasdev.tfs.data.newPck.source.database.dao.StreamDao
@@ -69,12 +70,27 @@ class StreamsRepositoryImpl(
     }
 
     override fun getOwnTopics(idStream: Long): Observable<List<Topic>> {
-        return userApi.getOwnTopics(idStream)
+        val networkSource = userApi.getOwnTopics(idStream)
+            .doOnSuccess {
+                val lists = it.topics.withIndex()
+                    .map { it.value.toTopicDb(idStream, it.index.toLong()) }
+                topicDao.insert(lists, idStream)
+            }
             .map {
-                it.topics.withIndex()
-                    .map { it.value.toTopicDomain(idStream, it.index.toLong()) }
+                it.topics.withIndex().map { it.value.toTopicDomain(idStream, it.index.toLong()) }
+                    .sortedBy { it.name }
             }
             .toObservable()
+
+        val dbSource = topicDao.getStreamTopics(idStream)
+            .flatMap {
+                Observable.fromIterable(it)
+                    .map { it.toTopicDomain() }
+                    .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
+            }
+            .toObservable()
+
+        return dbSource.concatWith(networkSource)
     }
 
     override fun searchQuery(query: String, isAmongSubs: Boolean): Single<List<Stream>> {
