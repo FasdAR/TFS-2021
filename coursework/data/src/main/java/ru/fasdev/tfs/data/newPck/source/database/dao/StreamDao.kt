@@ -8,6 +8,9 @@ import ru.fasdev.tfs.data.newPck.source.database.model.StreamDb
 @Dao
 abstract class StreamDao: BaseDao<StreamDb>
 {
+    @Query("SELECT * FROM stream WHERE id = :id")
+    abstract fun getById(id: Long): Single<StreamDb>
+
     @Query("SELECT * FROM stream")
     abstract fun getAll(): Single<List<StreamDb>>
 

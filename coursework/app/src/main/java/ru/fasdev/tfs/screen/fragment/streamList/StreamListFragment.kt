@@ -112,9 +112,8 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
         }
     }
 
-    override fun onClickTopic(nameTopic: String, idStream: Long) {
-        //TODO: GET INFO STREAM
-        fragmentRouter.navigateTo(ChatFragment.getScreen(idStream.toString(), nameTopic))
+    override fun onClickTopic(idTopic: Long, idStream: Long) {
+        fragmentRouter.navigateTo(ChatFragment.getScreen(idStream, idTopic))
     }
 
     override fun render(state: StreamListState) {

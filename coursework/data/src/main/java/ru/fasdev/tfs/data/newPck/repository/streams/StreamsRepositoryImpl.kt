@@ -98,4 +98,14 @@ class StreamsRepositoryImpl(
 
         return source.flatMap { mapStreamsDbToDomain(it) }
     }
+
+    override fun getStreamById(id: Long): Single<Stream> {
+        return streamDao.getById(id)
+            .map { it.toStreamDomain() }
+    }
+
+    override fun getTopicById(id: Long): Single<Topic> {
+        return topicDao.getById(id)
+            .map { it.toTopicDomain() }
+    }
 }

@@ -8,6 +8,9 @@ import ru.fasdev.tfs.data.newPck.source.database.model.TopicDb
 @Dao
 abstract class TopicDao : BaseDao<TopicDb>
 {
+    @Query("SELECT * FROM topic WHERE id = :id")
+    abstract fun getById(id: Long): Single<TopicDb>
+
     @Query("SELECT * FROM topic WHERE id_stream = :idStream")
     abstract fun getStreamTopics(idStream: Long): Single<List<TopicDb>>
 

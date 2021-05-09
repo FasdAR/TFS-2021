@@ -1,19 +1,36 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import androidx.lifecycle.ViewModel
+import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
+import ru.fasdev.tfs.TfsApp
+import ru.fasdev.tfs.data.newPck.repository.streams.StreamsRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
+import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 
 class ChatViewModel : ViewModel() {
+    //#region Test DI
+    object ChatComponent {
+        val streamsRepository = StreamsRepositoryImpl(
+            TfsApp.AppComponent.newUserApi,
+            TfsApp.AppComponent.newStreamApi,
+            TfsApp.AppComponent.newStreamDao,
+            TfsApp.AppComponent.newTopicDao
+        )
+    }
+    //#endregion
 
     private val store: Store<Action, ChatState> = Store(
         initialState = ChatState(),
         reducer = ::reducer,
-        middlewares = listOf()
+        middlewares = listOf(::sideActionLoadStreamName, ::sideActionLoadTopicName)
     )
 
     private val wiring = store.wire()
@@ -34,8 +51,38 @@ class ChatViewModel : ViewModel() {
 
     private fun reducer(state: ChatState, action: Action): ChatState {
         return when (action) {
+            is ChatAction.Internal.LoadedStreamName -> state.copy(streamName = action.streamName)
+            is ChatAction.Internal.LoadedTopicName -> state.copy(topicName = action.topicName)
             else -> state
         }
+    }
+
+    private fun sideActionLoadStreamName(
+        actions: Observable<Action>,
+        state: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Ui.LoadStreamInfo::class.java)
+            .observeOn(Schedulers.io())
+            .flatMap { action ->
+                ChatComponent.streamsRepository.getStreamById(action.idStream)
+                    .toObservable()
+                    .map { ChatAction.Internal.LoadedStreamName(it.name) }
+            }
+    }
+
+    private fun sideActionLoadTopicName(
+        actions: Observable<Action>,
+        state: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Ui.LoadTopicInfo::class.java)
+            .observeOn(Schedulers.io())
+            .flatMap { action ->
+                ChatComponent.streamsRepository.getTopicById(action.idTopic)
+                    .toObservable()
+                    .map { ChatAction.Internal.LoadedTopicName(it.name) }
+            }
     }
 
     /*

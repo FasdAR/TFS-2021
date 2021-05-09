@@ -10,4 +10,6 @@ interface StreamsRepository {
     fun getOwnSubsStreams(): Observable<List<Stream>>
     fun getOwnTopics(idStream: Long): Observable<List<Topic>>
     fun searchQuery(query: String, isAmongSubs: Boolean = false): Single<List<Stream>>
+    fun getStreamById(id: Long): Single<Stream>
+    fun getTopicById(id: Long): Single<Topic>
 }

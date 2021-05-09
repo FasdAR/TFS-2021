@@ -19,6 +19,8 @@ sealed class ChatAction {
         object LoadingPage: Internal()
         class LoadedPage(val items: List<ViewType>, val direction: Int): Internal()
         class LoadedError(val error: Throwable): Internal()
-        class UpdateMessage(val item: ViewType)
+        class UpdateMessage(val item: ViewType) : Internal()
+        class LoadedStreamName(val streamName: String) : Internal()
+        class LoadedTopicName(val topicName: String) : Internal()
     }
 }
