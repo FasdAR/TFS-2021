@@ -76,7 +76,9 @@ class StreamListViewModel : ViewModel() {
             )
             is StreamListAction.Internal.LoadedTopics -> state.copy(
                 error = null,
-                items = state.items.flatMap { item ->
+                items = state.items
+                    .toMutableList().apply { removeAll(action.topics) } // Для предотвращения дубликатов
+                    .flatMap { item ->
                     if (item is StreamItem && item.uId.toLong() == action.idStream) {
                         return@flatMap listOf(item.copy(isOpen = true)) + action.topics
                     }
