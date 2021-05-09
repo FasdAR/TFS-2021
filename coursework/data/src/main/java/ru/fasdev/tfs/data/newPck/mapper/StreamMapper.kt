@@ -12,6 +12,6 @@ fun StreamDb.toStreamDomain(): StreamDomain {
     return StreamDomain(id, name)
 }
 
-fun Stream.toStreamDb(isAmongSubs: Boolean): StreamDb {
-    return StreamDb(streamId, name, isAmongSubs)
+fun StreamDomain.toStreamDb(isAmongSubs: Boolean): StreamDb {
+    return StreamDb(id, name, isAmongSubs)
 }

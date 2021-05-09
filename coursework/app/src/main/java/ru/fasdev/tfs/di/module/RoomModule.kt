@@ -23,6 +23,10 @@ class RoomModule
             ).build()
         }
 
+        fun getStreamDao(appDatabase: ru.fasdev.tfs.data.newPck.source.database.TfsDatabase): ru.fasdev.tfs.data.newPck.source.database.dao.StreamDao = appDatabase.streamDao()
+
+        fun getTopicDao(appDatabase: ru.fasdev.tfs.data.newPck.source.database.TfsDatabase): ru.fasdev.tfs.data.newPck.source.database.dao.TopicDao = appDatabase.topicDao()
+
         fun getStreamDao(appDatabase: TfsDatabase): StreamDao = appDatabase.streamDao()
 
         fun getTopicDao(appDatabase: TfsDatabase): TopicDao = appDatabase.topicDao()

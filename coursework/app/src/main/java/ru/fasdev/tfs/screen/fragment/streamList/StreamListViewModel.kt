@@ -24,7 +24,12 @@ class StreamListViewModel : ViewModel() {
     }
     //#region Test DI
     object StreamComponent {
-        val streamsRepository = StreamsRepositoryImpl(TfsApp.AppComponent.newUserApi, TfsApp.AppComponent.newStreamApi, TfsApp.AppComponent.newRoomDb)
+        val streamsRepository = StreamsRepositoryImpl(
+            TfsApp.AppComponent.newUserApi,
+            TfsApp.AppComponent.newStreamApi,
+            TfsApp.AppComponent.newStreamDao,
+            TfsApp.AppComponent.newTopicDao
+        )
     }
     //#endregion
 

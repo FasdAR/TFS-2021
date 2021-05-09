@@ -24,6 +24,8 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
         val chatApi = RetrofitModule.getChatApi(retrofit)
 
         lateinit var newRoomDb: ru.fasdev.tfs.data.newPck.source.database.TfsDatabase
+        val newStreamDao by lazy { RoomModule.getStreamDao(newRoomDb) }
+        val newTopicDao by lazy { RoomModule.getTopicDao(newRoomDb) }
 
         val newUserApi = RetrofitModule.getNewUserApi(retrofit)
         val newStreamApi = RetrofitModule.getNewStreamApi(retrofit)

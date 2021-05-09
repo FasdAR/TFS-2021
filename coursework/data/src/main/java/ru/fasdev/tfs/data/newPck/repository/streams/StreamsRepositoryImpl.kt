@@ -6,41 +6,48 @@ import ru.fasdev.tfs.data.newPck.mapper.toStreamDb
 import ru.fasdev.tfs.data.newPck.mapper.toStreamDomain
 import ru.fasdev.tfs.data.newPck.mapper.toTopicDb
 import ru.fasdev.tfs.data.newPck.mapper.toTopicDomain
-import ru.fasdev.tfs.data.newPck.source.database.TfsDatabase
 import ru.fasdev.tfs.data.newPck.source.database.dao.StreamDao
 import ru.fasdev.tfs.data.newPck.source.database.dao.TopicDao
+import ru.fasdev.tfs.data.newPck.source.database.model.StreamDb
 import ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi
 import ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi
 import ru.fasdev.tfs.domain.newPck.stream.model.Stream
 import ru.fasdev.tfs.domain.newPck.stream.model.Topic
 
+typealias StreamData = ru.fasdev.tfs.data.newPck.source.network.streams.model.Stream
+
 class StreamsRepositoryImpl(
     private val userApi: UsersApi,
     private val streamApi: StreamsApi,
-    private val tfsDatabase: TfsDatabase
+    private val streamDao: StreamDao,
+    private val topicDao: TopicDao
 ) : StreamsRepository {
-    private val streamDao: StreamDao get() = tfsDatabase.streamDao()
-    private val topicDao: TopicDao get() = tfsDatabase.topicDao()
+    private fun mapStreamsToDomain(list: List<StreamData>): Single<List<Stream>> {
+        return Observable.fromIterable(list)
+            .map { it.toStreamDomain() }
+            .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
+    }
+
+    private fun mapStreamsDbToDomain(list: List<StreamDb>): Single<List<Stream>> {
+        return Observable.fromIterable(list)
+            .map { it.toStreamDomain() }
+            .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
+    }
+
+    private fun cacheStreams(list: List<Stream>, isAmongSubs: Boolean) {
+        streamDao.insert(
+            list.map { it.toStreamDb(isAmongSubs) }
+        )
+    }
 
     override fun getAllStreams(): Observable<List<Stream>> {
         val networkSource = streamApi.getAllStreams()
-            .doOnSuccess {
-                val lists = it.streams.map { it.toStreamDb(false) }
-                streamDao.insert(lists, false)
-            }
-            .flatMap {
-                Observable.fromIterable(it.streams)
-                    .map { it.toStreamDomain() }
-                    .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
-            }
+            .flatMap { mapStreamsToDomain(it.streams) }
+            .doOnSuccess { cacheStreams(it, false) }
             .toObservable()
 
         val dbSource = streamDao.getAll()
-            .flatMap {
-                Observable.fromIterable(it)
-                    .map { it.toStreamDomain() }
-                    .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
-            }
+            .flatMap { mapStreamsDbToDomain(it) }
             .toObservable()
 
         return dbSource.concatWith(networkSource)
@@ -48,23 +55,12 @@ class StreamsRepositoryImpl(
 
     override fun getOwnSubsStreams(): Observable<List<Stream>> {
         val networkSource = userApi.getOwnSubscriptions()
-            .doOnSuccess {
-                val lists = it.subscriptions.map { it.toStreamDb(true) }
-                streamDao.insert(lists, true)
-            }
-            .flatMap {
-                Observable.fromIterable(it.subscriptions)
-                    .map { it.toStreamDomain() }
-                    .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
-            }
+            .flatMap { mapStreamsToDomain(it.subscriptions) }
+            .doOnSuccess { cacheStreams(it, true) }
             .toObservable()
 
         val dbSource = streamDao.getAll(true)
-            .flatMap {
-                Observable.fromIterable(it)
-                    .map { it.toStreamDomain() }
-                    .toSortedList { item1, item2 -> item1.name.compareTo(item2.name) }
-            }
+            .flatMap { mapStreamsDbToDomain(it) }
             .toObservable()
         return dbSource.concatWith(networkSource)
     }
@@ -94,7 +90,12 @@ class StreamsRepositoryImpl(
     }
 
     override fun searchQuery(query: String, isAmongSubs: Boolean): Single<List<Stream>> {
-        //TODO: SEARCH IN DATA BASE
-        return Single.just(listOf())
+        val source = if (isAmongSubs) {
+            streamDao.searchStreams(query, true)
+        } else {
+            streamDao.searchStreams(query)
+        }
+
+        return source.flatMap { mapStreamsDbToDomain(it) }
     }
 }
