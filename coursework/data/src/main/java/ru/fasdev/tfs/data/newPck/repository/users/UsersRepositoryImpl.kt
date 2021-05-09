@@ -5,16 +5,15 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.data.newPck.mapper.toUser
 import ru.fasdev.tfs.data.newPck.mapper.toUserOnlineStatus
-import ru.fasdev.tfs.data.newPck.source.network.users.api.UserApi
+import ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi
 import ru.fasdev.tfs.data.newPck.source.network.users.model.BaseUser
 import ru.fasdev.tfs.domain.newPck.user.model.User
 import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
 import java.lang.ref.SoftReference
-import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository {
+class UsersRepositoryImpl(private val userApi: UsersApi) : UsersRepository {
     private companion object {
         const val DELAY_QUERY = 10L
     }

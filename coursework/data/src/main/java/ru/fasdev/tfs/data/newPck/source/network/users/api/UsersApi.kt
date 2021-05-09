@@ -3,12 +3,9 @@ package ru.fasdev.tfs.data.newPck.source.network.users.api
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
-import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersIdResponse
-import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersMeResponse
-import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersPresenceResponse
-import ru.fasdev.tfs.data.newPck.source.network.users.response.UsersResponse
+import ru.fasdev.tfs.data.newPck.source.network.users.response.*
 
-interface UserApi
+interface UsersApi
 {
     @GET("users/me")
     fun getOwnUser(): Single<UsersMeResponse>
@@ -21,4 +18,10 @@ interface UserApi
 
     @GET("users/{id}")
     fun getUserById(@Path("id") id: Long): Single<UsersIdResponse>
+
+    @GET("users/me/subscriptions")
+    fun getOwnSubscriptions(): Single<UsersMeSubsResponse>
+
+    @GET("users/me/{id_stream}/topics")
+    fun getOwnTopics(@Path("id_stream") idStream: Long): Single<UsersMeTopicsResponse>
 }

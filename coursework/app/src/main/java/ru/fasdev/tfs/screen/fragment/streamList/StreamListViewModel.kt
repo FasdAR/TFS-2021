@@ -50,7 +50,7 @@ class StreamListViewModel : ViewModel() {
             )
             is StreamListAction.Internal.LoadedTopics -> state.copy(
                 error = null,
-                items = state.items?.flatMap {
+                items = state.items.flatMap {
                     if (it.uId.toLong() == action.idStream) {
                         return@flatMap listOf(it) + action.topics
                     }
@@ -59,7 +59,7 @@ class StreamListViewModel : ViewModel() {
             )
             is StreamListAction.Internal.RemoveTopics -> state.copy(
                 error = null,
-                items = state.items?.toMutableList()?.apply {
+                items = state.items.toMutableList().apply {
                     val startIndex = indexOfFirst {
                         it is StreamItem && it.uId.toLong() == action.idStream
                     }
