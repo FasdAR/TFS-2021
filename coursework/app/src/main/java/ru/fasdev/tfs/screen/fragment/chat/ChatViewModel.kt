@@ -1,71 +1,44 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import androidx.lifecycle.ViewModel
-import com.freeletics.rxredux.StateAccessor
-import com.freeletics.rxredux.reduxStore
-import com.jakewharton.rxrelay2.PublishRelay
-import com.jakewharton.rxrelay2.Relay
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.schedulers.Schedulers
-import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.old.mapper.mapToUiList
-import ru.fasdev.tfs.data.old.repo.MessageRepoImpl
-import ru.fasdev.tfs.di.module.ChatDomainModule
-import ru.fasdev.tfs.domain.old.message.interactor.MessageInteractor
-import ru.fasdev.tfs.domain.old.message.interactor.MessageInteractorImpl
-import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
-import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.Store
+import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
-import ru.fasdev.tfs.view.MviView
 
 class ChatViewModel : ViewModel() {
-    object ChatComponent {
-        val messageRepo =
-            ChatDomainModule.getMessageRepo(
-                TfsApp.AppComponent.chatApi,
-                TfsApp.AppComponent.json,
-                TfsApp.AppComponent.roomDb,
-                TfsApp.AppComponent.messageDao,
-                TfsApp.AppComponent.userDao,
-                TfsApp.AppComponent.reactionDao
-            )
-        val messageInteractor = MessageInteractorImpl(messageRepo)
-    }
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-
-    private val interactor: MessageInteractor = ChatComponent.messageInteractor
-
-    private val inputRelay: Relay<ChatAction> = PublishRelay.create()
-    val input: Consumer<ChatAction> get() = inputRelay
-
-    val store = inputRelay.reduxStore(
+    private val store: Store<Action, ChatState> = Store(
         initialState = ChatState(),
-        sideEffects = listOf(::sendMessageSideEffect, ::selectedReactionSideEffect, ::loadPagingSideEffect),
-        reducer = ::reducer
+        reducer = ::reducer,
+        middlewares = listOf()
     )
 
-    fun attachView(mviView: MviView<ChatState>) {
-        compositeDisposable += store.subscribe{mviView.render(it)}
-    }
+    private val wiring = store.wire()
+    private var viewBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.clear()
+        wiring.dispose()
     }
 
-    fun reducer(state: ChatState, action: ChatAction): ChatState {
+    fun bind(view: MviView<Action, ChatState>) {
+        viewBinding = store.bind(view)
+    }
+
+    fun unBind() {
+        viewBinding.dispose()
+    }
+
+    private fun reducer(state: ChatState, action: Action): ChatState {
         return when (action) {
-            is ChatAction.LoadData -> state.copy(isLoading = true, error = null)
-            is ChatAction.LoadedData -> state.copy(isLoading = false, error = null, listItems = action.array)
-            is ChatAction.ErrorLoading -> state.copy(isLoading = false, error = action.error)
             else -> state
         }
     }
 
+    /*
     private fun sendMessageSideEffect(
         action: Observable<ChatAction>,
         state: StateAccessor<ChatState>
@@ -138,5 +111,5 @@ class ChatViewModel : ViewModel() {
                         ChatAction.ErrorLoading(error)
                     }
             }
-    }
+    }*/
 }

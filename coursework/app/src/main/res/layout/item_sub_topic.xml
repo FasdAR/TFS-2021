@@ -26,6 +26,7 @@
         android:textColor="@color/white_100"
         android:id="@+id/msg_count"
         android:layout_marginStart="25dp"
-        tools:text="25 mes"/>
+        tools:text="25 mes"
+        android:visibility="gone"/>
 
 </LinearLayout>

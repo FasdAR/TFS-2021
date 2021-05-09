@@ -6,7 +6,7 @@ import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.databinding.ItemSubTopicBinding
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 
-class TopicViewHolder(val view: View, private val onClickSubTopicListener: OnClickTopicListener) : ViewHolder<TopicItem>(view) {
+class TopicViewHolder(view: View, private val onClickSubTopicListener: OnClickTopicListener) : ViewHolder<TopicItem>(view) {
     private val binding = ItemSubTopicBinding.bind(view)
 
     interface OnClickTopicListener {

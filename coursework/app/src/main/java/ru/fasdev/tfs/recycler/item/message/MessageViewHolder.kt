@@ -1,16 +1,15 @@
-package ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder
+package ru.fasdev.tfs.recycler.item.message
 
 import android.os.Bundle
 import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.MessageUi
 import ru.fasdev.tfs.view.message.MessageViewGroup
 import ru.fasdev.tfs.view.message.base.BaseMessageView
 import ru.fasdev.tfs.view.message.base.model.MessageReactionUi
 import ru.fasdev.tfs.view.reaction.ReactionView
 
-abstract class MessageViewHolder<T : MessageUi>(
+abstract class MessageViewHolder<T : MessageItem>(
     val view: View,
     private val reactionListener: OnClickReactionListener,
     private val messageLongListener: OnLongClickMessageListener

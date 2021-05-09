@@ -1,29 +1,24 @@
 package ru.fasdev.tfs.screen.fragment.chat.mvi
 
-import ru.fasdev.tfs.domain.old.message.model.DirectionScroll
+import ru.fasdev.tfs.mviCore.entity.action.SideAction
+import ru.fasdev.tfs.mviCore.entity.action.UiAction
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 sealed class ChatAction {
-    object LoadData : ChatAction()
-    class ErrorLoading(val error: Throwable) : ChatAction()
-    class LoadedData(val array: List<ViewType>) : ChatAction()
+    sealed class Ui: UiAction {
+        class LoadPageMessages(val direction: Int) : Ui()
+        class SendMessage(val textMessage: String) : Ui()
+        class SelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
+        class UnSelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
+        class LoadStreamInfo(val idStream: Long) : Ui()
+        class LoadTopicInfo(val idTopic: Long) : Ui()
+        class OpenEmojiDialog(val idMessage: Long?) : Ui()
+    }
 
-    class SideEffectLoadingPage(
-        val topicName: String,
-        val streamName: String,
-        val lastVisibleId: Long,
-        val direction: DirectionScroll
-    ) : ChatAction()
-
-    class SideEffectSelectedReaction(
-        val idMessage: Int,
-        val emoji: String,
-        val isSelected: Boolean
-    ) : ChatAction()
-
-    class SideEffectSendMessage(
-        val textMessage: String,
-        val streamName: String,
-        val topicName: String
-    ) : ChatAction()
+    sealed class Internal : SideAction {
+        object LoadingPage: Internal()
+        class LoadedPage(val items: List<ViewType>, val direction: Int): Internal()
+        class LoadedError(val error: Throwable): Internal()
+        class UpdateMessage(val item: ViewType)
+    }
 }
