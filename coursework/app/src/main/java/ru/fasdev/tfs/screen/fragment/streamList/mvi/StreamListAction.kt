@@ -10,7 +10,7 @@ sealed class StreamListAction {
         object LoadSubStreams: Ui()
         class LoadTopics(val idStream: Long): Ui()
         class RemoveTopics(val idStream: Long): Ui()
-        class SearchStreams(val query: String): Ui()
+        class SearchStreams(val query: String, val isAmongSubs: Boolean): Ui()
     }
 
     sealed class Internal : SideAction {

@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentTopicListBinding
 import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
@@ -22,6 +25,7 @@ import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
 import ru.fasdev.tfs.screen.fragment.streamList.recycler.diff.StreamItemCallback
 import ru.fasdev.tfs.recycler.item.stream.StreamViewHolder
 import ru.fasdev.tfs.recycler.item.topic.TopicViewHolder
+import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.emptyListState
@@ -43,6 +47,7 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
         }
     }
 
+    private var searchDisposable: Disposable = Disposables.empty()
     override val actions: PublishRelay<Action> = PublishRelay.create()
     private val viewModel: StreamListViewModel by viewModels()
 
@@ -72,11 +77,20 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        searchDisposable = (parentFragment as ChannelsFragment).provideSearch.subscribe {
+            sendSearchStreamsAction(it)
+        }
+
         binding.rvTopics.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTopics.adapter = adapter
 
         viewModel.bind(this)
         sendLoadStreamsAction()
+    }
+
+    private fun sendSearchStreamsAction(query: String) {
+        val isSubs = mode == SUBSCRIBED_MODE
+        actions.accept(StreamListAction.Ui.SearchStreams(query, isSubs))
     }
 
     private fun sendLoadStreamsAction() {
@@ -135,6 +149,7 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
     override fun onDestroy() {
         super.onDestroy()
         viewModel.unBind()
+        searchDisposable.dispose()
     }
 
     override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {

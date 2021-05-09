@@ -19,8 +19,7 @@ import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import java.util.concurrent.TimeUnit
 
-class PeopleViewModel : ViewModel()
-{
+class PeopleViewModel : ViewModel() {
     private companion object {
         const val SEARCH_TIME_OUT = 500L
     }
@@ -90,7 +89,7 @@ class PeopleViewModel : ViewModel()
                     .toObservable()
                     .map<PeopleAction.Internal> { PeopleAction.Internal.LoadedUsers(it) }
                     .onErrorReturn { PeopleAction.Internal.LoadedError(it) }
-                    .startWith (PeopleAction.Internal.LoadingUsers)
+                    .startWith(PeopleAction.Internal.LoadingUsers)
             }
     }
 
@@ -103,7 +102,7 @@ class PeopleViewModel : ViewModel()
             .debounce(SEARCH_TIME_OUT, TimeUnit.MILLISECONDS)
             .distinctUntilChanged()
             .observeOn(Schedulers.io())
-            .switchMap {action ->
+            .switchMap { action ->
                 PeopleComponent.usersRepository.searchUsers(action.query)
                     .flatMap { list ->
                         Observable.fromIterable(list)

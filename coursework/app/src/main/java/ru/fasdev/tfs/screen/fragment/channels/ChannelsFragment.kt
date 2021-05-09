@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.tabs.TabLayoutMediator
+import com.jakewharton.rxrelay2.PublishRelay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentChannelsBinding
@@ -30,7 +31,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels), OnBackPressedList
     private val vpFactoryFragment = StreamFragmentFactory()
     private lateinit var vpAdapter: ViewPagerFragmentAdapter
 
-    val provideSearch: MutableLiveData<String> = MutableLiveData<String>()
+    val provideSearch: PublishRelay<String> = PublishRelay.create()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
@@ -56,7 +57,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels), OnBackPressedList
 
             attachToolbar = binding.toolbarLayout.root
             textChangeListener = SearchToolbar.TextChangeListener { query ->
-                provideSearch.postValue(query)
+                provideSearch.accept(query)
             }
         }
 
