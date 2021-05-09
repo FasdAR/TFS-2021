@@ -5,7 +5,7 @@ import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 data class TopicItem(
     override val uId: Int,
-    val streamName: String,
+    val idStream: Long,
     val nameTopic: String,
     val messageCount: Int,
     override val viewType: Int = R.layout.item_sub_topic

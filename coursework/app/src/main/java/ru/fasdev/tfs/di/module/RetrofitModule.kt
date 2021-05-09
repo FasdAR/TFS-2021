@@ -81,8 +81,12 @@ class RetrofitModule {
             return retrofit.create(UserApi::class.java)
         }
 
-        fun getNewuserApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi {
+        fun getNewUserApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi {
             return retrofit.create(ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi::class.java)
+        }
+
+        fun getNewStreamApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi {
+            return retrofit.create(ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi::class.java)
         }
 
         fun getStreamApi(retrofit: Retrofit): StreamApi {

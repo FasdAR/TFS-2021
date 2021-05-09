@@ -30,7 +30,7 @@ import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 
 class StreamListFragment : Fragment(R.layout.fragment_topic_list),
     StreamViewHolder.OnClickStreamListener, TopicViewHolder.OnClickTopicListener,
-    MviView<Action, StreamListState> {
+    MviView<Action, StreamListState>, InfoPlaceholderFragment.Listener {
 
     companion object {
         const val ALL_MODE = 1
@@ -76,7 +76,10 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
         binding.rvTopics.adapter = adapter
 
         viewModel.bind(this)
+        sendLoadStreamsAction()
+    }
 
+    private fun sendLoadStreamsAction() {
         when (mode) {
             ALL_MODE -> {
                 actions.accept(StreamListAction.Ui.LoadAllStreams)
@@ -95,8 +98,9 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
         }
     }
 
-    override fun onClickTopic(nameTopic: String, streamName: String) {
-        fragmentRouter.navigateTo(ChatFragment.getScreen(streamName, nameTopic))
+    override fun onClickTopic(nameTopic: String, idStream: Long) {
+        //TODO: GET INFO STREAM
+        fragmentRouter.navigateTo(ChatFragment.getScreen(idStream.toString(), nameTopic))
     }
 
     override fun render(state: StreamListState) {
@@ -131,5 +135,13 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
     override fun onDestroy() {
         super.onDestroy()
         viewModel.unBind()
+    }
+
+    override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {
+        when (buttonType) {
+            InfoPlaceholderFragment.ButtonType.POSITIVE -> {
+                sendLoadStreamsAction()
+            }
+        }
     }
 }

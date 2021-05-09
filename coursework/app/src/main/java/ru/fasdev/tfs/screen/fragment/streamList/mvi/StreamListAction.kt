@@ -16,7 +16,7 @@ sealed class StreamListAction {
     sealed class Internal : SideAction {
         object LoadingStreams: Internal()
         class LoadedTopics(val idStream: Long, val topics: List<ViewType>): Internal()
-        class RemoveTopics(val idStream: Long): Internal()
+        class RemoveTopics(val idStream: Long, val topics: List<ViewType>): Internal()
         class LoadedStreams(val streams: List<ViewType>): Internal()
         class LoadedError(val error: Throwable): Internal()
     }

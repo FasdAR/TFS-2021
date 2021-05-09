@@ -10,14 +10,14 @@ class TopicViewHolder(val view: View, private val onClickSubTopicListener: OnCli
     private val binding = ItemSubTopicBinding.bind(view)
 
     interface OnClickTopicListener {
-        fun onClickTopic(nameTopic: String, nameStream: String)
+        fun onClickTopic(nameTopic: String, idStream: Long)
     }
 
     override fun bind(item: TopicItem) {
         binding.nameTopic.text = item.nameTopic
         binding.msgCount.text = binding.root.resources.getString(R.string.sub_topic_msg, item.messageCount.toString())
 
-        binding.root.setOnClickListener { onClickSubTopicListener.onClickTopic(item.nameTopic, item.streamName) }
+        binding.root.setOnClickListener { onClickSubTopicListener.onClickTopic(item.nameTopic, item.idStream) }
         val isEvenNumber = (item.uId % 2) != 0
 
         if (isEvenNumber) {
