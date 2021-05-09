@@ -1,18 +1,19 @@
 package ru.fasdev.tfs.screen.fragment.streamList
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
+import ru.fasdev.tfs.data.mapper.toStreamItem
+import ru.fasdev.tfs.data.mapper.toTopicItem
 import ru.fasdev.tfs.data.newPck.repository.streams.StreamsRepositoryImpl
+import ru.fasdev.tfs.domain.newPck.stream.model.Stream
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.item.stream.StreamItem
-import ru.fasdev.tfs.recycler.item.topic.TopicItem
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
 
@@ -92,11 +93,11 @@ class StreamListViewModel : ViewModel() {
     }
 
     private fun sideActionRemoveTopics(
-        acions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>, stateFlow: Observable<StreamListState>
     ) : Observable<Action> {
-        return acions
+        return actions
             .ofType(StreamListAction.Ui.RemoveTopics::class.java)
-            .withLatestFrom(state) { action, state ->
+            .withLatestFrom(stateFlow) { action, state ->
                 val items = state.items
 
                 val startIndex = items.indexOfFirst { it is StreamItem && it.uId.toLong() == action.idStream }
@@ -104,6 +105,7 @@ class StreamListViewModel : ViewModel() {
                 val subItems = items.subList(startIndex + OFFSET_ARRAY, items.size)
                 var endIndex = subItems.indexOfFirst { it is StreamItem }
                 if (endIndex == NULL_INDEX) endIndex = subItems.size
+
                 val topics = subItems.subList(0, endIndex)
 
                 return@withLatestFrom StreamListAction.Internal.RemoveTopics(action.idStream, topics)
@@ -111,23 +113,16 @@ class StreamListViewModel : ViewModel() {
     }
 
     private fun sideActionLoadTopics(
-        acions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>, state: Observable<StreamListState>
     ) : Observable<Action> {
-        return acions
+        return actions
             .ofType(StreamListAction.Ui.LoadTopics::class.java)
             .observeOn(Schedulers.io())
             .flatMap { action ->
                 StreamComponent.streamsRepository.getOwnTopics(action.idStream)
                     .flatMap {
                         Observable.fromIterable(it)
-                            .map {
-                                TopicItem(
-                                    uId = it.id.toInt(),
-                                    idStream = action.idStream,
-                                    nameTopic = it.name,
-                                    messageCount = 0
-                                )
-                            }
+                            .map { it.toTopicItem(action.idStream) }
                             .toList()
                             .toObservable()
                     }
@@ -137,52 +132,38 @@ class StreamListViewModel : ViewModel() {
     }
 
     private fun sideActionLoadSubStreams(
-        acions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>, state: Observable<StreamListState>
     ) : Observable<Action> {
-        return acions
+        return actions
             .ofType(StreamListAction.Ui.LoadSubStreams.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
                 StreamComponent.streamsRepository.getOwnSubsStreams()
-                    .flatMap {
-                        Observable.fromIterable(it)
-                            .map {
-                                StreamItem(
-                                    uId = it.id.toInt(),
-                                    nameTopic = it.name
-                                )
-                            }
-                            .toList()
-                            .toObservable()
-                    }
-                    .map<StreamListAction.Internal> { StreamListAction.Internal.LoadedStreams(it) }
-                    .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
-                    .startWith(StreamListAction.Internal.LoadingStreams)
+                    .loadStreams()
             }
     }
 
     private fun sideActionLoadAllStreams(
-        acions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>, state: Observable<StreamListState>
     ) : Observable<Action> {
-        return acions
+        return actions
             .ofType(StreamListAction.Ui.LoadAllStreams.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
                 StreamComponent.streamsRepository.getAllStreams()
-                    .flatMap {
-                        Observable.fromIterable(it)
-                            .map {
-                                StreamItem(
-                                    uId = it.id.toInt(),
-                                    nameTopic = it.name
-                                )
-                            }
-                            .toList()
-                            .toObservable()
-                    }
-                    .map<StreamListAction.Internal> { StreamListAction.Internal.LoadedStreams(it) }
-                    .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
-                    .startWith(StreamListAction.Internal.LoadingStreams)
+                    .loadStreams()
             }
+    }
+
+    private fun Observable<List<Stream>>.loadStreams(): Observable<StreamListAction.Internal> {
+        return flatMap {
+            Observable.fromIterable(it)
+                .map { it.toStreamItem() }
+                .toList()
+                .toObservable()
+        }
+        .map<StreamListAction.Internal> { StreamListAction.Internal.LoadedStreams(it) }
+        .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
+        .startWith(StreamListAction.Internal.LoadingStreams)
     }
 }
