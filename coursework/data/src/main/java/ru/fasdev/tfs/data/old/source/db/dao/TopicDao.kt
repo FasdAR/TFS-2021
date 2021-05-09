@@ -10,6 +10,7 @@ import ru.fasdev.tfs.data.old.source.db.model.TopicDB
 @Dao
 abstract class TopicDao: BaseDao<TopicDB>
 {
+
     @Query("SELECT * FROM topic WHERE id_stream = :idStream")
     abstract fun getTopicsInStream(idStream: Long): Single<List<TopicDB>>
 

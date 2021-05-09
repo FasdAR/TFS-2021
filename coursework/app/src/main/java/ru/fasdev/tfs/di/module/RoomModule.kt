@@ -9,6 +9,13 @@ import ru.fasdev.tfs.data.old.source.db.dao.*
 class RoomModule
 {
     companion object {
+        fun getNewAppDatabase(context: Context): ru.fasdev.tfs.data.newPck.source.database.TfsDatabase {
+            return Room.databaseBuilder(
+                context,
+                ru.fasdev.tfs.data.newPck.source.database.TfsDatabase::class.java, "tfs_db_new"
+            ).build()
+        }
+
         fun getAppDatabase(context: Context): TfsDatabase {
             return Room.databaseBuilder(
                 context,

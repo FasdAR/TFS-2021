@@ -24,7 +24,7 @@ class StreamListViewModel : ViewModel() {
     }
     //#region Test DI
     object StreamComponent {
-        val streamsRepository = StreamsRepositoryImpl(TfsApp.AppComponent.newUserApi, TfsApp.AppComponent.newStreamApi)
+        val streamsRepository = StreamsRepositoryImpl(TfsApp.AppComponent.newUserApi, TfsApp.AppComponent.newStreamApi, TfsApp.AppComponent.newRoomDb)
     }
     //#endregion
 
@@ -53,10 +53,13 @@ class StreamListViewModel : ViewModel() {
 
     private fun reducer(state: StreamListState, action: Action): StreamListState {
         return when (action) {
-            is StreamListAction.Internal.LoadedError -> state.copy(
-                isLoading = false,
-                error = action.error
-            )
+            is StreamListAction.Internal.LoadedError -> {
+                return if(state.items.isEmpty()) {
+                    state.copy(isLoading = false, error = action.error)
+                } else {
+                    state
+                }
+            }
             is StreamListAction.Internal.LoadingStreams -> state.copy(
                 isLoading = true,
                 error = null
@@ -86,7 +89,8 @@ class StreamListViewModel : ViewModel() {
                             return@map item
                         }
                     }
-                    .toMutableList().apply { removeAll(action.topics) }
+                    .toMutableList()
+                    .apply { removeAll(action.topics) }
             )
             else -> state
         }

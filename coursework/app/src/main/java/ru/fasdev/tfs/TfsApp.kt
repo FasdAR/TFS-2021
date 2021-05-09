@@ -23,6 +23,8 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
         val streamApi = RetrofitModule.getStreamApi(retrofit)
         val chatApi = RetrofitModule.getChatApi(retrofit)
 
+        lateinit var newRoomDb: ru.fasdev.tfs.data.newPck.source.database.TfsDatabase
+
         val newUserApi = RetrofitModule.getNewUserApi(retrofit)
         val newStreamApi = RetrofitModule.getNewStreamApi(retrofit)
 
@@ -37,6 +39,7 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
     override fun onCreate() {
         super.onCreate()
         AppComponent.roomDb = RoomModule.getAppDatabase(this)
+        AppComponent.newRoomDb = RoomModule.getNewAppDatabase(this)
         RxJavaPlugins.setErrorHandler { e: Throwable? -> Log.e("RxDisposeError", e?.message.toString())}
     }
 
