@@ -14,8 +14,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
-{
+class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository {
     private companion object {
         const val DELAY_QUERY = 10L
     }
@@ -31,8 +30,7 @@ class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
     override fun getOwnUser(): Single<User> {
         return userApi.getOwnUser()
             .map {
-                (it as BaseUser).toUser()
-                    .copy(isBot = false)
+                (it as BaseUser).toUser().copy(isBot = false)
             }
             .flatMap(::getOnlineStatus)
     }
@@ -48,13 +46,13 @@ class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
                 Observable.fromIterable(it.members)
                     .filter { !it.isBot }
                     .map { user -> user.toUser().copy(isBot = user.isBot) }
-                    .concatMap {
-                        Observable.just(it).delay(DELAY_QUERY, TimeUnit.MILLISECONDS)
+                    .concatMap { user ->
+                        Observable.just(user).delay(DELAY_QUERY, TimeUnit.MILLISECONDS)
                     }
                     .flatMapSingle { user ->
                         getOnlineStatus(user).subscribeOn(Schedulers.io())
                     }
-                    .toSortedList { item1, item2 -> item1.fullName.compareTo(item2.fullName)  }
+                    .toSortedList { item1, item2 -> item1.fullName.compareTo(item2.fullName) }
             }
             .doOnSuccess {
                 temporaryCacheAllUsers = SoftReference(it)
@@ -72,5 +70,13 @@ class UsersRepositoryImpl(private val userApi: UserApi) : UsersRepository
                 return@filter userFullName.contains(readyQuery) || userEmail.contains(readyQuery)
             }
             .toList()
+    }
+
+    override fun getUserById(id: Long): Single<User> {
+        return userApi.getUserById(id)
+            .map {
+                it.user.toUser().copy(isBot = false)
+            }
+            .flatMap(::getOnlineStatus)
     }
 }

@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.people
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,7 @@ import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
 import ru.fasdev.tfs.recycler.item.user.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.info.*
-import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
+import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 
 class PeopleFragment : Fragment(R.layout.fragment_people),
@@ -105,7 +104,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
     }
 
     override fun onClickUser(idUser: Int, email: String) {
-        rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser.toLong()))
+        rootRouter.navigateTo(AnotherProfileFragment.getScreen(idUser.toLong()))
         binding.searchLayout.hideKeyboard()
     }
 
