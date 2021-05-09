@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder
+package ru.fasdev.tfs.recycler.item.stream
 
 import android.os.Bundle
 import android.view.View
@@ -6,9 +6,8 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.getColorCompat
 import ru.fasdev.tfs.databinding.ItemTopicBinding
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
 
-class StreamViewHolder(val view: View, private val streamListener: OnClickStreamListener) : ViewHolder<StreamUi>(view) {
+class StreamViewHolder(val view: View, private val streamListener: OnClickStreamListener) : ViewHolder<StreamItem>(view) {
     companion object {
         const val KEY_PAYLOADS_IS_OPEN = "ID_OPEN"
     }
@@ -20,7 +19,7 @@ class StreamViewHolder(val view: View, private val streamListener: OnClickStream
     private val binding = ItemTopicBinding.bind(view)
     private var isOpened: Boolean = false
 
-    private var item: StreamUi? = null
+    private var item: StreamItem? = null
 
     init {
         binding.root.setOnClickListener {
@@ -28,7 +27,7 @@ class StreamViewHolder(val view: View, private val streamListener: OnClickStream
         }
     }
 
-    override fun bind(item: StreamUi) {
+    override fun bind(item: StreamItem) {
         this.item = item
 
         binding.nameTopic.text = view.resources.getString(R.string.main_topic_title, item.nameTopic)
@@ -37,7 +36,7 @@ class StreamViewHolder(val view: View, private val streamListener: OnClickStream
         setOpenArrow(isOpened)
     }
 
-    override fun bind(item: StreamUi, payloads: List<Any>) {
+    override fun bind(item: StreamItem, payloads: List<Any>) {
         val bundle = payloads[0] as Bundle
         isOpened = bundle.getBoolean(KEY_PAYLOADS_IS_OPEN)
         setOpenArrow(isOpened)

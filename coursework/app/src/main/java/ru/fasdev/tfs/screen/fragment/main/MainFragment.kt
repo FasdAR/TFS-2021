@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
-import ru.fasdev.tfs.view.ui.fragment.channels.ChannelsFragment
+import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
 import ru.fasdev.tfs.screen.fragment.people.PeopleFragment

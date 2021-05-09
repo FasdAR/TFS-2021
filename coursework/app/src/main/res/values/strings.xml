@@ -28,4 +28,5 @@
     <string name="empty_users_list">The list of users is empty</string>
 
     <string name="empty_res_search">Nothing was found for your search</string>
+    <string name="empty_streams_list">The list of streams is empty</string>
 </resources>

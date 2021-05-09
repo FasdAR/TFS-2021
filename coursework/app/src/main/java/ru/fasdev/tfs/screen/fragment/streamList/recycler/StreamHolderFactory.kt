@@ -4,8 +4,8 @@ import android.view.View
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolderFactory
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.StreamViewHolder
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewHolder.TopicViewHolder
+import ru.fasdev.tfs.recycler.item.stream.StreamViewHolder
+import ru.fasdev.tfs.recycler.item.topic.TopicViewHolder
 
 class StreamHolderFactory(
     private val streamListener: StreamViewHolder.OnClickStreamListener,

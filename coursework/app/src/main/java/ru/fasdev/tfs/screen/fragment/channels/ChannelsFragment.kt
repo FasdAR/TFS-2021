@@ -1,4 +1,4 @@
-package ru.fasdev.tfs.view.ui.fragment.channels
+package ru.fasdev.tfs.screen.fragment.channels
 
 import android.os.Bundle
 import android.view.LayoutInflater

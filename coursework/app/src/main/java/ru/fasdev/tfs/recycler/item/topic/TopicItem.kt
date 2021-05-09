@@ -1,9 +1,9 @@
-package ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType
+package ru.fasdev.tfs.recycler.item.topic
 
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
-data class TopicUi(
+data class TopicItem(
     override val uId: Int,
     val streamName: String,
     val nameTopic: String,

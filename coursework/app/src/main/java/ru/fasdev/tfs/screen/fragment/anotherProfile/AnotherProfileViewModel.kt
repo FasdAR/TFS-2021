@@ -14,7 +14,7 @@ import ru.fasdev.tfs.screen.fragment.anotherProfile.mvi.AnotherProfileAction
 import ru.fasdev.tfs.screen.fragment.anotherProfile.mvi.AnotherProfileState
 
 class AnotherProfileViewModel : ViewModel() {
-   //#region Test DI
+    //#region Test DI
     object ProfileComponent {
        val usersRepository = UsersRepositoryImpl(TfsApp.AppComponent.newUserApi)
     }
