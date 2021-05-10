@@ -6,7 +6,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.ItemUserBinding
-import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
+import ru.fasdev.tfs.domain.user.model.UserOnlineStatus
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 
 class UserViewHolder(val view: View, private val clickUser: OnClickUserListener) : ViewHolder<UserItem>(view) {

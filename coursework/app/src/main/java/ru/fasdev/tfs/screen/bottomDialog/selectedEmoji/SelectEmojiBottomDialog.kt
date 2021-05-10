@@ -17,7 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.data.old.mapper.Emoji
+import ru.fasdev.tfs.data.source.network.emoji.EmojiList
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
 import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
@@ -77,7 +77,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     // #region Rx chains
     private fun loadEmoji() {
-        disposeEmojiLoad += Single.just(Emoji.values())
+        disposeEmojiLoad += Single.just(EmojiList.values())
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
             .map { EmojiUi(it.index, it.value.unicode, it.value.nameInZulip) }
             .toList()

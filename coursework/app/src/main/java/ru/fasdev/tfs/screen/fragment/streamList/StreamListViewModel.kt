@@ -8,8 +8,8 @@ import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toStreamItem
 import ru.fasdev.tfs.data.mapper.toTopicItem
-import ru.fasdev.tfs.data.newPck.repository.streams.StreamsRepositoryImpl
-import ru.fasdev.tfs.domain.newPck.stream.model.Stream
+import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
+import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action

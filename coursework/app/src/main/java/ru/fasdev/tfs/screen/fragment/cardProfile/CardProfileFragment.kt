@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import coil.load
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentCardProfileBinding
-import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
+import ru.fasdev.tfs.domain.user.model.UserOnlineStatus
 
 class CardProfileFragment : Fragment(R.layout.fragment_card_profile) {
     companion object {

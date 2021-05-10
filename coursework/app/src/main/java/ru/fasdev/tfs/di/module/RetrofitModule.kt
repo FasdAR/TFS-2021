@@ -12,11 +12,10 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import ru.fasdev.tfs.BuildConfig
-import ru.fasdev.tfs.data.newPck.source.network.events.api.EventsApi
-import ru.fasdev.tfs.data.newPck.source.network.messages.api.MessagesApi
-import ru.fasdev.tfs.data.old.source.network.chat.api.ChatApi
-import ru.fasdev.tfs.data.old.source.network.stream.api.StreamApi
-import ru.fasdev.tfs.data.old.source.network.users.api.UserApi
+import ru.fasdev.tfs.data.source.network.events.api.EventsApi
+import ru.fasdev.tfs.data.source.network.messages.api.MessagesApi
+import ru.fasdev.tfs.data.source.network.streams.api.StreamsApi
+import ru.fasdev.tfs.data.source.network.users.api.UsersApi
 import java.util.concurrent.TimeUnit
 
 class RetrofitModule {
@@ -82,32 +81,20 @@ class RetrofitModule {
                 .build()
         }
 
-        fun getUserApi(retrofit: Retrofit): UserApi {
-            return retrofit.create(UserApi::class.java)
-        }
-
         fun getNewMessageApi(retrofit: Retrofit): MessagesApi {
             return retrofit.create(MessagesApi::class.java)
         }
 
-        fun getNewUserApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi {
-            return retrofit.create(ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi::class.java)
+        fun getNewUserApi(retrofit: Retrofit): UsersApi {
+            return retrofit.create(UsersApi::class.java)
         }
 
-        fun getNewStreamApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi {
-            return retrofit.create(ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi::class.java)
+        fun getNewStreamApi(retrofit: Retrofit): StreamsApi {
+            return retrofit.create(StreamsApi::class.java)
         }
 
         fun getEventsApi(retrofit: Retrofit): EventsApi {
             return retrofit.create(EventsApi::class.java)
-        }
-
-        fun getStreamApi(retrofit: Retrofit): StreamApi {
-            return retrofit.create(StreamApi::class.java)
-        }
-
-        fun getChatApi(retrofit: Retrofit): ChatApi {
-            return retrofit.create(ChatApi::class.java)
         }
     }
 }

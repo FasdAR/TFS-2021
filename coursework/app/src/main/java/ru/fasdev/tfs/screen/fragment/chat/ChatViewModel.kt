@@ -8,14 +8,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import kotlinx.serialization.encodeToString
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toMessageItem
-import ru.fasdev.tfs.data.newPck.repository.messages.MessagesRepositoryImpl
-import ru.fasdev.tfs.data.newPck.repository.streams.StreamsRepositoryImpl
-import ru.fasdev.tfs.data.newPck.source.network.base.model.Narrow
-import ru.fasdev.tfs.data.newPck.source.network.events.manager.EventsManager
-import ru.fasdev.tfs.data.newPck.source.network.events.model.EventType
+import ru.fasdev.tfs.data.repository.messages.MessagesRepositoryImpl
+import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
+import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action

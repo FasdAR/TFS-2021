@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.ownProfile.mvi
 
-import ru.fasdev.tfs.domain.newPck.user.model.User
+import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.mviCore.entity.action.SideAction
 import ru.fasdev.tfs.mviCore.entity.action.UiAction
 

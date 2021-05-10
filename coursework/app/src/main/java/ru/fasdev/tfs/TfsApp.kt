@@ -4,26 +4,19 @@ import android.app.Application
 import android.util.Log
 import io.reactivex.plugins.RxJavaPlugins
 import retrofit2.Retrofit
-import ru.fasdev.tfs.data.old.source.db.TfsDatabase
-import ru.fasdev.tfs.data.old.source.db.dao.StreamDao
-import ru.fasdev.tfs.data.old.source.db.dao.TopicDao
-import ru.fasdev.tfs.data.old.source.network.users.api.UserApi
+import ru.fasdev.tfs.data.source.database.TfsDatabase
 import ru.fasdev.tfs.di.module.RetrofitModule
 import ru.fasdev.tfs.di.module.RoomModule
 import ru.fasdev.tfs.di.provide.ProvideRetrofit
-import ru.fasdev.tfs.di.provide.ProvideRoom
 
 
-class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
+class TfsApp : Application(), ProvideRetrofit {
     object AppComponent {
 
         val json = RetrofitModule.getJson()
         val retrofit = RetrofitModule.getRetrofit()
-        val userApi = RetrofitModule.getUserApi(retrofit)
-        val streamApi = RetrofitModule.getStreamApi(retrofit)
-        val chatApi = RetrofitModule.getChatApi(retrofit)
 
-        lateinit var newRoomDb: ru.fasdev.tfs.data.newPck.source.database.TfsDatabase
+        lateinit var newRoomDb: TfsDatabase
         val newStreamDao by lazy { RoomModule.getStreamDao(newRoomDb) }
         val newTopicDao by lazy { RoomModule.getTopicDao(newRoomDb) }
 
@@ -32,24 +25,18 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
         val newStreamApi = RetrofitModule.getNewStreamApi(retrofit)
         val eventsApi = RetrofitModule.getEventsApi(retrofit)
 
-        lateinit var roomDb: TfsDatabase
-        val streamDao by lazy { RoomModule.getStreamDao(roomDb) }
-        val topicDao by lazy { RoomModule.getTopicDao(roomDb) }
-        val messageDao by lazy { RoomModule.getMessageDao(roomDb) }
-        val reactionDao by lazy { RoomModule.getReactionDao(roomDb) }
-        val userDao by lazy { RoomModule.getUserDao(roomDb) }
+        val streamDao by lazy { RoomModule.getStreamDao(newRoomDb) }
+        val topicDao by lazy { RoomModule.getTopicDao(newRoomDb) }
+        val messageDao by lazy { RoomModule.getMessageDao(newRoomDb) }
+        val reactionDao by lazy { RoomModule.getReactionDao(newRoomDb) }
+        val userDao by lazy { RoomModule.getUserDao(newRoomDb) }
     }
 
     override fun onCreate() {
         super.onCreate()
-        AppComponent.roomDb = RoomModule.getAppDatabase(this)
         AppComponent.newRoomDb = RoomModule.getNewAppDatabase(this)
         RxJavaPlugins.setErrorHandler { e: Throwable? -> Log.e("RxDisposeError", e?.message.toString())}
     }
 
     override fun getRetrofit(): Retrofit = AppComponent.retrofit
-    override fun getUserApi(): UserApi = AppComponent.userApi
-
-    override fun getStreamDao(): StreamDao = AppComponent.streamDao
-    override fun getTopicDao(): TopicDao = AppComponent.topicDao
 }

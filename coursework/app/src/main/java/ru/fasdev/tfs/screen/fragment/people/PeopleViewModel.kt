@@ -2,19 +2,17 @@ package ru.fasdev.tfs.screen.fragment.people
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toUserItem
-import ru.fasdev.tfs.data.newPck.repository.users.UsersRepositoryImpl
+import ru.fasdev.tfs.data.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.recycler.item.emptySearch.EmptySearchItem
-import ru.fasdev.tfs.recycler.item.user.UserItem
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import java.util.concurrent.TimeUnit

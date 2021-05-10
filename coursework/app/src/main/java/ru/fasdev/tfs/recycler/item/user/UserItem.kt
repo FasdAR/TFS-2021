@@ -1,8 +1,7 @@
 package ru.fasdev.tfs.recycler.item.user
 
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.domain.newPck.user.model.UserOnlineStatus
-import ru.fasdev.tfs.domain.old.user.model.UserStatus
+import ru.fasdev.tfs.domain.user.model.UserOnlineStatus
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 data class UserItem(

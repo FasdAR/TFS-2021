@@ -1,6 +1,6 @@
 package ru.fasdev.tfs.data.mapper
 
-import ru.fasdev.tfs.domain.newPck.message.model.Message
+import ru.fasdev.tfs.domain.message.model.Message
 import ru.fasdev.tfs.recycler.item.externalMessage.ExternalMessageItem
 import ru.fasdev.tfs.recycler.item.internalMessage.InternalMessageItem
 import ru.fasdev.tfs.recycler.item.message.MessageItem
