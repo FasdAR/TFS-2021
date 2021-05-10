@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxrelay2.ReplayRelay
+import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
@@ -34,6 +35,7 @@ import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
 import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
+import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
@@ -129,6 +131,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         }
 
         viewModel.bind(this)
+        viewModel.bind(::renderSideEffect)
 
         actions.accept(ChatAction.Ui.LoadStreamInfo(idStream))
         actions.accept(ChatAction.Ui.LoadTopicInfo(idTopic))
@@ -194,13 +197,11 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         previousList: MutableList<ViewType>,
         currentList: MutableList<ViewType>
     ) {
-        //TODO: LIST IS DOWN, SCROLL TO BOTTOM
-        /*
         _binding?.let {
-            if (!it.rvList.canScrollVertically(1) && isDown)
+            if (!it.rvList.canScrollVertically(1)) {
                 it.rvList.scrollToPosition(0)
+            }
         }
-         */
     }
 
     override fun render(state: ChatState) {
@@ -208,6 +209,17 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         binding.topic.text = resources.getString(R.string.sub_topic_title, state.topicName)
 
         adapter.items = state.items
+    }
+
+    private fun renderSideEffect(uiEffect: ChatUiEffect) {
+        when (uiEffect) {
+            is ChatUiEffect.ErrorSnackbar -> {
+                //TODO: ADD ERROR SNACKBAR
+            }
+            is ChatUiEffect.OpenEmojiDialog -> {
+                showBottomEmojiDialog()
+            }
+        }
     }
 
     override fun onDestroy() {

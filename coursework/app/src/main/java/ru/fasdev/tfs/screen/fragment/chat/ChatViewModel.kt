@@ -1,7 +1,9 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import androidx.lifecycle.ViewModel
+import com.jakewharton.rxrelay2.ReplayRelay
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
@@ -17,6 +19,7 @@ import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 import ru.fasdev.tfs.screen.fragment.chat.mvi.model.PageLoadInfo
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
+import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
 import ru.fasdev.tfs.screen.fragment.chat.mvi.model.SendMessageInfo
 import java.util.concurrent.TimeUnit
 
@@ -49,8 +52,11 @@ class ChatViewModel : ViewModel() {
             ::sideActionLoadTopicName, ::sideActionLoadNextPage, ::sideActionSendMessage)
     )
 
+    private val uiEffects: ReplayRelay<ChatUiEffect> = ReplayRelay.create()
+
     private val wiring = store.wire()
     private var viewBinding: Disposable = Disposables.empty()
+    private var uiEffectBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
         super.onCleared()
@@ -61,8 +67,17 @@ class ChatViewModel : ViewModel() {
         viewBinding = store.bind(view)
     }
 
+    fun bind(render: (ChatUiEffect) -> Unit) {
+        uiEffectBinding = uiEffects
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                render(it)
+            }
+    }
+
     fun unBind() {
         viewBinding.dispose()
+        uiEffectBinding.dispose()
     }
 
     private fun reducer(state: ChatState, action: Action): ChatState {
@@ -92,6 +107,14 @@ class ChatViewModel : ViewModel() {
                 }
 
                 state.copy(items = items.distinct())
+            }
+            is ChatAction.Internal.SendedError -> {
+                uiEffects.accept(ChatUiEffect.ErrorSnackbar(action.error.message.toString()))
+                state
+            }
+            is ChatAction.Ui.OpenEmojiDialog -> {
+                uiEffects.accept(ChatUiEffect.OpenEmojiDialog)
+                state.copy(idSelectedMessage = action.idMessage)
             }
             else -> state
         }
