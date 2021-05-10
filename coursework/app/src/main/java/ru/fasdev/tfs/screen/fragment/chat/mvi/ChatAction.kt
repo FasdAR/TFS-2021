@@ -3,6 +3,7 @@ package ru.fasdev.tfs.screen.fragment.chat.mvi
 import ru.fasdev.tfs.mviCore.entity.action.SideAction
 import ru.fasdev.tfs.mviCore.entity.action.UiAction
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.item.message.MessageItem
 import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 
 sealed class ChatAction {
@@ -25,7 +26,9 @@ sealed class ChatAction {
         object LoadingPage: Internal()
         class LoadedPage(val items: List<ViewType>, val direction: DirectionScroll): Internal()
         class LoadedError(val error: Throwable): Internal()
-        class UpdateMessage(val item: ViewType) : Internal()
         class LoadedStreamInfo(val streamName: String, val topicName: String) : Internal()
+
+        class StartListenMessage(val streamName: String, val topicName: String): Internal()
+        class UpdateMessages(val items: List<MessageItem>) : Internal()
     }
 }

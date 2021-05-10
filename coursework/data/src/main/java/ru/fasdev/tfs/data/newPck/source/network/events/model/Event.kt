@@ -9,11 +9,10 @@ import ru.fasdev.tfs.data.newPck.source.network.users.model.User
 class Event(
     val type: EventType,
     val id: Int,
-    val message: Message,
-    val op: Operation,
-    @SerialName("user_id") val userId: Long,
-    val user: User,
-    @SerialName("message_id") val messageId: Long,
-    @SerialName("emoji_name") val emojiName: String,
-    @SerialName("emoji_code") val emojiCode: String,
+    val message: Message? = null,
+    val op: Operation? = null,
+    @SerialName("user_id") val userId: Long? = null,
+    @SerialName("message_id") val messageId: Long? = null,
+    @SerialName("emoji_name") val emojiName: String? = null,
+    @SerialName("emoji_code") val emojiCode: String? = null,
 )

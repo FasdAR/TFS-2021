@@ -12,10 +12,12 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import ru.fasdev.tfs.BuildConfig
+import ru.fasdev.tfs.data.newPck.source.network.events.api.EventsApi
 import ru.fasdev.tfs.data.newPck.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.data.old.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.old.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.data.old.source.network.users.api.UserApi
+import java.util.concurrent.TimeUnit
 
 class RetrofitModule {
     companion object {
@@ -50,6 +52,8 @@ class RetrofitModule {
         ): OkHttpClient {
             return OkHttpClient.Builder()
                 .apply {
+                    readTimeout(60, TimeUnit.SECONDS)
+                    connectTimeout(60, TimeUnit.SECONDS)
                     addInterceptor(loggingInterceptor)
                     authInterceptor?.let { addInterceptor(it) }
                 }.build()
@@ -92,6 +96,10 @@ class RetrofitModule {
 
         fun getNewStreamApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi {
             return retrofit.create(ru.fasdev.tfs.data.newPck.source.network.streams.api.StreamsApi::class.java)
+        }
+
+        fun getEventsApi(retrofit: Retrofit): EventsApi {
+            return retrofit.create(EventsApi::class.java)
         }
 
         fun getStreamApi(retrofit: Retrofit): StreamApi {

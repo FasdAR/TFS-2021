@@ -30,6 +30,7 @@ class TfsApp : Application(), ProvideRetrofit, ProvideRoom {
         val newMessagesApi = RetrofitModule.getNewMessageApi(retrofit)
         val newUserApi = RetrofitModule.getNewUserApi(retrofit)
         val newStreamApi = RetrofitModule.getNewStreamApi(retrofit)
+        val eventsApi = RetrofitModule.getEventsApi(retrofit)
 
         lateinit var roomDb: TfsDatabase
         val streamDao by lazy { RoomModule.getStreamDao(roomDb) }

@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.ReplayRelay
 import io.reactivex.Observable
@@ -7,10 +8,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import kotlinx.serialization.encodeToString
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toMessageItem
 import ru.fasdev.tfs.data.newPck.repository.messages.MessagesRepositoryImpl
 import ru.fasdev.tfs.data.newPck.repository.streams.StreamsRepositoryImpl
+import ru.fasdev.tfs.data.newPck.source.network.base.model.Narrow
+import ru.fasdev.tfs.data.newPck.source.network.events.manager.EventsManager
+import ru.fasdev.tfs.data.newPck.source.network.events.model.EventType
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
@@ -40,7 +45,8 @@ class ChatViewModel : ViewModel() {
 
         val messagesRepository = MessagesRepositoryImpl(
             TfsApp.AppComponent.json,
-            TfsApp.AppComponent.newMessagesApi
+            TfsApp.AppComponent.newMessagesApi,
+            EventsManager(TfsApp.AppComponent.json, TfsApp.AppComponent.eventsApi)
         )
     }
     //#endregion
@@ -49,7 +55,7 @@ class ChatViewModel : ViewModel() {
         initialState = ChatState(),
         reducer = ::reducer,
         middlewares = listOf(::sideActionLoadStreamInfo, ::sideActionLoadNextPage,
-            ::sideActionSendMessage, ::sideActionAddReaction, ::sideActionRemoveReaction)
+            ::sideActionSendMessage, ::sideActionAddReaction, ::sideActionRemoveReaction, ::sideActionListenUpdateMessage)
     )
 
     private val uiEffects: ReplayRelay<ChatUiEffect> = ReplayRelay.create()
@@ -81,20 +87,25 @@ class ChatViewModel : ViewModel() {
     }
 
     private fun reducer(state: ChatState, action: Action): ChatState {
+        Log.d("NEW_ACTION_REDUCER", action.toString())
         return when (action) {
             is ChatAction.Internal.LoadedStreamInfo -> state.copy(streamName = action.streamName, topicName = action.topicName)
             is ChatAction.Internal.LoadedError -> state.copy(isLoading = false, error = action.error)
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
-            is ChatAction.Internal.UpdateMessage -> {
-                val indexMessage = state.items.indexOfFirst { it is MessageItem && it.uId == action.item.uId }
-                if (indexMessage != -1) {
-                    val items = state.items.toMutableList()
-                    items[indexMessage] = action.item
-                    state.copy(items = items)
+            is ChatAction.Internal.UpdateMessages -> {
+                val items = state.items.toMutableList()
+                val newItems = action.items
+
+                newItems.forEach { item ->
+                    val indexMessage = items.indexOfFirst { it is MessageItem && it.uId == item.uId }
+                    if (indexMessage != -1) {
+                        items[indexMessage] = item
+                    } else {
+                        items.add(item)
+                    }
                 }
-                else {
-                    state.copy(items = state.items + listOf(action.item))
-                }
+
+                state.copy(items = items)
             }
             is ChatAction.Internal.LoadedPage -> {
                 val isUpScroll = action.direction == DirectionScroll.UP
@@ -119,6 +130,29 @@ class ChatViewModel : ViewModel() {
         }
     }
 
+    private fun sideActionListenUpdateMessage(
+        actions: Observable<Action>,
+        state: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Internal.StartListenMessage::class.java)
+            .observeOn(Schedulers.io())
+            .flatMap {
+                return@flatMap ChatComponent.messagesRepository.listenUpdate(it.streamName, it.topicName)
+                    .flatMap {
+                        Observable.fromIterable(it)
+                            .map {
+                                val isOwnMessage = it.sender.id == USER_ID
+                                it.toMessageItem(isOwnMessage)
+                            }
+                            .toList()
+                            .toObservable()
+                    }
+                    .map<ChatAction.Internal> { ChatAction.Internal.UpdateMessages(it) }
+                    .onErrorReturn { ChatAction.Internal.SendedError(it) }
+            }
+    }
+
     private fun sideActionLoadStreamInfo(
         actions: Observable<Action>,
         state: Observable<ChatState>
@@ -136,6 +170,7 @@ class ChatViewModel : ViewModel() {
                     .flatMap {
                         Observable.just(
                             ChatAction.Internal.LoadedStreamInfo(it.first, it.second),
+                            ChatAction.Internal.StartListenMessage(it.first, it.second),
                             ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP)
                         )
                     }

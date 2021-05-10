@@ -12,7 +12,7 @@ interface EventsApi
 {
     @POST("register")
     fun registerQueue(
-        @Query("event_types") eventTypes: List<EventType>,
+        @Query("event_types") eventTypes: String,
         @Query("narrow") narrow: String
     ) : Single<RegisterResponse>
 

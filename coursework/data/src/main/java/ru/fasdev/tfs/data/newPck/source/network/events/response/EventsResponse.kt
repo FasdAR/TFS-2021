@@ -12,5 +12,5 @@ class EventsResponse (
     override val msg: String,
     override val result: ZulipResult,
     val events: List<Event>,
-    @SerialName("queue_id") val queueId: String
+    @SerialName("queue_id") val queueId: String? = null
 ) : BaseResponse
