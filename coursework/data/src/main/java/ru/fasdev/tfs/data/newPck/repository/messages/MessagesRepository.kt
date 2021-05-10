@@ -14,4 +14,7 @@ interface MessagesRepository {
     ) : Observable<List<Message>>
 
     fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable
+
+    fun addReaction(messageId: Long, emojiName: String): Completable
+    fun removeReaction(messageId: Long, emojiName: String): Completable
 }

@@ -9,8 +9,8 @@ sealed class ChatAction {
     sealed class Ui: UiAction {
         data class LoadPageMessages(val anchorMessageId: Long?, val direction: DirectionScroll) : Ui()
         class SendMessage(val textMessage: String) : Ui()
-        class SelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
-        class UnSelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
+        data class SelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
+        data class UnSelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
         class LoadStreamInfo(val idStream: Long, val idTopic: Long) : Ui()
         class OpenEmojiDialog(val idMessage: Long?) : Ui()
     }
@@ -18,6 +18,9 @@ sealed class ChatAction {
     sealed class Internal : SideAction {
         object SendedMessage: Internal()
         class SendedError(val error: Throwable): Internal()
+
+        object SelectedReaction: Internal()
+        object UnSelectedReaction: Internal()
 
         object LoadingPage: Internal()
         class LoadedPage(val items: List<ViewType>, val direction: DirectionScroll): Internal()

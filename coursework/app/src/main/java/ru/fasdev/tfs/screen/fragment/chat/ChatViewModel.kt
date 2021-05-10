@@ -48,7 +48,8 @@ class ChatViewModel : ViewModel() {
     private val store: Store<Action, ChatState> = Store(
         initialState = ChatState(),
         reducer = ::reducer,
-        middlewares = listOf(::sideActionLoadStreamInfo, ::sideActionLoadNextPage, ::sideActionSendMessage)
+        middlewares = listOf(::sideActionLoadStreamInfo, ::sideActionLoadNextPage,
+            ::sideActionSendMessage, ::sideActionAddReaction, ::sideActionRemoveReaction)
     )
 
     private val uiEffects: ReplayRelay<ChatUiEffect> = ReplayRelay.create()
@@ -211,6 +212,50 @@ class ChatViewModel : ViewModel() {
                 .toObservable<ChatAction.Internal>()
                 .map<ChatAction.Internal> { ChatAction.Internal.SendedMessage }
                 .onErrorReturn { ChatAction.Internal.SendedError(it) }
+            }
+    }
+
+    private fun sideActionAddReaction(
+        actions: Observable<Action>,
+        stateFlow: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Ui.SelectedReaction::class.java)
+            .observeOn(Schedulers.io())
+            .withLatestFrom(stateFlow) { action, state ->
+                if (action.idMessage == null) {
+                    return@withLatestFrom action.copy(idMessage = state.idSelectedMessage)
+                } else {
+                    action
+                }
+            }
+            .flatMap { action ->
+                ChatComponent.messagesRepository.addReaction(action.idMessage ?: -1, action.emoji)
+                    .toObservable<ChatAction.Internal>()
+                    .map<ChatAction.Internal> { ChatAction.Internal.SelectedReaction }
+                    .onErrorReturn { ChatAction.Internal.SendedError(it) }
+            }
+    }
+
+    private fun sideActionRemoveReaction(
+        actions: Observable<Action>,
+        stateFlow: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Ui.UnSelectedReaction::class.java)
+            .observeOn(Schedulers.io())
+            .withLatestFrom(stateFlow) { action, state ->
+                if (action.idMessage == null) {
+                    return@withLatestFrom action.copy(idMessage = state.idSelectedMessage)
+                } else {
+                    action
+                }
+            }
+            .flatMap { action ->
+                ChatComponent.messagesRepository.removeReaction(action.idMessage ?: -1, action.emoji)
+                    .toObservable<ChatAction.Internal>()
+                    .map<ChatAction.Internal> { ChatAction.Internal.UnSelectedReaction }
+                    .onErrorReturn { ChatAction.Internal.SendedError(it) }
             }
     }
 }

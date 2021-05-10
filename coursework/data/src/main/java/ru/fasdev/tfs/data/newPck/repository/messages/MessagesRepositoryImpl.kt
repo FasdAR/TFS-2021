@@ -59,4 +59,14 @@ class MessagesRepositoryImpl(
             Completable.fromCallable { it.result == ZulipResult.SUCCESS }
         }
     }
+
+    override fun addReaction(messageId: Long, emojiName: String): Completable {
+        return messagesApi.addReaction(messageId, emojiName)
+            .flatMapCompletable { Completable.fromCallable { it.result == ZulipResult.SUCCESS } }
+    }
+
+    override fun removeReaction(messageId: Long, emojiName: String): Completable {
+        return messagesApi.deleteReaction(messageId, emojiName)
+            .flatMapCompletable { Completable.fromCallable { it.result == ZulipResult.SUCCESS } }
+    }
 }

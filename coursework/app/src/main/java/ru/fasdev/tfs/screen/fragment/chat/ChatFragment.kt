@@ -172,7 +172,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     }
 
     override fun onClickReaction(uIdMessage: Int, emoji: String, isSelected: Boolean) {
-        if (isSelected) {
+        if (!isSelected) {
             actions.accept(ChatAction.Ui.UnSelectedReaction(uIdMessage.toLong(), emoji))
         } else {
             actions.accept(ChatAction.Ui.SelectedReaction(uIdMessage.toLong(), emoji))

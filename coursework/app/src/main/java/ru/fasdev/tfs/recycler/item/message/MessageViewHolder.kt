@@ -61,7 +61,7 @@ abstract class MessageViewHolder<T : MessageItem>(
         reactionListener.onClickAddNewReaction(messageId)
     }
 
-    override fun onClickReaction(reactionView: ReactionView, emoji: String, isSelected: Boolean) {
-        reactionListener.onClickReaction(messageId, emoji, isSelected)
+    override fun onClickReaction(reactionView: ReactionView, emojiName: String, isSelected: Boolean) {
+        reactionListener.onClickReaction(messageId, emojiName, isSelected)
     }
 }

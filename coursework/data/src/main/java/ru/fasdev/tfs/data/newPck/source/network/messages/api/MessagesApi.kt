@@ -1,9 +1,8 @@
 package ru.fasdev.tfs.data.newPck.source.network.messages.api
 
 import io.reactivex.Single
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
+import ru.fasdev.tfs.data.newPck.source.network.messages.response.MessagesReactions
 import ru.fasdev.tfs.data.newPck.source.network.messages.response.MessagesResponse
 import ru.fasdev.tfs.data.newPck.source.network.messages.response.PostMessagesResponse
 
@@ -33,4 +32,10 @@ interface MessagesApi
         @Query("content") content: String,
         @Query("subject") subject: String
     ): Single<PostMessagesResponse>
+
+    @POST("messages/{message_id}/reactions")
+    fun addReaction(@Path("message_id") messageId: Long, @Query("emoji_name") emojiName: String): Single<MessagesReactions>
+
+    @DELETE("messages/{message_id}/reactions")
+    fun deleteReaction(@Path("message_id") messageId: Long, @Query("emoji_name") emojiName: String): Single<MessagesReactions>
 }
