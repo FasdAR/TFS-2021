@@ -82,13 +82,15 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
 
     private val holderFactory by lazy { ChatHolderFactory(this, this) }
-    private val adapter by lazy { RecyclerAdapter(holderFactory, ChatItemCallback()) }
+    private val adapter by lazy { RecyclerAdapter(holderFactory, ChatItemCallback()).apply { differListListener = this@ChatFragment } }
 
     private val idStream: Long
         get() = requireArguments().getLong(KEY_STREAM_ID)
 
     private val idTopic: Long
         get() = requireArguments().getLong(KEY_TOPIC_ID)
+
+    private var listIsDown: Boolean = true
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -160,10 +162,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
                     super.onScrolled(recyclerView, dx, dy)
 
                     val layoutManager = (binding.rvList.layoutManager as LinearLayoutManager)
-                    //val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
                     val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                    //isDown = firstVisiblePosition == 0
+                    listIsDown = firstVisiblePosition == 0
                     val isUpScroll = dy < 0
 
                     val isUpdate = if (isUpScroll) {
@@ -210,7 +212,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         currentList: MutableList<ViewType>
     ) {
         _binding?.let {
-            if (!it.rvList.canScrollVertically(1)) {
+            if (!it.rvList.canScrollVertically(1) && listIsDown) {
                 it.rvList.scrollToPosition(0)
             }
         }
