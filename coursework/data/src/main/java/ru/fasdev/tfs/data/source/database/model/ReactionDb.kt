@@ -6,7 +6,7 @@ import androidx.room.*
     tableName = "reaction",
     foreignKeys = [
         ForeignKey(
-            entity = ReactionDb::class,
+            entity = MessageDb::class,
             parentColumns = ["id"],
             childColumns = ["id_message"],
             onDelete = ForeignKey.CASCADE,
@@ -17,7 +17,7 @@ import androidx.room.*
         Index(value = ["id_message", "emoji_name"], unique = true)
     ]
 )
-class ReactionDb(
+data class ReactionDb(
     @PrimaryKey(autoGenerate = true) val id: Long? = null,
     @ColumnInfo(name = "id_message") val idMessage: Long,
     val emoji: String,

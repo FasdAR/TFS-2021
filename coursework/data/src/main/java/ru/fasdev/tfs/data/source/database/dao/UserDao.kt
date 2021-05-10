@@ -12,4 +12,7 @@ abstract class UserDao: BaseDao<UserDb>
 {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertReplace(entity: UserDb) : Completable
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertReplace(entity: List<UserDb>) : Completable
 }

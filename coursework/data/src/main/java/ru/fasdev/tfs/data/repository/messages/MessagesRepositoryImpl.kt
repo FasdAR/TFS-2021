@@ -4,7 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import ru.fasdev.tfs.data.mapper.toMessageDomain
+import ru.fasdev.tfs.data.mapper.*
 import ru.fasdev.tfs.data.source.database.dao.MessageDao
 import ru.fasdev.tfs.data.source.database.dao.ReactionDao
 import ru.fasdev.tfs.data.source.database.dao.UserDao
@@ -13,12 +13,16 @@ import ru.fasdev.tfs.data.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.data.source.network.base.model.Narrow
 import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.data.source.network.events.model.EventType
+import ru.fasdev.tfs.data.source.network.events.model.Operation
 import ru.fasdev.tfs.domain.message.model.Message
 
 class MessagesRepositoryImpl(
     private val json: Json,
     private val messagesApi: MessagesApi,
-    private val eventsManager: EventsManager
+    private val eventsManager: EventsManager,
+    private val userDao: UserDao,
+    private val messageDao: MessageDao,
+    private val reactionDao: ReactionDao
 ) : MessagesRepository {
     companion object {
         private const val USER_ID = 402233L
@@ -27,8 +31,6 @@ class MessagesRepositoryImpl(
         private const val OPERATOR_STREAM = "stream"
         private const val OPERATOR_TOPIC = "topic"
     }
-
-    private var currentListMessages: List<Message> = listOf()
 
     override fun getMessagesPage(
         nameStream: String,
@@ -56,9 +58,19 @@ class MessagesRepositoryImpl(
                     .toSortedList { item1, item2 -> item1.date.compareTo(item2.date) }
                     .toObservable()
             }
-            .doOnNext {
-                //ТЕСТОВОЕ КЭШИРОВАНИЕ
-                currentListMessages = (currentListMessages + it).distinct()
+            .flatMap {
+                val users = it.map { it.sender }.map { it.toUserDb() }
+                val messages = it.map { it.toMessageDb() }
+                val reactions = it.flatMap { message ->
+                    message.reactions.map { reaction ->
+                        reaction.toReactionDb(message.id)
+                    }
+                }
+
+                userDao.insertReplace(users)
+                    .andThen(messageDao.insertReplace(messages))
+                    .andThen(reactionDao.insertReplace(reactions))
+                    .andThen(Observable.just(it))
             }
     }
 
@@ -92,13 +104,36 @@ class MessagesRepositoryImpl(
         return eventsManager.startListen(narrows, eventTypes)
             .flatMap {
                 Observable.fromIterable(it)
-                    .map { event ->
+                    .flatMap { event ->
                         when (event.type) {
-                            EventType.REACTION -> {
-                                return@map currentListMessages.find {it.id == event.messageId} ?: error("Nothing Reaction")
-                            }
                             EventType.MESSAGE -> {
-                                return@map event.message?.toMessageDomain(USER_ID) ?: error("Error map message")
+                                val msg = event.toMessage().toMessageDomain(USER_ID)
+
+                                messageDao.insertReplace(msg.toMessageDb())
+                                    .andThen(Observable.just(msg))
+                            }
+                            EventType.REACTION -> {
+                                reactionDao.getByReactionByKey(event.messageId!!, event.emojiName!!)
+                                    .map {
+                                        when (event.op) {
+                                            Operation.ADD -> {
+                                                it.copy(countSelection = it.countSelection + 1, isSelected = true)
+                                            }
+                                            Operation.REMOVE -> {
+                                                it.copy(countSelection = it.countSelection - 1, isSelected = false)
+                                            }
+                                            null -> it
+                                        }
+                                    }
+                                    .toObservable()
+                                    .flatMap {
+                                        reactionDao.insertReplace(it)
+                                            .andThen(
+                                                messageDao.getMessageById(event.messageId)
+                                                .map { it.toMessageDomain() }
+                                                .toObservable()
+                                            )
+                                    }
                             }
                         }
                     }

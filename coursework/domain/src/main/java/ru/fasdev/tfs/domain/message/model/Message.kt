@@ -8,5 +8,6 @@ class Message(
     val sender: User,
     val text: String,
     val date: Date,
-    val reactions: List<Reaction>
+    val reactions: List<Reaction>,
+    val topic: String
 )
