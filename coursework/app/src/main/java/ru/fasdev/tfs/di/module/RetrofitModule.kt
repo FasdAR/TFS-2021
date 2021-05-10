@@ -12,6 +12,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import ru.fasdev.tfs.BuildConfig
+import ru.fasdev.tfs.data.newPck.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.data.old.source.network.chat.api.ChatApi
 import ru.fasdev.tfs.data.old.source.network.stream.api.StreamApi
 import ru.fasdev.tfs.data.old.source.network.users.api.UserApi
@@ -79,6 +80,10 @@ class RetrofitModule {
 
         fun getUserApi(retrofit: Retrofit): UserApi {
             return retrofit.create(UserApi::class.java)
+        }
+
+        fun getNewMessageApi(retrofit: Retrofit): MessagesApi {
+            return retrofit.create(MessagesApi::class.java)
         }
 
         fun getNewUserApi(retrofit: Retrofit): ru.fasdev.tfs.data.newPck.source.network.users.api.UsersApi {

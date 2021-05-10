@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -29,6 +30,7 @@ import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.recycler.item.message.MessageViewHolder
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.SelectEmojiBottomDialog
+import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
@@ -127,6 +129,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
         actions.accept(ChatAction.Ui.LoadStreamInfo(idStream))
         actions.accept(ChatAction.Ui.LoadTopicInfo(idTopic))
+
+        binding.root.postDelayed(1000L) {
+            actions.accept(ChatAction.Ui.LoadPageMessages(DirectionScroll.UP))
+        }
     }
 
     private fun showBottomEmojiDialog() {
@@ -165,6 +171,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     override fun render(state: ChatState) {
         binding.toolbarLayout.title.text = resources.getString(R.string.main_topic_title, state.streamName)
         binding.topic.text = resources.getString(R.string.sub_topic_title, state.topicName)
+
+        adapter.items = state.items
     }
 
     override fun onDestroy() {
