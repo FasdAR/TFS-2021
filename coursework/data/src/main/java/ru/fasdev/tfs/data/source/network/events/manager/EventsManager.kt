@@ -11,15 +11,15 @@ import ru.fasdev.tfs.data.source.network.events.model.EventType
 
 class EventsManager(private val json: Json, private val eventsApi: EventsApi) {
     private companion object {
-        private val BAD_EVENT_QUEUE_ID = "BAD_EVENT_QUEUE_ID"
-        private val BAD_REQUEST = "BAD_REQUEST"
+        private const val BAD_EVENT_QUEUE_ID = "BAD_EVENT_QUEUE_ID"
+        private const val BAD_REQUEST = "BAD_REQUEST"
     }
 
     private var lastId = -1
     private val lastEventId get() = lastId
 
     fun startListen(narrows: List<Narrow>, eventTypes: List<EventType>): Observable<List<Event>> {
-        val narrowJson = "${narrows.map { "[\"${it.operator}\",\"${it.operand}\"]" }}"
+        val narrowJson = "${narrows.map { "[\"${it.operator}\",\"${it.operand.replace("\"", "\\\"")}\"]" }}"
         val eventTypesJson = json.encodeToString(eventTypes)
 
         return eventsApi.registerQueue(eventTypesJson, narrowJson)
