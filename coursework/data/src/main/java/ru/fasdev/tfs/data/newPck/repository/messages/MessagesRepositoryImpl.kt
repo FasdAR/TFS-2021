@@ -15,6 +15,7 @@ class MessagesRepositoryImpl(
     private val messagesApi: MessagesApi
 ) : MessagesRepository {
     companion object {
+        private const val USER_ID = 402233L
         private const val ANCHOR_NEWEST = "newest"
 
         private const val OPERATOR_STREAM = "stream"
@@ -43,7 +44,7 @@ class MessagesRepositoryImpl(
             .map { it.messages }
             .flatMapObservable {
                 Observable.fromIterable(it)
-                    .map { it.toMessageDomain() }
+                    .map { it.toMessageDomain(USER_ID) }
                     .toSortedList { item1, item2 -> item1.date.compareTo(item2.date) }
                     .toObservable()
             }

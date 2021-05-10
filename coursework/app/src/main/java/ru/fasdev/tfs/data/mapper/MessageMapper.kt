@@ -10,7 +10,7 @@ fun Message.toMessageItem(isOwnMessage: Boolean): MessageItem {
         return InternalMessageItem(
             uId = id.toInt(),
             message = text,
-            reactions = listOf() //TOOD: ADD MAPPER TO UI MODEL,
+            reactions = reactions.map { it.toReactionItem() }
         )
     }
     else {
@@ -19,7 +19,7 @@ fun Message.toMessageItem(isOwnMessage: Boolean): MessageItem {
             nameSender = sender.fullName,
             avatarSrc = sender.avatarUrl,
             message = text,
-            reactions = listOf() //TODO: ADD MAPPER TO UI MODEL
+            reactions = reactions.map { it.toReactionItem() }
         )
     }
 }
