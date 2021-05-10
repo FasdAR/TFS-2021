@@ -1,12 +1,14 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
@@ -41,11 +43,13 @@ import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
+import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import javax.inject.Inject
 
 class ChatFragment : Fragment(R.layout.fragment_chat),
     MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
-    AsyncListDiffer.ListListener<ViewType>, MviView<Action, ChatState> {
+    AsyncListDiffer.ListListener<ViewType>, MviView<Action, ChatState>,
+    InfoPlaceholderFragment.Listener {
 
     companion object {
         private val TAG: String = ChatFragment::class.java.simpleName
@@ -217,6 +221,16 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         binding.topic.text = resources.getString(R.string.sub_topic_title, state.topicName)
 
         adapter.items = state.items
+
+        if (state.error != null) {
+            binding.infoPlaceholder.isGone = false
+            binding.rvList.isGone = true
+
+            infoFragment.handleErrorState(state.error)
+        } else {
+            binding.infoPlaceholder.isGone = true
+            binding.rvList.isGone = false
+        }
     }
 
     private fun renderSideEffect(uiEffect: ChatUiEffect) {
@@ -235,5 +249,13 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         _binding = null
         viewModel.unBind()
+    }
+
+    override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {
+        when (buttonType) {
+            InfoPlaceholderFragment.ButtonType.POSITIVE -> {
+                actions.accept(ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP))
+            }
+        }
     }
 }

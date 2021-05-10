@@ -44,6 +44,15 @@
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/msg_layout"/>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/info_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:name="ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintBottom_toTopOf="@id/msg_layout"/>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/msg_layout"
         android:layout_width="match_parent"

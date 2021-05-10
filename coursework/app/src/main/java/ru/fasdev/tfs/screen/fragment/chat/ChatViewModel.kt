@@ -91,7 +91,7 @@ class ChatViewModel @Inject constructor(
             )
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
             is ChatAction.Internal.UpdateMessages -> {
-                state.copy(items = action.items)
+                state.copy(items = action.items, error = null)
             }
             is ChatAction.Internal.LoadedPage -> {
                 val isUpScroll = action.direction == DirectionScroll.UP
@@ -102,7 +102,7 @@ class ChatViewModel @Inject constructor(
                     action.items + state.items
                 }
 
-                state.copy(items = items.distinct())
+                state.copy(items = items.distinct(), error = null)
             }
             is ChatAction.Internal.SendedError -> {
                 uiEffects.accept(ChatUiEffect.ErrorSnackbar(action.error.message.toString()))
@@ -185,8 +185,15 @@ class ChatViewModel @Inject constructor(
     ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.LoadPageMessages::class.java)
-            .distinctUntilChanged()
-            .debounce(500, TimeUnit.MILLISECONDS)
+            .flatMap {
+                if (it.anchorMessageId != null) {
+                    Observable.just(it).distinctUntilChanged()
+                        .debounce(500, TimeUnit.MILLISECONDS)
+                }
+                else {
+                    Observable.just(it)
+                }
+            }
             .observeOn(Schedulers.io())
             .filter { it.direction == DirectionScroll.UP }
             .withLatestFrom(stateFlow) { action, state ->
