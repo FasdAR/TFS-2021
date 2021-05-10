@@ -14,6 +14,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxrelay2.ReplayRelay
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
@@ -44,6 +45,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     companion object {
         private val TAG: String = ChatFragment::class.java.simpleName
         private const val COLOR_TOOLBAR = R.color.teal_500
+        private const val LIMIT_UPDATE = 5
 
         private const val KEY_STREAM_ID = "STREAM_ID"
         private const val KEY_TOPIC_ID = "TOPIC_ID"
@@ -109,6 +111,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
         binding.rvList.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, true)
         binding.rvList.adapter = adapter
+        initListenerScroll()
 
         binding.msgEdt.addTextChangedListener {
             //TODO: CHANGE PLUS TO NORMAL DRAWABLE
@@ -131,8 +134,40 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         actions.accept(ChatAction.Ui.LoadTopicInfo(idTopic))
 
         binding.root.postDelayed(1000L) {
-            actions.accept(ChatAction.Ui.LoadPageMessages(DirectionScroll.UP))
+            actions.accept(ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP))
         }
+    }
+
+    private fun initListenerScroll() {
+        binding.rvList.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val layoutManager = (binding.rvList.layoutManager as LinearLayoutManager)
+                    //val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+                    val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                    //isDown = firstVisiblePosition == 0
+                    val isUpScroll = dy < 0
+
+                    val isUpdate = if (isUpScroll) {
+                        (adapter.itemCount - lastVisibleItem) <= LIMIT_UPDATE
+                    } else {
+                        lastVisibleItem - LIMIT_UPDATE <= LIMIT_UPDATE
+                    }
+
+                    if (isUpdate) {
+                        val id = adapter.items[lastVisibleItem].uId.toLong()
+                        if (isUpScroll) {
+                            actions.accept(ChatAction.Ui.LoadPageMessages(id, DirectionScroll.UP))
+                        } else {
+                            actions.accept(ChatAction.Ui.LoadPageMessages(id, DirectionScroll.DOWN))
+                        }
+                    }
+                }
+            }
+        )
     }
 
     private fun showBottomEmojiDialog() {
@@ -181,88 +216,3 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         viewModel.unBind()
     }
 }
-
-/*
-    private var isDown: Boolean = true
-    private var isFirstLoaded: Boolean = false
-
-    // #region Rx chains
-    private fun updateChatItems() {
-        compositeDisposable.add(
-            Flowable.interval(0, 5, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .filter { isDown }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = {
-                        viewModel.input.accept(
-                            ChatAction.SideEffectLoadingPage(
-                                topicName,
-                                streamName,
-                                MessageRepoImpl.NEWEST_ANCHOR,
-                                DirectionScroll.UP
-                            )
-                        )
-                    },
-                    onError = ::onError
-                )
-        )
-    }
-// #endregion
-    private fun initListenerScrollRv() {
-        compositeDisposable.add(
-            Observable.create<PagingItem> { emitter ->
-                val scrollListener = object : RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-
-                        val layoutManager = (binding.rvList.layoutManager as LinearLayoutManager)
-
-                        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-                        val lastVisibleItem = (binding.rvList.layoutManager as LinearLayoutManager)
-                            .findLastVisibleItemPosition()
-
-                        val isUpScroll = dy < 0
-
-                        val isUpdate = if (isUpScroll) {
-                            (adapter.itemCount - lastVisibleItem) <= LIMIT_UPDATE
-                        } else {
-                            lastVisibleItem - LIMIT_UPDATE <= LIMIT_UPDATE
-                        }
-
-                        isDown = firstVisiblePosition == 0
-
-                        if (isUpdate) {
-                            val id = adapter.items[lastVisibleItem].uId.toLong()
-
-                            if (isUpScroll) {
-                                val pagingItem = PagingItem(id, DirectionScroll.UP)
-                                emitter.onNext(pagingItem)
-                            } else {
-                                val pagingItem = PagingItem(id, DirectionScroll.DOWN)
-                                emitter.onNext(pagingItem)
-                            }
-                        }
-                    }
-                }
-
-                binding.rvList.addOnScrollListener(scrollListener)
-            }
-                .distinctUntilChanged()
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribeBy {
-                    viewModel.input.accept(
-                        ChatAction.SideEffectLoadingPage(
-                            topicName,
-                            streamName,
-                            it.lastVisibleId,
-                            it.direction
-                        )
-                    )
-                }
-        )
-    }
-
-    data class PagingItem(val lastVisibleId: Long, val direction: DirectionScroll)
-}
-*/

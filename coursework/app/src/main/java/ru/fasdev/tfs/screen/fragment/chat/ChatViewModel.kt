@@ -19,6 +19,7 @@ import ru.fasdev.tfs.screen.fragment.chat.model.PageLoadInfo
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
+import java.util.concurrent.TimeUnit
 
 class ChatViewModel : ViewModel() {
     private companion object {
@@ -78,7 +79,7 @@ class ChatViewModel : ViewModel() {
                     action.items + state.items
                 }
 
-                state.copy(items = items)
+                state.copy(items = items.distinct())
             }
             else -> state
         }
@@ -118,15 +119,12 @@ class ChatViewModel : ViewModel() {
     ) : Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.LoadPageMessages::class.java)
+            .distinctUntilChanged()
+            .debounce(500, TimeUnit.MILLISECONDS)
             .observeOn(Schedulers.io())
+            .filter { it.direction == DirectionScroll.UP }
             .withLatestFrom(stateFlow) { action, state ->
                 val isUpScroll = action.direction == DirectionScroll.UP
-
-                val idAnchorMessage: Long? = if (isUpScroll) {
-                    state.items.filterIsInstance<MessageItem>().firstOrNull()?.uId?.toLong()
-                } else {
-                    state.items.filterIsInstance<MessageItem>().lastOrNull()?.uId?.toLong()
-                }
 
                 val afterMessageCount = if (isUpScroll) 0 else LIMIT_PAGE
                 val beforeMessageCount = if (!isUpScroll) 0 else LIMIT_PAGE
@@ -134,7 +132,7 @@ class ChatViewModel : ViewModel() {
                 PageLoadInfo(
                     state.streamName.toString(),
                     state.topicName.toString(),
-                    idAnchorMessage,
+                    action.anchorMessageId,
                     afterMessageCount,
                     beforeMessageCount,
                     action.direction
@@ -151,7 +149,7 @@ class ChatViewModel : ViewModel() {
                     )
                     .flatMap {
                         Observable.fromIterable(it)
-                            .sorted { item1, item2 -> item1.date.compareTo(item2.date) }
+                            .sorted { item1, item2 -> item2.date.compareTo(item1.date) }
                             .map {
                                 val isOwnMessage = it.sender.id == USER_ID
                                 it.toMessageItem(isOwnMessage)
@@ -164,85 +162,4 @@ class ChatViewModel : ViewModel() {
                     .startWith(ChatAction.Internal.LoadingPage)
             }
     }
-
-    /*
-    .map<OwnProfileAction.Internal> { OwnProfileAction.Internal.LoadedUser(it) }
-                    .onErrorReturn { OwnProfileAction.Internal.LoadedError(it) }
-                    .startWith(OwnProfileAction.Internal.LoadingUser)
-     */
-
-    /*
-    private fun sendMessageSideEffect(
-        action: Observable<ChatAction>,
-        state: StateAccessor<ChatState>
-    ): Observable<ChatAction> {
-        return action
-            .ofType(ChatAction.SideEffectSendMessage::class.java)
-            .filter{ it.textMessage.isNotEmpty() }
-            .switchMap {
-                interactor
-                    .sendMessage(it.streamName, it.topicName, it.textMessage)
-                    .subscribeOn(Schedulers.io())
-                    .toObservable<ChatAction>()
-                    .onErrorReturn { error ->
-                        ChatAction.ErrorLoading(error)
-                    }
-            }
-    }
-
-    private fun selectedReactionSideEffect(
-        action: Observable<ChatAction>,
-        state: StateAccessor<ChatState>
-    ) : Observable<ChatAction> {
-        return action
-            .ofType(ChatAction.SideEffectSelectedReaction::class.java)
-            .switchMap {
-                interactor
-                    .setSelectionReaction(it.idMessage, it.emoji, it.isSelected)
-                    .subscribeOn(Schedulers.io())
-                    .toObservable<ChatAction>()
-                    .onErrorReturn { error ->
-                        ChatAction.ErrorLoading(error)
-                    }
-            }
-    }
-
-    private fun loadPagingSideEffect(
-        action: Observable<ChatAction>,
-        state: StateAccessor<ChatState>
-    ) : Observable<ChatAction> {
-        return action
-            .ofType(ChatAction.SideEffectLoadingPage::class.java)
-            .switchMap { action ->
-                interactor
-                    .getMessagesByTopic(
-                        nameStream = action.streamName,
-                        nameTopic = action.topicName,
-                        anchorMessage = action.lastVisibleId,
-                        direction = action.direction
-                    )
-                    .subscribeOn(Schedulers.io())
-                    .map { newList ->
-                        newList.mapToUiList(MessageRepoImpl.USER_ID).reversed()
-                    }
-                    .map {
-                        val oldState = state()
-
-                        if (action.direction == DirectionScroll.UP) {
-                            oldState.listItems + it
-                        } else {
-                            it + oldState.listItems
-                        }
-                    }
-                    .map { it.distinct() }
-                    .toObservable()
-                    .map {
-                        ChatAction.LoadedData(it)
-                    }
-                    .map { it as ChatAction }
-                    .onErrorReturn { error ->
-                        ChatAction.ErrorLoading(error)
-                    }
-            }
-    }*/
 }

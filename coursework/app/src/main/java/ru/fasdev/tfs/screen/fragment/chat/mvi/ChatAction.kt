@@ -7,7 +7,7 @@ import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 
 sealed class ChatAction {
     sealed class Ui: UiAction {
-        class LoadPageMessages(val direction: DirectionScroll) : Ui()
+        data class LoadPageMessages(val anchorMessageId: Long?, val direction: DirectionScroll) : Ui()
         class SendMessage(val textMessage: String) : Ui()
         class SelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
         class UnSelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
