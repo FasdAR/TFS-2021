@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.chat
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxrelay2.ReplayRelay
+import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
@@ -37,6 +40,7 @@ import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
 import ru.fasdev.tfs.screen.fragment.chat.recycler.ChatHolderFactory
 import ru.fasdev.tfs.screen.fragment.chat.recycler.diff.ChatItemCallback
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
+import javax.inject.Inject
 
 class ChatFragment : Fragment(R.layout.fragment_chat),
     MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
@@ -60,7 +64,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     }
 
     override val actions: ReplayRelay<Action> = ReplayRelay.create()
-    private val viewModel: ChatViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: ChatViewModel by viewModels{viewModelFactory}
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -77,6 +84,11 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
     private val idTopic: Long
         get() = requireArguments().getLong(KEY_TOPIC_ID)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

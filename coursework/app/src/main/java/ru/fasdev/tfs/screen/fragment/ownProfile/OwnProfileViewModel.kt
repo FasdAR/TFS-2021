@@ -6,19 +6,18 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
+import ru.fasdev.tfs.data.repository.users.UsersRepository
 import ru.fasdev.tfs.data.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
+import javax.inject.Inject
 
-class OwnProfileViewModel : ViewModel() {
-    //#region Test DI
-    object ProfileComponent {
-        val usersRepository = UsersRepositoryImpl(TfsApp.AppComponent.newUserApi)
-    }
-    //#ednregion
+class OwnProfileViewModel @Inject constructor(
+    private val usersRepository: UsersRepository
+) : ViewModel() {
 
     private val store: Store<Action, OwnProfileState> = Store(
         initialState = OwnProfileState(),
@@ -66,7 +65,7 @@ class OwnProfileViewModel : ViewModel() {
             .ofType(OwnProfileAction.Ui.LoadUser.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                ProfileComponent.usersRepository.getOwnUser()
+                usersRepository.getOwnUser()
                     .toObservable()
                     .map<OwnProfileAction.Internal> { OwnProfileAction.Internal.LoadedUser(it) }
                     .onErrorReturn { OwnProfileAction.Internal.LoadedError(it) }

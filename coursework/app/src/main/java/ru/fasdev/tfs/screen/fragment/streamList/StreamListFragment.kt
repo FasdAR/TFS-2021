@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.streamList
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,10 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.PublishRelay
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -31,6 +34,7 @@ import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.emptyListState
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
+import javax.inject.Inject
 
 class StreamListFragment : Fragment(R.layout.fragment_topic_list),
     StreamViewHolder.OnClickStreamListener, TopicViewHolder.OnClickTopicListener,
@@ -49,7 +53,10 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
 
     private var searchDisposable: Disposable = Disposables.empty()
     override val actions: PublishRelay<Action> = PublishRelay.create()
-    private val viewModel: StreamListViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: StreamListViewModel by viewModels{viewModelFactory}
 
     private var _binding: FragmentTopicListBinding? = null
     private val binding get() = _binding!!
@@ -63,6 +70,11 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
         get() = (requireActivity() as ProvideFragmentRouter).getRouter()
 
     private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.people
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.PublishRelay
+import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
@@ -28,6 +31,7 @@ import ru.fasdev.tfs.recycler.item.user.UserViewHolder
 import ru.fasdev.tfs.screen.fragment.info.*
 import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
+import javax.inject.Inject
 
 class PeopleFragment : Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
@@ -40,7 +44,10 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
     }
 
     override val actions: PublishRelay<Action> = PublishRelay.create()
-    private val viewModel: PeopleViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: PeopleViewModel by viewModels{viewModelFactory}
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
@@ -52,6 +59,11 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
 
     private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

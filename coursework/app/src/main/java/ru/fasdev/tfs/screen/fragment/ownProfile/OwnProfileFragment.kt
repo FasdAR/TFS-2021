@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.ownProfile
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,9 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.jakewharton.rxrelay2.PublishRelay
+import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentOwnProfileBinding
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
@@ -21,6 +24,7 @@ import ru.fasdev.tfs.screen.fragment.info.otherErrorState
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
 import java.net.UnknownHostException
+import javax.inject.Inject
 
 class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Action, OwnProfileState>, InfoPlaceholderFragment.Listener {
     companion object {
@@ -30,13 +34,21 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
     }
 
     override val actions: PublishRelay<Action> = PublishRelay.create()
-    private val viewModel: OwnProfileViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: OwnProfileViewModel by viewModels{viewModelFactory}
 
     private var _binding: FragmentOwnProfileBinding? = null
     private val binding get() = _binding!!
 
     private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
     private val cardProfileFragment get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {

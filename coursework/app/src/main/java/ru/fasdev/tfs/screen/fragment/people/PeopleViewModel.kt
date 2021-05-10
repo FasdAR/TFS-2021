@@ -5,9 +5,8 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toUserItem
-import ru.fasdev.tfs.data.repository.users.UsersRepositoryImpl
+import ru.fasdev.tfs.data.repository.users.UsersRepository
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
@@ -16,17 +15,14 @@ import ru.fasdev.tfs.recycler.item.emptySearch.EmptySearchItem
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class PeopleViewModel : ViewModel() {
+class PeopleViewModel @Inject constructor(
+    private val usersRepository: UsersRepository
+) : ViewModel() {
     private companion object {
         const val SEARCH_TIME_OUT = 500L
     }
-
-    //#region Test Di
-    object PeopleComponent {
-        val usersRepository = UsersRepositoryImpl(TfsApp.AppComponent.newUserApi)
-    }
-    //#endregion
 
     private val store: Store<Action, PeopleState> = Store(
         initialState = PeopleState(),
@@ -78,7 +74,7 @@ class PeopleViewModel : ViewModel() {
             .ofType(PeopleAction.Ui.LoadUsers.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                PeopleComponent.usersRepository.getAllUsers()
+                usersRepository.getAllUsers()
                     .flatMap {
                         Observable.fromIterable(it)
                             .map { user -> user.toUserItem() }
@@ -101,7 +97,7 @@ class PeopleViewModel : ViewModel() {
             .distinctUntilChanged()
             .observeOn(Schedulers.io())
             .switchMap { action ->
-                PeopleComponent.usersRepository.searchUsers(action.query)
+                usersRepository.searchUsers(action.query)
                     .flatMap { list ->
                         Observable.fromIterable(list)
                             .map<ViewType> { user -> user.toUserItem() }

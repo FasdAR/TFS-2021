@@ -6,19 +6,18 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
+import ru.fasdev.tfs.data.repository.users.UsersRepository
 import ru.fasdev.tfs.data.repository.users.UsersRepositoryImpl
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.anotherProfile.mvi.AnotherProfileAction
 import ru.fasdev.tfs.screen.fragment.anotherProfile.mvi.AnotherProfileState
+import javax.inject.Inject
 
-class AnotherProfileViewModel : ViewModel() {
-    //#region Test DI
-    object ProfileComponent {
-       val usersRepository = UsersRepositoryImpl(TfsApp.AppComponent.newUserApi)
-    }
-    //#ednregion
+class AnotherProfileViewModel @Inject constructor(
+    private val usersRepository: UsersRepository
+) : ViewModel() {
 
     private val store: Store<Action, AnotherProfileState> = Store(
         initialState = AnotherProfileState(),
@@ -50,10 +49,13 @@ class AnotherProfileViewModel : ViewModel() {
             )
             is AnotherProfileAction.Internal.LoadedUser -> state.copy(
                 isLoading = false,
-                error =  null,
+                error = null,
                 user = action.user
             )
-            is AnotherProfileAction.Internal.LoadingUser -> state.copy(isLoading = true, error = null)
+            is AnotherProfileAction.Internal.LoadingUser -> state.copy(
+                isLoading = true,
+                error = null
+            )
             else -> state
         }
     }
@@ -66,9 +68,13 @@ class AnotherProfileViewModel : ViewModel() {
             .ofType(AnotherProfileAction.Ui.LoadUser::class.java)
             .observeOn(Schedulers.io())
             .flatMap { action ->
-                ProfileComponent.usersRepository.getUserById(action.id)
+                usersRepository.getUserById(action.id)
                     .toObservable()
-                    .map<AnotherProfileAction.Internal> { AnotherProfileAction.Internal.LoadedUser(it) }
+                    .map<AnotherProfileAction.Internal> {
+                        AnotherProfileAction.Internal.LoadedUser(
+                            it
+                        )
+                    }
                     .onErrorReturn { AnotherProfileAction.Internal.LoadedError(it) }
                     .startWith(AnotherProfileAction.Internal.LoadingUser)
             }

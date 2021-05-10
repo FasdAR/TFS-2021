@@ -10,7 +10,9 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toMessageItem
+import ru.fasdev.tfs.data.repository.messages.MessagesRepository
 import ru.fasdev.tfs.data.repository.messages.MessagesRepositoryImpl
+import ru.fasdev.tfs.data.repository.streams.StreamsRepository
 import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
 import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.mviCore.MviView
@@ -24,35 +26,28 @@ import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
 import ru.fasdev.tfs.screen.fragment.chat.mvi.model.SendMessageInfo
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class ChatViewModel : ViewModel() {
+class ChatViewModel @Inject constructor(
+    private val streamRepository: StreamsRepository,
+    private val messagesRepository: MessagesRepository
+) : ViewModel() {
     private companion object {
         const val LIMIT_PAGE = 20
         const val USER_ID = 402233L
     }
 
-    //#region Test DI
-    object ChatComponent {
-        val streamsRepository = StreamsRepositoryImpl(
-            TfsApp.AppComponent.newUserApi,
-            TfsApp.AppComponent.newStreamApi,
-            TfsApp.AppComponent.newStreamDao,
-            TfsApp.AppComponent.newTopicDao
-        )
-
-        val messagesRepository = MessagesRepositoryImpl(
-            TfsApp.AppComponent.json,
-            TfsApp.AppComponent.newMessagesApi,
-            EventsManager(TfsApp.AppComponent.json, TfsApp.AppComponent.eventsApi)
-        )
-    }
-    //#endregion
-
     private val store: Store<Action, ChatState> = Store(
         initialState = ChatState(),
         reducer = ::reducer,
-        middlewares = listOf(::sideActionLoadStreamInfo, ::sideActionLoadNextPage,
-            ::sideActionSendMessage, ::sideActionAddReaction, ::sideActionRemoveReaction, ::sideActionListenUpdateMessage)
+        middlewares = listOf(
+            ::sideActionLoadStreamInfo,
+            ::sideActionLoadNextPage,
+            ::sideActionSendMessage,
+            ::sideActionAddReaction,
+            ::sideActionRemoveReaction,
+            ::sideActionListenUpdateMessage
+        )
     )
 
     private val uiEffects: ReplayRelay<ChatUiEffect> = ReplayRelay.create()
@@ -86,8 +81,14 @@ class ChatViewModel : ViewModel() {
     private fun reducer(state: ChatState, action: Action): ChatState {
         Log.d("NEW_ACTION_REDUCER", action.toString())
         return when (action) {
-            is ChatAction.Internal.LoadedStreamInfo -> state.copy(streamName = action.streamName, topicName = action.topicName)
-            is ChatAction.Internal.LoadedError -> state.copy(isLoading = false, error = action.error)
+            is ChatAction.Internal.LoadedStreamInfo -> state.copy(
+                streamName = action.streamName,
+                topicName = action.topicName
+            )
+            is ChatAction.Internal.LoadedError -> state.copy(
+                isLoading = false,
+                error = action.error
+            )
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
             is ChatAction.Internal.UpdateMessages -> {
                 state.copy(items = action.items)
@@ -118,12 +119,12 @@ class ChatViewModel : ViewModel() {
     private fun sideActionListenUpdateMessage(
         actions: Observable<Action>,
         stateFlow: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Internal.StartListenMessage::class.java)
             .observeOn(Schedulers.io())
             .flatMap {
-                return@flatMap ChatComponent.messagesRepository.listenUpdate(it.streamName, it.topicName)
+                return@flatMap messagesRepository.listenUpdate(it.streamName, it.topicName)
                     .flatMap {
                         Observable.fromIterable(it)
                             .map {
@@ -136,7 +137,8 @@ class ChatViewModel : ViewModel() {
                     .withLatestFrom(stateFlow) { updateItems, state ->
                         val items = state.items.toMutableList()
                         updateItems.forEach { item ->
-                            val indexMessage = items.indexOfFirst { it is MessageItem && it.uId == item.uId }
+                            val indexMessage =
+                                items.indexOfFirst { it is MessageItem && it.uId == item.uId }
 
                             if (indexMessage != -1) {
                                 items[indexMessage] = item
@@ -155,13 +157,13 @@ class ChatViewModel : ViewModel() {
     private fun sideActionLoadStreamInfo(
         actions: Observable<Action>,
         state: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.LoadStreamInfo::class.java)
             .observeOn(Schedulers.io())
             .flatMap { action ->
-                val streamSource = ChatComponent.streamsRepository.getStreamById(action.idStream)
-                val topicSource = ChatComponent.streamsRepository.getTopicById(action.idTopic)
+                val streamSource = streamRepository.getStreamById(action.idStream)
+                val topicSource = streamRepository.getTopicById(action.idTopic)
 
                 streamSource
                     .zipWith(topicSource) { stream, topic -> stream.name to topic.name }
@@ -180,7 +182,7 @@ class ChatViewModel : ViewModel() {
     private fun sideActionLoadNextPage(
         actions: Observable<Action>,
         stateFlow: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.LoadPageMessages::class.java)
             .distinctUntilChanged()
@@ -203,7 +205,7 @@ class ChatViewModel : ViewModel() {
                 )
             }
             .flatMap { loadInfo ->
-                ChatComponent.messagesRepository
+                messagesRepository
                     .getMessagesPage(
                         nameStream = loadInfo.nameStream,
                         nameTopic = loadInfo.nameTopic,
@@ -221,7 +223,12 @@ class ChatViewModel : ViewModel() {
                             .toList()
                             .toObservable()
                     }
-                    .map<ChatAction.Internal> { ChatAction.Internal.LoadedPage(it, loadInfo.directionScroll) }
+                    .map<ChatAction.Internal> {
+                        ChatAction.Internal.LoadedPage(
+                            it,
+                            loadInfo.directionScroll
+                        )
+                    }
                     .onErrorReturn { ChatAction.Internal.LoadedError(it) }
                     .startWith(ChatAction.Internal.LoadingPage)
             }
@@ -230,7 +237,7 @@ class ChatViewModel : ViewModel() {
     private fun sideActionSendMessage(
         actions: Observable<Action>,
         stateFlow: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.SendMessage::class.java)
             .observeOn(Schedulers.io())
@@ -238,21 +245,21 @@ class ChatViewModel : ViewModel() {
                 SendMessageInfo(state.streamName.toString(), state.topicName.toString(), action)
             }
             .flatMap { action ->
-                ChatComponent.messagesRepository.sendMessage(
+                messagesRepository.sendMessage(
                     action.streamName,
                     action.topicName,
                     action.action.textMessage
                 )
-                .toObservable<ChatAction.Internal>()
-                .map<ChatAction.Internal> { ChatAction.Internal.SendedMessage }
-                .onErrorReturn { ChatAction.Internal.SendedError(it) }
+                    .toObservable<ChatAction.Internal>()
+                    .map<ChatAction.Internal> { ChatAction.Internal.SendedMessage }
+                    .onErrorReturn { ChatAction.Internal.SendedError(it) }
             }
     }
 
     private fun sideActionAddReaction(
         actions: Observable<Action>,
         stateFlow: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.SelectedReaction::class.java)
             .observeOn(Schedulers.io())
@@ -264,7 +271,7 @@ class ChatViewModel : ViewModel() {
                 }
             }
             .flatMap { action ->
-                ChatComponent.messagesRepository.addReaction(action.idMessage ?: -1, action.emoji)
+                messagesRepository.addReaction(action.idMessage ?: -1, action.emoji)
                     .toObservable<ChatAction.Internal>()
                     .map<ChatAction.Internal> { ChatAction.Internal.SelectedReaction }
                     .onErrorReturn { ChatAction.Internal.SendedError(it) }
@@ -274,7 +281,7 @@ class ChatViewModel : ViewModel() {
     private fun sideActionRemoveReaction(
         actions: Observable<Action>,
         stateFlow: Observable<ChatState>
-    ) : Observable<Action> {
+    ): Observable<Action> {
         return actions
             .ofType(ChatAction.Ui.UnSelectedReaction::class.java)
             .observeOn(Schedulers.io())
@@ -286,7 +293,7 @@ class ChatViewModel : ViewModel() {
                 }
             }
             .flatMap { action ->
-                ChatComponent.messagesRepository.removeReaction(action.idMessage ?: -1, action.emoji)
+                messagesRepository.removeReaction(action.idMessage ?: -1, action.emoji)
                     .toObservable<ChatAction.Internal>()
                     .map<ChatAction.Internal> { ChatAction.Internal.UnSelectedReaction }
                     .onErrorReturn { ChatAction.Internal.SendedError(it) }

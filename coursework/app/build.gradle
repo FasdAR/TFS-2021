@@ -92,4 +92,13 @@ dependencies {
 
     //swipe refresh layout
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    //Dagger 2
+    implementation 'com.google.dagger:dagger:2.35.1'
+    kapt 'com.google.dagger:dagger-compiler:2.35.1'
+
+    //Dagger 2 Android
+    implementation 'com.google.dagger:dagger-android:2.35.1'
+    implementation 'com.google.dagger:dagger-android-support:2.35.1'
+    kapt 'com.google.dagger:dagger-android-processor:2.35.1'
 }

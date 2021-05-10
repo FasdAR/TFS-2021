@@ -1,5 +1,6 @@
 package ru.fasdev.tfs.screen.fragment.anotherProfile
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +11,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.jakewharton.rxrelay2.PublishRelay
+import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentAnotherProfileBinding
@@ -24,6 +27,7 @@ import ru.fasdev.tfs.screen.fragment.anotherProfile.mvi.AnotherProfileState
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
+import javax.inject.Inject
 
 class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
     MviView<Action, AnotherProfileState>, InfoPlaceholderFragment.Listener {
@@ -43,7 +47,10 @@ class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
     }
 
     override val actions: PublishRelay<Action> = PublishRelay.create()
-    private val viewModel: AnotherProfileViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: AnotherProfileViewModel by viewModels{viewModelFactory}
 
     private var _binding: FragmentAnotherProfileBinding? = null
     private val binding get() = _binding!!
@@ -58,6 +65,11 @@ class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
         get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
     private val cardProfileFragment
         get() = childFragmentManager.findFragmentById(R.id.card_profile) as CardProfileFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -5,10 +5,9 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toStreamItem
 import ru.fasdev.tfs.data.mapper.toTopicItem
-import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
+import ru.fasdev.tfs.data.repository.streams.StreamsRepository
 import ru.fasdev.tfs.domain.stream.model.Stream
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
@@ -19,24 +18,16 @@ import ru.fasdev.tfs.recycler.item.stream.StreamItem
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class StreamListViewModel : ViewModel() {
+class StreamListViewModel @Inject constructor(
+    private val streamsRepository: StreamsRepository
+) : ViewModel() {
     private companion object {
         const val OFFSET_ARRAY = 1
         const val NULL_INDEX = -1
         const val SEARCH_TIME_OUT = 500L
     }
-
-    //#region Test DI
-    object StreamComponent {
-        val streamsRepository = StreamsRepositoryImpl(
-            TfsApp.AppComponent.newUserApi,
-            TfsApp.AppComponent.newStreamApi,
-            TfsApp.AppComponent.newStreamDao,
-            TfsApp.AppComponent.newTopicDao
-        )
-    }
-    //#endregion
 
     private val store: Store<Action, StreamListState> = Store(
         initialState = StreamListState(),
@@ -120,7 +111,7 @@ class StreamListViewModel : ViewModel() {
             .distinctUntilChanged()
             .observeOn(Schedulers.io())
             .switchMap { action ->
-                StreamComponent.streamsRepository.searchQuery(action.query, action.isAmongSubs)
+                streamsRepository.searchQuery(action.query, action.isAmongSubs)
                     .toObservable()
                     .flatMap {
                         Observable.fromIterable(it)
@@ -165,7 +156,7 @@ class StreamListViewModel : ViewModel() {
             .ofType(StreamListAction.Ui.LoadTopics::class.java)
             .observeOn(Schedulers.io())
             .flatMap { action ->
-                StreamComponent.streamsRepository.getOwnTopics(action.idStream)
+                streamsRepository.getOwnTopics(action.idStream)
                     .flatMap {
                         Observable.fromIterable(it)
                             .map { it.toTopicItem(action.idStream) }
@@ -189,8 +180,7 @@ class StreamListViewModel : ViewModel() {
             .ofType(StreamListAction.Ui.LoadSubStreams.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                StreamComponent.streamsRepository.getOwnSubsStreams()
-                    .loadStreams()
+                streamsRepository.getOwnSubsStreams().loadStreams()
             }
     }
 
@@ -201,8 +191,7 @@ class StreamListViewModel : ViewModel() {
             .ofType(StreamListAction.Ui.LoadAllStreams.javaClass)
             .observeOn(Schedulers.io())
             .flatMap { _ ->
-                StreamComponent.streamsRepository.getAllStreams()
-                    .loadStreams()
+                streamsRepository.getAllStreams().loadStreams()
             }
     }
 
