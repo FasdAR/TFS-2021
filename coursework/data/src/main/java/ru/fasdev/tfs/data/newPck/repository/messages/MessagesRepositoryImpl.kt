@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
 import ru.fasdev.tfs.data.newPck.mapper.toMessageDomain
 import ru.fasdev.tfs.data.newPck.source.network.base.model.ZulipResult
 import ru.fasdev.tfs.data.newPck.source.network.messages.api.MessagesApi
-import ru.fasdev.tfs.data.newPck.source.network.messages.model.Narrow
+import ru.fasdev.tfs.data.newPck.source.network.base.model.Narrow
 import ru.fasdev.tfs.domain.newPck.message.model.Message
 
 class MessagesRepositoryImpl(
