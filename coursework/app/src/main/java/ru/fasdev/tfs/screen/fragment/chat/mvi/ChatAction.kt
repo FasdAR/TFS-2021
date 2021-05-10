@@ -17,6 +17,9 @@ sealed class ChatAction {
     }
 
     sealed class Internal : SideAction {
+        object SendedMessage: Internal()
+        class SendedError(val error: Throwable): Internal()
+
         object LoadingPage: Internal()
         class LoadedPage(val items: List<ViewType>, val direction: DirectionScroll): Internal()
         class LoadedError(val error: Throwable): Internal()

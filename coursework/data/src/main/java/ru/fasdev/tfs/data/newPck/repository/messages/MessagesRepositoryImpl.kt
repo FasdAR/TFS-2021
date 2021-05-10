@@ -1,9 +1,11 @@
 package ru.fasdev.tfs.data.newPck.repository.messages
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import ru.fasdev.tfs.data.newPck.mapper.toMessageDomain
+import ru.fasdev.tfs.data.newPck.source.network.base.model.ZulipResult
 import ru.fasdev.tfs.data.newPck.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.data.newPck.source.network.messages.model.Narrow
 import ru.fasdev.tfs.domain.newPck.message.model.Message
@@ -45,5 +47,15 @@ class MessagesRepositoryImpl(
                     .toSortedList { item1, item2 -> item1.date.compareTo(item2.date) }
                     .toObservable()
             }
+    }
+
+    override fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable {
+        return messagesApi.sendMessage(
+            to = nameStream,
+            subject = nameTopic,
+            content = message
+        ).flatMapCompletable {
+            Completable.fromCallable { it.result == ZulipResult.SUCCESS }
+        }
     }
 }

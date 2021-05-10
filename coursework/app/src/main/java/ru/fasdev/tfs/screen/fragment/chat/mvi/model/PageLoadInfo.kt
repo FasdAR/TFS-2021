@@ -1,8 +1,11 @@
-package ru.fasdev.tfs.screen.fragment.chat.model
+package ru.fasdev.tfs.screen.fragment.chat.mvi.model
+
+import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
 
 class PageLoadInfo(val nameStream: String,
                    val nameTopic: String,
                    val idAnchorMessage: Long?,
                    val afterMessageCount: Int,
                    val beforeMessageCount: Int,
-                   val directionScroll: DirectionScroll)
+                   val directionScroll: DirectionScroll
+)

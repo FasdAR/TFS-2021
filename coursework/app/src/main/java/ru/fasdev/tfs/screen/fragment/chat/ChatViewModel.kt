@@ -2,7 +2,6 @@ package ru.fasdev.tfs.screen.fragment.chat
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
@@ -15,10 +14,10 @@ import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.item.message.MessageItem
 import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
-import ru.fasdev.tfs.screen.fragment.chat.model.PageLoadInfo
+import ru.fasdev.tfs.screen.fragment.chat.mvi.model.PageLoadInfo
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
-import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
+import ru.fasdev.tfs.screen.fragment.chat.mvi.model.SendMessageInfo
 import java.util.concurrent.TimeUnit
 
 class ChatViewModel : ViewModel() {
@@ -47,7 +46,7 @@ class ChatViewModel : ViewModel() {
         initialState = ChatState(),
         reducer = ::reducer,
         middlewares = listOf(::sideActionLoadStreamName,
-            ::sideActionLoadTopicName, ::sideActionLoadNextPage)
+            ::sideActionLoadTopicName, ::sideActionLoadNextPage, ::sideActionSendMessage)
     )
 
     private val wiring = store.wire()
@@ -70,6 +69,19 @@ class ChatViewModel : ViewModel() {
         return when (action) {
             is ChatAction.Internal.LoadedStreamName -> state.copy(streamName = action.streamName)
             is ChatAction.Internal.LoadedTopicName -> state.copy(topicName = action.topicName)
+            is ChatAction.Internal.LoadedError -> state.copy(isLoading = false, error = action.error)
+            is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
+            is ChatAction.Internal.UpdateMessage -> {
+                val indexMessage = state.items.indexOfFirst { it is MessageItem && it.uId == action.item.uId }
+                if (indexMessage != -1) {
+                    val items = state.items.toMutableList()
+                    items[indexMessage] = action.item
+                    state.copy(items = items)
+                }
+                else {
+                    state.copy(items = state.items + listOf(action.item))
+                }
+            }
             is ChatAction.Internal.LoadedPage -> {
                 val isUpScroll = action.direction == DirectionScroll.UP
 
@@ -95,7 +107,8 @@ class ChatViewModel : ViewModel() {
             .flatMap { action ->
                 ChatComponent.streamsRepository.getStreamById(action.idStream)
                     .toObservable()
-                    .map { ChatAction.Internal.LoadedStreamName(it.name) }
+                    .map<ChatAction.Internal> { ChatAction.Internal.LoadedStreamName(it.name) }
+                    .onErrorReturn { ChatAction.Internal.LoadedError(it) }
             }
     }
 
@@ -109,7 +122,8 @@ class ChatViewModel : ViewModel() {
             .flatMap { action ->
                 ChatComponent.streamsRepository.getTopicById(action.idTopic)
                     .toObservable()
-                    .map { ChatAction.Internal.LoadedTopicName(it.name) }
+                    .map<ChatAction.Internal> { ChatAction.Internal.LoadedTopicName(it.name) }
+                    .onErrorReturn { ChatAction.Internal.LoadedError(it) }
             }
     }
 
@@ -160,6 +174,28 @@ class ChatViewModel : ViewModel() {
                     .map<ChatAction.Internal> { ChatAction.Internal.LoadedPage(it, loadInfo.directionScroll) }
                     .onErrorReturn { ChatAction.Internal.LoadedError(it) }
                     .startWith(ChatAction.Internal.LoadingPage)
+            }
+    }
+
+    private fun sideActionSendMessage(
+        actions: Observable<Action>,
+        stateFlow: Observable<ChatState>
+    ) : Observable<Action> {
+        return actions
+            .ofType(ChatAction.Ui.SendMessage::class.java)
+            .observeOn(Schedulers.io())
+            .withLatestFrom(stateFlow) { action, state ->
+                SendMessageInfo(state.streamName.toString(), state.topicName.toString(), action)
+            }
+            .flatMap { action ->
+                ChatComponent.messagesRepository.sendMessage(
+                    action.streamName,
+                    action.topicName,
+                    action.action.textMessage
+                )
+                .toObservable<ChatAction.Internal>()
+                .map<ChatAction.Internal> { ChatAction.Internal.SendedMessage }
+                .onErrorReturn { ChatAction.Internal.SendedError(it) }
             }
     }
 }
