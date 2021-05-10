@@ -35,6 +35,7 @@ class MessagesRepositoryImpl(
     override fun getMessagesPage(
         nameStream: String,
         nameTopic: String,
+        idStream: Long,
         idAnchorMessage: Long?,
         afterMessageCount: Int,
         beforeMessageCount: Int
@@ -44,8 +45,9 @@ class MessagesRepositoryImpl(
         val narrowJson = json.encodeToString(listOf(narrowStream, narrowTopic))
 
         val anchorMessage: String = idAnchorMessage?.toString() ?: ANCHOR_NEWEST
+        val isActualData = anchorMessage == ANCHOR_NEWEST
 
-        return messagesApi.getMessages(
+        val networkSource = messagesApi.getMessages(
             anchor = anchorMessage,
             numBefore = beforeMessageCount,
             numAfter = afterMessageCount,
@@ -72,6 +74,20 @@ class MessagesRepositoryImpl(
                     .andThen(reactionDao.insertReplace(reactions))
                     .andThen(Observable.just(it))
             }
+
+        if (isActualData) {
+            val dataBaseSource = messageDao.getMessagesByTopicStream(nameTopic, idStream)
+                .flatMapObservable {
+                    Observable.fromIterable(it)
+                        .map { it.toMessageDomain() }
+                        .toSortedList { item1, item2 -> item1.date.compareTo(item2.date) }
+                        .toObservable()
+                }
+
+            return dataBaseSource.concatWith(networkSource)
+        }
+
+        return networkSource
     }
 
     override fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable {

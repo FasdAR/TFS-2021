@@ -83,12 +83,16 @@ class ChatViewModel @Inject constructor(
         return when (action) {
             is ChatAction.Internal.LoadedStreamInfo -> state.copy(
                 streamName = action.streamName,
-                topicName = action.topicName
+                topicName = action.topicName,
+                streamId = action.idStream
             )
-            is ChatAction.Internal.LoadedError -> state.copy(
-                isLoading = false,
-                error = action.error
-            )
+            is ChatAction.Internal.LoadedError -> {
+                return if (state.items.isEmpty()) {
+                    state.copy(isLoading = false, error = action.error)
+                } else {
+                    state
+                }
+            }
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
             is ChatAction.Internal.UpdateMessages -> {
                 state.copy(items = action.items, error = null)
@@ -170,7 +174,7 @@ class ChatViewModel @Inject constructor(
                     .toObservable()
                     .flatMap {
                         Observable.just(
-                            ChatAction.Internal.LoadedStreamInfo(it.first, it.second),
+                            ChatAction.Internal.LoadedStreamInfo(it.first, it.second, action.idStream),
                             ChatAction.Internal.StartListenMessage(it.first, it.second),
                             ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP)
                         )
@@ -203,6 +207,7 @@ class ChatViewModel @Inject constructor(
                 val beforeMessageCount = if (!isUpScroll) 0 else LIMIT_PAGE
 
                 PageLoadInfo(
+                    state.streamId ?: -1,
                     state.streamName.toString(),
                     state.topicName.toString(),
                     action.anchorMessageId,
@@ -218,7 +223,8 @@ class ChatViewModel @Inject constructor(
                         nameTopic = loadInfo.nameTopic,
                         idAnchorMessage = loadInfo.idAnchorMessage,
                         afterMessageCount = loadInfo.afterMessageCount,
-                        beforeMessageCount = loadInfo.beforeMessageCount
+                        beforeMessageCount = loadInfo.beforeMessageCount,
+                        idStream = loadInfo.idStream
                     )
                     .flatMap {
                         Observable.fromIterable(it)

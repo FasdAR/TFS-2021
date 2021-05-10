@@ -14,8 +14,8 @@ import ru.fasdev.tfs.data.source.database.relation.MessageRelation
 @Dao
 abstract class MessageDao : BaseDao<MessageDb>
 {
-    @Query("SELECT * FROM message WHERE topic = :topic")
-    abstract fun getMessagesByTopic(topic: String) : Maybe<List<MessageRelation>>
+    @Query("SELECT * FROM message WHERE topic = :topic AND id_stream = :idStream ORDER BY date DESC")
+    abstract fun getMessagesByTopicStream(topic: String, idStream: Long) : Single<List<MessageRelation>>
 
     @Query("SELECT * FROM message WHERE id = :id")
     abstract fun getMessageById(id: Long) : Single<MessageRelation>

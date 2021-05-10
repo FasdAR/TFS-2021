@@ -26,7 +26,7 @@ sealed class ChatAction {
         object LoadingPage: Internal()
         class LoadedPage(val items: List<ViewType>, val direction: DirectionScroll): Internal()
         class LoadedError(val error: Throwable): Internal()
-        class LoadedStreamInfo(val streamName: String, val topicName: String) : Internal()
+        class LoadedStreamInfo(val streamName: String, val topicName: String, val idStream: Long) : Internal()
 
         class StartListenMessage(val streamName: String, val topicName: String): Internal()
         class UpdateMessages(val items: List<ViewType>) : Internal()

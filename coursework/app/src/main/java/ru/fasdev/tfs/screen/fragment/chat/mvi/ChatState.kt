@@ -4,6 +4,7 @@ import ru.fasdev.tfs.mviCore.entity.state.UiState
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 
 data class ChatState (
+    val streamId: Long? = null,
     val streamName: String? = null,
     val topicName: String? = null,
     val isLoading: Boolean = false,

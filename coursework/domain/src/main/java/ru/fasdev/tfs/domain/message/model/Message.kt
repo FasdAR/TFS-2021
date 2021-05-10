@@ -9,5 +9,6 @@ class Message(
     val text: String,
     val date: Date,
     val reactions: List<Reaction>,
-    val topic: String
+    val topic: String,
+    val streamId: Long
 )

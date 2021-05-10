@@ -14,7 +14,8 @@ fun Message.toMessageDomain(userId: Long): MessageDomain {
         text = content,
         date = timestamp,
         reactions = reactions.toDomainReaction(userId),
-        topic = subject
+        topic = subject,
+        streamId = streamId
     )
 }
 
@@ -23,6 +24,7 @@ fun MessageDomain.toMessageDb(): MessageDb {
         id,
         sender.id,
         topic,
+        streamId,
         text,
         date
     )
@@ -35,6 +37,7 @@ fun MessageRelation.toMessageDomain(): MessageDomain {
         text = messageDb.text,
         date = messageDb.date,
         reactions = reactions.map { it.toReactionDomain() },
-        topic = messageDb.topic
+        topic = messageDb.topic,
+        streamId = messageDb.idStream
     )
 }

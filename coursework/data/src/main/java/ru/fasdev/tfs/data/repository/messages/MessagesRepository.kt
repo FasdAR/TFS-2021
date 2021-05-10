@@ -8,6 +8,7 @@ interface MessagesRepository {
     fun getMessagesPage(
         nameStream: String,
         nameTopic: String,
+        idStream: Long,
         idAnchorMessage: Long?,
         afterMessageCount: Int,
         beforeMessageCount: Int
