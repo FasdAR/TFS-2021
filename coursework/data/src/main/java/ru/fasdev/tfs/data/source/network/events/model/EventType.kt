@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class EventType
-{
+enum class EventType {
     @SerialName("message") MESSAGE,
     @SerialName("reaction") REACTION
 }

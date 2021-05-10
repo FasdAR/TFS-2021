@@ -6,7 +6,7 @@ import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
 import ru.fasdev.tfs.data.source.network.messages.model.Message
 
 @Serializable
-class MessagesResponse (
+class MessagesResponse(
     override val code: String? = null,
     override val msg: String,
     override val result: ZulipResult,

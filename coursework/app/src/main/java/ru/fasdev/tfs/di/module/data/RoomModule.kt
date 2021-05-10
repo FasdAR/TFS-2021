@@ -5,13 +5,15 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ru.fasdev.tfs.data.source.database.TfsDatabase
-import ru.fasdev.tfs.data.source.database.dao.*
+import ru.fasdev.tfs.data.source.database.dao.MessageDao
+import ru.fasdev.tfs.data.source.database.dao.ReactionDao
+import ru.fasdev.tfs.data.source.database.dao.StreamDao
+import ru.fasdev.tfs.data.source.database.dao.TopicDao
+import ru.fasdev.tfs.data.source.database.dao.UserDao
 import ru.fasdev.tfs.di.scope.AppScope
-import javax.inject.Singleton
 
 @Module
-class RoomModule
-{
+class RoomModule {
     @Provides
     @AppScope
     fun provideTfsDatabase(context: Context): TfsDatabase {

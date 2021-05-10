@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class Operation
-{
+enum class Operation {
     @SerialName("remove") REMOVE,
     @SerialName("add") ADD
 }

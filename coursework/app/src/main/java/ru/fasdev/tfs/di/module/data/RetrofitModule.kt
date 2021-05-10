@@ -20,11 +20,9 @@ import ru.fasdev.tfs.data.source.network.streams.api.StreamsApi
 import ru.fasdev.tfs.data.source.network.users.api.UsersApi
 import ru.fasdev.tfs.di.scope.AppScope
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @Module
-class RetrofitModule
-{
+class RetrofitModule {
     private companion object {
         private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
         private const val TOKEN_AUTH = "Basic YW5kcmV5cmVkbmlrb3ZAZ21haWwuY29tOk5ud3lUakNVZEpnc0s4Sm1QbWo2YVdIdHJMNWZjUktn"
@@ -40,8 +38,7 @@ class RetrofitModule
         return HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
-            }
-            else {
+            } else {
                 setLevel(HttpLoggingInterceptor.Level.BASIC)
             }
         }
@@ -63,7 +60,7 @@ class RetrofitModule
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: Interceptor
-    ) : OkHttpClient {
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
                 readTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -89,9 +86,11 @@ class RetrofitModule
 
     @Provides
     @AppScope
-    fun provideRetrofit(okHttpClient: OkHttpClient,
-                        callAdapter: CallAdapter.Factory,
-                        converterFactory: Converter.Factory) : Retrofit {
+    fun provideRetrofit(
+        okHttpClient: OkHttpClient,
+        callAdapter: CallAdapter.Factory,
+        converterFactory: Converter.Factory
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)

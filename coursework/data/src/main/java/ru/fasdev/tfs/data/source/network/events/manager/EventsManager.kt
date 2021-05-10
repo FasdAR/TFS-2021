@@ -9,8 +9,7 @@ import ru.fasdev.tfs.data.source.network.events.api.EventsApi
 import ru.fasdev.tfs.data.source.network.events.model.Event
 import ru.fasdev.tfs.data.source.network.events.model.EventType
 
-class EventsManager (private val json: Json, private val eventsApi: EventsApi)
-{
+class EventsManager(private val json: Json, private val eventsApi: EventsApi) {
     private companion object {
         private val BAD_EVENT_QUEUE_ID = "BAD_EVENT_QUEUE_ID"
         private val BAD_REQUEST = "BAD_REQUEST"
@@ -38,10 +37,10 @@ class EventsManager (private val json: Json, private val eventsApi: EventsApi)
                         }
                         .toObservable()
                 }
-                .repeat()
+                    .repeat()
             }
             .retry()
     }
 
-    class BadQueueIdError(idQueue: String): Throwable()
+    class BadQueueIdError(idQueue: String) : Throwable()
 }

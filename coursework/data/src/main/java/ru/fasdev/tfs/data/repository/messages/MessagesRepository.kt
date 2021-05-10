@@ -12,7 +12,7 @@ interface MessagesRepository {
         idAnchorMessage: Long?,
         afterMessageCount: Int,
         beforeMessageCount: Int
-    ) : Observable<List<Message>>
+    ): Observable<List<Message>>
 
     fun sendMessage(nameStream: String, nameTopic: String, message: String): Completable
 

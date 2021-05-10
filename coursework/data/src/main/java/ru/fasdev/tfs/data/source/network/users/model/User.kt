@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class User (
+class User(
     @SerialName("user_id") override val userId: Long,
     override val email: String,
     @SerialName("full_name") override val fullName: String,

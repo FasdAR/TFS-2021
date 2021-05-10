@@ -12,11 +12,11 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.FragmentMainBinding
-import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
 import ru.fasdev.tfs.fragmentRouter.base.BaseFragmentRouter
-import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
+import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
 import ru.fasdev.tfs.screen.fragment.ownProfile.OwnProfileFragment
+import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
 import javax.inject.Inject
 
 class MainFragment : Fragment(R.layout.fragment_main), OnBackPressedListener, HasAndroidInjector {

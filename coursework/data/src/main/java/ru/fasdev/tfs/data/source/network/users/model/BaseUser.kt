@@ -1,7 +1,6 @@
 package ru.fasdev.tfs.data.source.network.users.model
 
-interface BaseUser
-{
+interface BaseUser {
     val userId: Long
     val email: String
     val fullName: String

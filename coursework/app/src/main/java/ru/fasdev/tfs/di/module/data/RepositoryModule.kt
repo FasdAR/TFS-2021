@@ -9,7 +9,11 @@ import ru.fasdev.tfs.data.repository.streams.StreamsRepository
 import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
 import ru.fasdev.tfs.data.repository.users.UsersRepository
 import ru.fasdev.tfs.data.repository.users.UsersRepositoryImpl
-import ru.fasdev.tfs.data.source.database.dao.*
+import ru.fasdev.tfs.data.source.database.dao.MessageDao
+import ru.fasdev.tfs.data.source.database.dao.ReactionDao
+import ru.fasdev.tfs.data.source.database.dao.StreamDao
+import ru.fasdev.tfs.data.source.database.dao.TopicDao
+import ru.fasdev.tfs.data.source.database.dao.UserDao
 import ru.fasdev.tfs.data.source.network.events.api.EventsApi
 import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.data.source.network.messages.api.MessagesApi
@@ -28,8 +32,12 @@ class RepositoryModule {
     @Provides
     @AppScope
     fun provideMessageRepository(
-        json: Json, messagesApi: MessagesApi, eventsManager: EventsManager,
-        messageDao: MessageDao, reactionDao: ReactionDao, usersDao: UserDao
+        json: Json,
+        messagesApi: MessagesApi,
+        eventsManager: EventsManager,
+        messageDao: MessageDao,
+        reactionDao: ReactionDao,
+        usersDao: UserDao
     ): MessagesRepository {
         return MessagesRepositoryImpl(
             json,
@@ -44,7 +52,10 @@ class RepositoryModule {
     @Provides
     @AppScope
     fun provideStreamsRepository(
-        usersApi: UsersApi, streamsApi: StreamsApi, streamsDao: StreamDao, topicDao: TopicDao
+        usersApi: UsersApi,
+        streamsApi: StreamsApi,
+        streamsDao: StreamDao,
+        topicDao: TopicDao
     ): StreamsRepository {
         return StreamsRepositoryImpl(usersApi, streamsApi, streamsDao, topicDao)
     }

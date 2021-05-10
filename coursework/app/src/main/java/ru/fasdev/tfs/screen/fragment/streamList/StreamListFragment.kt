@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.PublishRelay
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import ru.fasdev.tfs.R
@@ -23,9 +22,6 @@ import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
-import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.diff.StreamItemCallback
 import ru.fasdev.tfs.recycler.item.stream.StreamViewHolder
 import ru.fasdev.tfs.recycler.item.topic.TopicViewHolder
 import ru.fasdev.tfs.screen.fragment.channels.ChannelsFragment
@@ -34,11 +30,17 @@ import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.emptyListState
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
+import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.StreamHolderFactory
+import ru.fasdev.tfs.screen.fragment.streamList.recycler.diff.StreamItemCallback
 import javax.inject.Inject
 
-class StreamListFragment : Fragment(R.layout.fragment_topic_list),
-    StreamViewHolder.OnClickStreamListener, TopicViewHolder.OnClickTopicListener,
-    MviView<Action, StreamListState>, InfoPlaceholderFragment.Listener {
+class StreamListFragment :
+    Fragment(R.layout.fragment_topic_list),
+    StreamViewHolder.OnClickStreamListener,
+    TopicViewHolder.OnClickTopicListener,
+    MviView<Action, StreamListState>,
+    InfoPlaceholderFragment.Listener {
 
     companion object {
         const val ALL_MODE = 1
@@ -56,7 +58,7 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: StreamListViewModel by viewModels{viewModelFactory}
+    private val viewModel: StreamListViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentTopicListBinding? = null
     private val binding get() = _binding!!
@@ -137,17 +139,14 @@ class StreamListFragment : Fragment(R.layout.fragment_topic_list),
             binding.infoPlaceholder.isGone = false
 
             infoFragment.handleErrorState(state.error)
-        }
-        else {
+        } else {
             if (state.isLoading) {
                 binding.infoPlaceholder.isGone = true
-            }
-            else {
+            } else {
                 if (state.items.isNotEmpty()) {
                     binding.infoPlaceholder.isGone = true
                     binding.rvTopics.isGone = false
-                }
-                else {
+                } else {
                     binding.rvTopics.isGone = true
                     binding.infoPlaceholder.isGone = false
 

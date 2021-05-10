@@ -24,18 +24,23 @@ import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.item.user.UserViewHolder
+import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
+import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
+import ru.fasdev.tfs.screen.fragment.info.emptyListState
+import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
-import ru.fasdev.tfs.recycler.item.user.UserViewHolder
-import ru.fasdev.tfs.screen.fragment.info.*
-import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import javax.inject.Inject
 
-class PeopleFragment : Fragment(R.layout.fragment_people),
+class PeopleFragment :
+    Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
-    OnBackPressedListener, MviView<Action, PeopleState>, InfoPlaceholderFragment.Listener {
+    OnBackPressedListener,
+    MviView<Action, PeopleState>,
+    InfoPlaceholderFragment.Listener {
 
     companion object {
         private val TAG: String = PeopleFragment::class.java.simpleName
@@ -47,7 +52,7 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: PeopleViewModel by viewModels{viewModelFactory}
+    private val viewModel: PeopleViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
@@ -138,17 +143,14 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
             binding.infoPlaceholder.isGone = false
 
             infoFragment.handleErrorState(state.error)
-        }
-        else {
+        } else {
             if (state.isLoading) {
                 binding.infoPlaceholder.isGone = true
-            }
-            else {
+            } else {
                 if (!state.users.isNullOrEmpty()) {
                     binding.infoPlaceholder.isGone = true
                     binding.usersRv.isGone = false
-                }
-                else {
+                } else {
                     binding.usersRv.isGone = true
                     binding.infoPlaceholder.isGone = false
 

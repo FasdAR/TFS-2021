@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import com.google.android.material.tabs.TabLayoutMediator
 import com.jakewharton.rxrelay2.PublishRelay
 import dagger.android.AndroidInjector
@@ -24,7 +23,9 @@ import ru.fasdev.tfs.screen.fragment.channels.pager.StreamFragmentFactory
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
 import javax.inject.Inject
 
-class ChannelsFragment : Fragment(R.layout.fragment_channels), OnBackPressedListener,
+class ChannelsFragment :
+    Fragment(R.layout.fragment_channels),
+    OnBackPressedListener,
     HasAndroidInjector {
     companion object {
         private val TAG: String = ChannelsFragment::class.java.simpleName

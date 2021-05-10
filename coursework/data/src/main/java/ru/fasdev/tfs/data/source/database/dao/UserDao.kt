@@ -8,11 +8,10 @@ import ru.fasdev.tfs.data.source.database.base.BaseDao
 import ru.fasdev.tfs.data.source.database.model.UserDb
 
 @Dao
-abstract class UserDao: BaseDao<UserDb>
-{
+abstract class UserDao : BaseDao<UserDb> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: UserDb) : Completable
+    abstract fun insertReplace(entity: UserDb): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: List<UserDb>) : Completable
+    abstract fun insertReplace(entity: List<UserDb>): Completable
 }

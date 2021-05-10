@@ -8,22 +8,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import ru.fasdev.tfs.TfsApp
 import ru.fasdev.tfs.data.mapper.toMessageItem
 import ru.fasdev.tfs.data.repository.messages.MessagesRepository
-import ru.fasdev.tfs.data.repository.messages.MessagesRepositoryImpl
 import ru.fasdev.tfs.data.repository.streams.StreamsRepository
-import ru.fasdev.tfs.data.repository.streams.StreamsRepositoryImpl
-import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.mviCore.MviView
 import ru.fasdev.tfs.mviCore.Store
 import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.recycler.item.message.MessageItem
 import ru.fasdev.tfs.screen.fragment.chat.model.DirectionScroll
-import ru.fasdev.tfs.screen.fragment.chat.mvi.model.PageLoadInfo
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatAction
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatState
 import ru.fasdev.tfs.screen.fragment.chat.mvi.ChatUiEffect
+import ru.fasdev.tfs.screen.fragment.chat.mvi.model.PageLoadInfo
 import ru.fasdev.tfs.screen.fragment.chat.mvi.model.SendMessageInfo
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -193,8 +189,7 @@ class ChatViewModel @Inject constructor(
                 if (it.anchorMessageId != null) {
                     Observable.just(it).distinctUntilChanged()
                         .debounce(500, TimeUnit.MILLISECONDS)
-                }
-                else {
+                } else {
                     Observable.just(it)
                 }
             }

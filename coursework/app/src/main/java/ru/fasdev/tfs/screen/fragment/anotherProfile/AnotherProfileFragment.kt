@@ -29,8 +29,10 @@ import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import javax.inject.Inject
 
-class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
-    MviView<Action, AnotherProfileState>, InfoPlaceholderFragment.Listener {
+class AnotherProfileFragment :
+    Fragment(R.layout.fragment_another_profile),
+    MviView<Action, AnotherProfileState>,
+    InfoPlaceholderFragment.Listener {
     companion object {
         private val TAG: String = AnotherProfileFragment::class.java.simpleName
 
@@ -50,7 +52,7 @@ class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: AnotherProfileViewModel by viewModels{viewModelFactory}
+    private val viewModel: AnotherProfileViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentAnotherProfileBinding? = null
     private val binding get() = _binding!!
@@ -102,15 +104,13 @@ class AnotherProfileFragment : Fragment(R.layout.fragment_another_profile),
             binding.infoPlaceholder.isGone = false
 
             infoFragment.handleErrorState(state.error)
-        }
-        else {
+        } else {
             binding.infoPlaceholder.isGone = true
             binding.cardProfile.isGone = false
 
             if (state.isLoading) {
                 cardProfileFragment.startShimmer()
-            }
-            else {
+            } else {
                 cardProfileFragment.stopShimmer()
 
                 cardProfileFragment.apply {

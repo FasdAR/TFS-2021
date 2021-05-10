@@ -12,8 +12,7 @@ fun Message.toMessageItem(isOwnMessage: Boolean): MessageItem {
             message = text,
             reactions = reactions.map { it.toReactionItem() }
         )
-    }
-    else {
+    } else {
         return ExternalMessageItem(
             uId = id.toInt(),
             nameSender = sender.fullName,

@@ -6,7 +6,7 @@ import ru.fasdev.tfs.data.source.network.streams.model.Topic
 typealias TopicDomain = ru.fasdev.tfs.domain.stream.model.Topic
 
 fun Topic.toTopicDomain(idStream: Long, index: Long): TopicDomain {
-    return TopicDomain(idStream + index, name, 0) //TODO: CHANGE LAST MESSAGE COUNT
+    return TopicDomain(idStream + index, name, 0) // TODO: CHANGE LAST MESSAGE COUNT
 }
 
 fun Topic.toTopicDb(idStream: Long, index: Long): TopicDb {

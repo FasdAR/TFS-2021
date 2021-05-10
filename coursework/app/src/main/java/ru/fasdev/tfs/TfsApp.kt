@@ -21,7 +21,7 @@ class TfsApp : Application(), HasAndroidInjector {
             .create(this)
             .inject(this)
 
-        RxJavaPlugins.setErrorHandler { e: Throwable? -> Log.e("RxDisposeError", e?.message.toString())}
+        RxJavaPlugins.setErrorHandler { e: Throwable? -> Log.e("RxDisposeError", e?.message.toString()) }
     }
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector

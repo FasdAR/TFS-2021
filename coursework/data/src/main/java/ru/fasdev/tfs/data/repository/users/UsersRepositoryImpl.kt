@@ -10,7 +10,7 @@ import ru.fasdev.tfs.data.source.network.users.model.BaseUser
 import ru.fasdev.tfs.domain.user.model.User
 import ru.fasdev.tfs.domain.user.model.UserOnlineStatus
 import java.lang.ref.SoftReference
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class UsersRepositoryImpl(private val userApi: UsersApi) : UsersRepository {
@@ -18,7 +18,7 @@ class UsersRepositoryImpl(private val userApi: UsersApi) : UsersRepository {
         const val DELAY_QUERY = 20L
     }
 
-    //Временный кэш списка всех пользователей
+    // Временный кэш списка всех пользователей
     private var temporaryCacheAllUsers: SoftReference<List<User>> = SoftReference(listOf())
 
     private fun getOnlineStatus(user: User): Single<User> {

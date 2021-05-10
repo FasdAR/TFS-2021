@@ -11,8 +11,7 @@ import ru.fasdev.tfs.screen.fragment.people.PeopleFragment
 import ru.fasdev.tfs.screen.fragment.people.PeopleViewModel
 
 @Module
-abstract class PeopleModule
-{
+abstract class PeopleModule {
     @FragmentScope
     @ContributesAndroidInjector(modules = [])
     abstract fun createFragment(): PeopleFragment

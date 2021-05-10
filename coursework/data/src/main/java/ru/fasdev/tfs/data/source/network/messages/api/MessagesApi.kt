@@ -1,13 +1,16 @@
 package ru.fasdev.tfs.data.source.network.messages.api
 
 import io.reactivex.Single
-import retrofit2.http.*
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 import ru.fasdev.tfs.data.source.network.messages.response.MessagesReactions
 import ru.fasdev.tfs.data.source.network.messages.response.MessagesResponse
 import ru.fasdev.tfs.data.source.network.messages.response.PostMessagesResponse
 
-interface MessagesApi
-{
+interface MessagesApi {
     companion object {
         const val OLDEST_ANCHOR = "oldest"
         const val LIMIT_PAGE = 20
@@ -23,7 +26,7 @@ interface MessagesApi
         @Query("client_gravatar") clientGravatar: Boolean = false,
         @Query("apply_markdown") applyMarkdown: Boolean = false,
         @Query("use_first_unread_anchor") useFirstUnreadAnchor: Boolean = false
-    ) : Single<MessagesResponse>
+    ): Single<MessagesResponse>
 
     @POST("messages")
     fun sendMessage(

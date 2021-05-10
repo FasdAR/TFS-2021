@@ -45,9 +45,12 @@ import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import javax.inject.Inject
 
-class ChatFragment : Fragment(R.layout.fragment_chat),
-    MessageViewHolder.OnLongClickMessageListener, MessageViewHolder.OnClickReactionListener,
-    AsyncListDiffer.ListListener<ViewType>, MviView<Action, ChatState>,
+class ChatFragment :
+    Fragment(R.layout.fragment_chat),
+    MessageViewHolder.OnLongClickMessageListener,
+    MessageViewHolder.OnClickReactionListener,
+    AsyncListDiffer.ListListener<ViewType>,
+    MviView<Action, ChatState>,
     InfoPlaceholderFragment.Listener {
 
     companion object {
@@ -71,7 +74,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: ChatViewModel by viewModels{viewModelFactory}
+    private val viewModel: ChatViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -117,7 +120,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
             insetView.updatePadding(bottom = initialPadding.bottom + systemInsets.bottom)
         }
 
-        setFragmentResultListener(SelectEmojiBottomDialog.TAG) {_, bundle ->
+        setFragmentResultListener(SelectEmojiBottomDialog.TAG) { _, bundle ->
             val emoji = bundle.getString(SelectEmojiBottomDialog.KEY_SELECTED_EMOJI)
             emoji?.let { actions.accept(ChatAction.Ui.SelectedReaction(emoji = emoji)) }
         }
@@ -134,7 +137,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         initListenerScroll()
 
         binding.msgEdt.addTextChangedListener {
-            //TODO: CHANGE PLUS TO NORMAL DRAWABLE
+            // TODO: CHANGE PLUS TO NORMAL DRAWABLE
             if (it.isNullOrEmpty()) {
                 binding.sendBtn.setIconResource(R.drawable.ic_add)
             } else {
@@ -237,7 +240,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
     private fun renderSideEffect(uiEffect: ChatUiEffect) {
         when (uiEffect) {
             is ChatUiEffect.ErrorSnackbar -> {
-                //TODO: ADD ERROR SNACKBAR
+                // TODO: ADD ERROR SNACKBAR
             }
             is ChatUiEffect.OpenEmojiDialog -> {
                 showBottomEmojiDialog()

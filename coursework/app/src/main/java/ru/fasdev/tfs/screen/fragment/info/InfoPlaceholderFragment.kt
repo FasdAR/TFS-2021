@@ -39,8 +39,7 @@ fun InfoPlaceholderFragment.emptyListState(description: String) {
     positiveBtnText = resources.getString(R.string.update)
 }
 
-class InfoPlaceholderFragment: Fragment(R.layout.fragment_error_network)
-{
+class InfoPlaceholderFragment : Fragment(R.layout.fragment_error_network) {
     enum class ButtonType {
         POSITIVE
     }

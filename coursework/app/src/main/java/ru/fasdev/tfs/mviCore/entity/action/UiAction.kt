@@ -1,3 +1,3 @@
 package ru.fasdev.tfs.mviCore.entity.action
 
-interface UiAction: Action
+interface UiAction : Action

@@ -11,8 +11,7 @@ import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
 import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileViewModel
 
 @Module
-abstract class AnotherProfileModule
-{
+abstract class AnotherProfileModule {
     @FragmentScope
     @ContributesAndroidInjector(modules = [])
     abstract fun createFragment(): AnotherProfileFragment

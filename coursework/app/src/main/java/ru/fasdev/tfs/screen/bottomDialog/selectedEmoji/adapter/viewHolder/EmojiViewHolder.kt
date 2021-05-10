@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewHolder
 
-import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 import ru.fasdev.tfs.databinding.ItemEmojiBinding
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
+import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 
 class EmojiViewHolder(
     private val viewBinding: ItemEmojiBinding,

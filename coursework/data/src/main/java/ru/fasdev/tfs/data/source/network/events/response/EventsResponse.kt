@@ -7,7 +7,7 @@ import ru.fasdev.tfs.data.source.network.base.response.BaseResponse
 import ru.fasdev.tfs.data.source.network.events.model.Event
 
 @Serializable
-class EventsResponse (
+class EventsResponse(
     override val code: String? = null,
     override val msg: String,
     override val result: ZulipResult,

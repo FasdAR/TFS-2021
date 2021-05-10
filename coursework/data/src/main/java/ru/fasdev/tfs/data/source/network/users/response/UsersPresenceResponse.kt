@@ -11,4 +11,4 @@ class UsersPresenceResponse(
     override val msg: String,
     override val result: ZulipResult,
     val presence: Presence
-): BaseResponse
+) : BaseResponse

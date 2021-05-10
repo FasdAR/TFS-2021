@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "stream")
-class StreamDb (
+class StreamDb(
     @PrimaryKey val id: Long,
     val name: String,
     @ColumnInfo(name = "is_sub") val isSub: Boolean

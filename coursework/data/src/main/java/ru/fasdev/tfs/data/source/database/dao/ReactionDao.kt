@@ -10,13 +10,12 @@ import ru.fasdev.tfs.data.source.database.base.BaseDao
 import ru.fasdev.tfs.data.source.database.model.ReactionDb
 
 @Dao
-abstract class ReactionDao: BaseDao<ReactionDb>
-{
+abstract class ReactionDao : BaseDao<ReactionDb> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: ReactionDb) : Completable
+    abstract fun insertReplace(entity: ReactionDb): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: List<ReactionDb>) : Completable
+    abstract fun insertReplace(entity: List<ReactionDb>): Completable
 
     @Query("SELECT * FROM reaction WHERE id_message = :idMessage AND emoji_name = :emojiName")
     abstract fun getByReactionByKey(idMessage: Long, emojiName: String): Single<ReactionDb>

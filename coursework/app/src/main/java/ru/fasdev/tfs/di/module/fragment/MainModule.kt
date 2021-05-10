@@ -6,8 +6,7 @@ import ru.fasdev.tfs.di.scope.ContainerFragmentScope
 import ru.fasdev.tfs.screen.fragment.main.MainFragment
 
 @Module
-abstract class MainModule
-{
+abstract class MainModule {
     @ContainerFragmentScope
     @ContributesAndroidInjector(modules = [])
     abstract fun createFragment(): MainFragment

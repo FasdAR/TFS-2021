@@ -1,7 +1,7 @@
 package ru.fasdev.tfs.data.source.database.base.converter
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.util.Date
 
 class DateConverter {
     @TypeConverter

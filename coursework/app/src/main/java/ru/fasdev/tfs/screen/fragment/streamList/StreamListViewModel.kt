@@ -103,7 +103,8 @@ class StreamListViewModel @Inject constructor(
     }
 
     private fun sideActionSearchStreams(
-        actions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
     ): Observable<Action> {
         return actions
             .ofType(StreamListAction.Ui.SearchStreams::class.java)
@@ -126,7 +127,8 @@ class StreamListViewModel @Inject constructor(
     }
 
     private fun sideActionRemoveTopics(
-        actions: Observable<Action>, stateFlow: Observable<StreamListState>
+        actions: Observable<Action>,
+        stateFlow: Observable<StreamListState>
     ): Observable<Action> {
         return actions
             .ofType(StreamListAction.Ui.RemoveTopics::class.java)
@@ -150,7 +152,8 @@ class StreamListViewModel @Inject constructor(
     }
 
     private fun sideActionLoadTopics(
-        actions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
     ): Observable<Action> {
         return actions
             .ofType(StreamListAction.Ui.LoadTopics::class.java)
@@ -174,7 +177,8 @@ class StreamListViewModel @Inject constructor(
     }
 
     private fun sideActionLoadSubStreams(
-        actions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
     ): Observable<Action> {
         return actions
             .ofType(StreamListAction.Ui.LoadSubStreams.javaClass)
@@ -185,7 +189,8 @@ class StreamListViewModel @Inject constructor(
     }
 
     private fun sideActionLoadAllStreams(
-        actions: Observable<Action>, state: Observable<StreamListState>
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
     ): Observable<Action> {
         return actions
             .ofType(StreamListAction.Ui.LoadAllStreams.javaClass)

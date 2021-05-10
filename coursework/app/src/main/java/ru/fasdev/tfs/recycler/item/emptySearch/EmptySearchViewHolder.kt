@@ -5,8 +5,7 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.databinding.ItemEmptyResSearchBinding
 import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
 
-class EmptySearchViewHolder(val view: View): ViewHolder<EmptySearchItem>(view)
-{
+class EmptySearchViewHolder(val view: View) : ViewHolder<EmptySearchItem>(view) {
     private val binding = ItemEmptyResSearchBinding.bind(view)
 
     override fun bind(item: EmptySearchItem) {

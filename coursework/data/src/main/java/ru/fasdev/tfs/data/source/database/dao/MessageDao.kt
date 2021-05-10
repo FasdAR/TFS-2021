@@ -5,24 +5,22 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import ru.fasdev.tfs.data.source.database.base.BaseDao
 import ru.fasdev.tfs.data.source.database.model.MessageDb
 import ru.fasdev.tfs.data.source.database.relation.MessageRelation
 
 @Dao
-abstract class MessageDao : BaseDao<MessageDb>
-{
+abstract class MessageDao : BaseDao<MessageDb> {
     @Query("SELECT * FROM message WHERE topic = :topic AND id_stream = :idStream ORDER BY date DESC")
-    abstract fun getMessagesByTopicStream(topic: String, idStream: Long) : Single<List<MessageRelation>>
+    abstract fun getMessagesByTopicStream(topic: String, idStream: Long): Single<List<MessageRelation>>
 
     @Query("SELECT * FROM message WHERE id = :id")
-    abstract fun getMessageById(id: Long) : Single<MessageRelation>
+    abstract fun getMessageById(id: Long): Single<MessageRelation>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: MessageDb) : Completable
+    abstract fun insertReplace(entity: MessageDb): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertReplace(entity: List<MessageDb>) : Completable
+    abstract fun insertReplace(entity: List<MessageDb>): Completable
 }

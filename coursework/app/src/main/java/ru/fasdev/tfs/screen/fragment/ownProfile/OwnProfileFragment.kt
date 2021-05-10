@@ -19,11 +19,8 @@ import ru.fasdev.tfs.mviCore.entity.action.Action
 import ru.fasdev.tfs.screen.fragment.cardProfile.CardProfileFragment
 import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
 import ru.fasdev.tfs.screen.fragment.info.handleErrorState
-import ru.fasdev.tfs.screen.fragment.info.networkErrorState
-import ru.fasdev.tfs.screen.fragment.info.otherErrorState
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileAction
 import ru.fasdev.tfs.screen.fragment.ownProfile.mvi.OwnProfileState
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Action, OwnProfileState>, InfoPlaceholderFragment.Listener {
@@ -37,7 +34,7 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel: OwnProfileViewModel by viewModels{viewModelFactory}
+    private val viewModel: OwnProfileViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentOwnProfileBinding? = null
     private val binding get() = _binding!!
@@ -67,15 +64,13 @@ class OwnProfileFragment : Fragment(R.layout.fragment_own_profile), MviView<Acti
             binding.infoPlaceholder.isGone = false
 
             infoFragment.handleErrorState(state.error)
-        }
-        else {
+        } else {
             binding.infoPlaceholder.isGone = true
             binding.cardProfile.isGone = false
 
             if (state.isLoading) {
                 cardProfileFragment.startShimmer()
-            }
-            else {
+            } else {
                 cardProfileFragment.stopShimmer()
 
                 cardProfileFragment.apply {

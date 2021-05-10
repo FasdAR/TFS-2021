@@ -4,16 +4,20 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import ru.fasdev.tfs.data.mapper.*
+import ru.fasdev.tfs.data.mapper.toMessage
+import ru.fasdev.tfs.data.mapper.toMessageDb
+import ru.fasdev.tfs.data.mapper.toMessageDomain
+import ru.fasdev.tfs.data.mapper.toReactionDb
+import ru.fasdev.tfs.data.mapper.toUserDb
 import ru.fasdev.tfs.data.source.database.dao.MessageDao
 import ru.fasdev.tfs.data.source.database.dao.ReactionDao
 import ru.fasdev.tfs.data.source.database.dao.UserDao
-import ru.fasdev.tfs.data.source.network.base.model.ZulipResult
-import ru.fasdev.tfs.data.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.data.source.network.base.model.Narrow
+import ru.fasdev.tfs.data.source.network.base.model.ZulipResult
 import ru.fasdev.tfs.data.source.network.events.manager.EventsManager
 import ru.fasdev.tfs.data.source.network.events.model.EventType
 import ru.fasdev.tfs.data.source.network.events.model.Operation
+import ru.fasdev.tfs.data.source.network.messages.api.MessagesApi
 import ru.fasdev.tfs.domain.message.model.Message
 
 class MessagesRepositoryImpl(
@@ -146,8 +150,8 @@ class MessagesRepositoryImpl(
                                         reactionDao.insertReplace(it)
                                             .andThen(
                                                 messageDao.getMessageById(event.messageId)
-                                                .map { it.toMessageDomain() }
-                                                .toObservable()
+                                                    .map { it.toMessageDomain() }
+                                                    .toObservable()
                                             )
                                     }
                             }

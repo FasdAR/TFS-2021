@@ -11,8 +11,7 @@ import ru.fasdev.tfs.screen.fragment.chat.ChatFragment
 import ru.fasdev.tfs.screen.fragment.chat.ChatViewModel
 
 @Module
-abstract class ChatModule
-{
+abstract class ChatModule {
     @FragmentScope
     @ContributesAndroidInjector(modules = [])
     abstract fun createFragment(): ChatFragment

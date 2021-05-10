@@ -4,8 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class ZulipResult
-{
+enum class ZulipResult {
     @SerialName("success") SUCCESS,
     @SerialName("error") ERROR
 }
