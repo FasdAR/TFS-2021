@@ -79,18 +79,6 @@ class MessagesRepositoryImpl(
                     .andThen(Observable.just(it))
             }
 
-        if (isActualData) {
-            val dataBaseSource = messageDao.getMessagesByTopicStream(nameTopic, idStream)
-                .flatMapObservable {
-                    Observable.fromIterable(it)
-                        .map { it.toMessageDomain() }
-                        .toSortedList { item1, item2 -> item1.date.compareTo(item2.date) }
-                        .toObservable()
-                }
-
-            return dataBaseSource.concatWith(networkSource)
-        }
-
         return networkSource
     }
 
