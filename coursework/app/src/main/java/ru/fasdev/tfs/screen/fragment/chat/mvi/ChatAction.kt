@@ -11,8 +11,7 @@ sealed class ChatAction {
         class SendMessage(val textMessage: String) : Ui()
         class SelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
         class UnSelectedReaction(val idMessage: Long? = null, val emoji: String) : Ui()
-        class LoadStreamInfo(val idStream: Long) : Ui()
-        class LoadTopicInfo(val idTopic: Long) : Ui()
+        class LoadStreamInfo(val idStream: Long, val idTopic: Long) : Ui()
         class OpenEmojiDialog(val idMessage: Long?) : Ui()
     }
 
@@ -24,7 +23,6 @@ sealed class ChatAction {
         class LoadedPage(val items: List<ViewType>, val direction: DirectionScroll): Internal()
         class LoadedError(val error: Throwable): Internal()
         class UpdateMessage(val item: ViewType) : Internal()
-        class LoadedStreamName(val streamName: String) : Internal()
-        class LoadedTopicName(val topicName: String) : Internal()
+        class LoadedStreamInfo(val streamName: String, val topicName: String) : Internal()
     }
 }

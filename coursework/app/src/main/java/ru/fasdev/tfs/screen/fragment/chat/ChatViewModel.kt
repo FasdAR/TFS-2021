@@ -48,8 +48,7 @@ class ChatViewModel : ViewModel() {
     private val store: Store<Action, ChatState> = Store(
         initialState = ChatState(),
         reducer = ::reducer,
-        middlewares = listOf(::sideActionLoadStreamName,
-            ::sideActionLoadTopicName, ::sideActionLoadNextPage, ::sideActionSendMessage)
+        middlewares = listOf(::sideActionLoadStreamInfo, ::sideActionLoadNextPage, ::sideActionSendMessage)
     )
 
     private val uiEffects: ReplayRelay<ChatUiEffect> = ReplayRelay.create()
@@ -82,8 +81,7 @@ class ChatViewModel : ViewModel() {
 
     private fun reducer(state: ChatState, action: Action): ChatState {
         return when (action) {
-            is ChatAction.Internal.LoadedStreamName -> state.copy(streamName = action.streamName)
-            is ChatAction.Internal.LoadedTopicName -> state.copy(topicName = action.topicName)
+            is ChatAction.Internal.LoadedStreamInfo -> state.copy(streamName = action.streamName, topicName = action.topicName)
             is ChatAction.Internal.LoadedError -> state.copy(isLoading = false, error = action.error)
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
             is ChatAction.Internal.UpdateMessage -> {
@@ -120,7 +118,7 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    private fun sideActionLoadStreamName(
+    private fun sideActionLoadStreamInfo(
         actions: Observable<Action>,
         state: Observable<ChatState>
     ) : Observable<Action> {
@@ -128,24 +126,18 @@ class ChatViewModel : ViewModel() {
             .ofType(ChatAction.Ui.LoadStreamInfo::class.java)
             .observeOn(Schedulers.io())
             .flatMap { action ->
-                ChatComponent.streamsRepository.getStreamById(action.idStream)
-                    .toObservable()
-                    .map<ChatAction.Internal> { ChatAction.Internal.LoadedStreamName(it.name) }
-                    .onErrorReturn { ChatAction.Internal.LoadedError(it) }
-            }
-    }
+                val streamSource = ChatComponent.streamsRepository.getStreamById(action.idStream)
+                val topicSource = ChatComponent.streamsRepository.getTopicById(action.idTopic)
 
-    private fun sideActionLoadTopicName(
-        actions: Observable<Action>,
-        state: Observable<ChatState>
-    ) : Observable<Action> {
-        return actions
-            .ofType(ChatAction.Ui.LoadTopicInfo::class.java)
-            .observeOn(Schedulers.io())
-            .flatMap { action ->
-                ChatComponent.streamsRepository.getTopicById(action.idTopic)
+                streamSource
+                    .zipWith(topicSource) { stream, topic -> stream.name to topic.name }
                     .toObservable()
-                    .map<ChatAction.Internal> { ChatAction.Internal.LoadedTopicName(it.name) }
+                    .flatMap {
+                        Observable.just(
+                            ChatAction.Internal.LoadedStreamInfo(it.first, it.second),
+                            ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP)
+                        )
+                    }
                     .onErrorReturn { ChatAction.Internal.LoadedError(it) }
             }
     }

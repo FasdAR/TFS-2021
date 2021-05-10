@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxrelay2.ReplayRelay
-import io.reactivex.android.schedulers.AndroidSchedulers
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.doOnApplyWindowsInsets
 import ru.fasdev.tfs.core.ext.getColorCompat
@@ -133,12 +132,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
         viewModel.bind(this)
         viewModel.bind(::renderSideEffect)
 
-        actions.accept(ChatAction.Ui.LoadStreamInfo(idStream))
-        actions.accept(ChatAction.Ui.LoadTopicInfo(idTopic))
-
-        binding.root.postDelayed(1000L) {
-            actions.accept(ChatAction.Ui.LoadPageMessages(null, DirectionScroll.UP))
-        }
+        actions.accept(ChatAction.Ui.LoadStreamInfo(idStream, idTopic))
     }
 
     private fun initListenerScroll() {
