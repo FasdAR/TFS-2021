@@ -93,19 +93,7 @@ class ChatViewModel : ViewModel() {
             is ChatAction.Internal.LoadedError -> state.copy(isLoading = false, error = action.error)
             is ChatAction.Internal.LoadingPage -> state.copy(isLoading = true, error = null)
             is ChatAction.Internal.UpdateMessages -> {
-                val items = state.items.toMutableList()
-                val newItems = action.items
-
-                newItems.forEach { item ->
-                    val indexMessage = items.indexOfFirst { it is MessageItem && it.uId == item.uId }
-                    if (indexMessage != -1) {
-                        items[indexMessage] = item
-                    } else {
-                        items.add(item)
-                    }
-                }
-
-                state.copy(items = items)
+                state.copy(items = action.items)
             }
             is ChatAction.Internal.LoadedPage -> {
                 val isUpScroll = action.direction == DirectionScroll.UP
@@ -132,7 +120,7 @@ class ChatViewModel : ViewModel() {
 
     private fun sideActionListenUpdateMessage(
         actions: Observable<Action>,
-        state: Observable<ChatState>
+        stateFlow: Observable<ChatState>
     ) : Observable<Action> {
         return actions
             .ofType(ChatAction.Internal.StartListenMessage::class.java)
@@ -147,6 +135,20 @@ class ChatViewModel : ViewModel() {
                             }
                             .toList()
                             .toObservable()
+                    }
+                    .withLatestFrom(stateFlow) { updateItems, state ->
+                        val items = state.items.toMutableList()
+                        updateItems.forEach { item ->
+                            val indexMessage = items.indexOfFirst { it is MessageItem && it.uId == item.uId }
+
+                            if (indexMessage != -1) {
+                                items[indexMessage] = item
+                            } else {
+                                items.add(0, item)
+                            }
+                        }
+
+                        return@withLatestFrom items
                     }
                     .map<ChatAction.Internal> { ChatAction.Internal.UpdateMessages(it) }
                     .onErrorReturn { ChatAction.Internal.SendedError(it) }

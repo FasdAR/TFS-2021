@@ -29,6 +29,6 @@ sealed class ChatAction {
         class LoadedStreamInfo(val streamName: String, val topicName: String) : Internal()
 
         class StartListenMessage(val streamName: String, val topicName: String): Internal()
-        class UpdateMessages(val items: List<MessageItem>) : Internal()
+        class UpdateMessages(val items: List<ViewType>) : Internal()
     }
 }
