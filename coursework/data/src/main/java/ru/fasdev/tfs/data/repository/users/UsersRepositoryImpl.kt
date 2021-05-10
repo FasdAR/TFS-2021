@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class UsersRepositoryImpl(private val userApi: UsersApi) : UsersRepository {
     private companion object {
-        const val DELAY_QUERY = 10L
+        const val DELAY_QUERY = 20L
     }
 
     //Временный кэш списка всех пользователей

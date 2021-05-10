@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -102,6 +103,8 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         binding.toolbarLayout.root.setSystemInsetsInTop()
         view.doOnApplyWindowsInsets { insetView, windowInsets, initialPadding ->
@@ -229,6 +232,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat),
 
     override fun onDestroy() {
         super.onDestroy()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         _binding = null
         viewModel.unBind()
     }
