@@ -3,6 +3,16 @@
     <style name="Widget"/>
     <style name="Widget.TFS"/>
 
+    <style name="Widget.TFS.Button.Main" parent="Widget.TFS.Button.UnelevatedButton">
+        <item name="android:textSize">28sp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:paddingRight">56dp</item>
+        <item name="android:paddingLeft">56dp</item>
+        <item name="android:backgroundTint">@color/grey_930</item>
+        <item name="cornerRadius">31dp</item>
+    </style>
+
     <style name="Widget.TFS.ReactionView">
         <item name="android:paddingLeft">9dp</item>
         <item name="android:paddingRight">9dp</item>

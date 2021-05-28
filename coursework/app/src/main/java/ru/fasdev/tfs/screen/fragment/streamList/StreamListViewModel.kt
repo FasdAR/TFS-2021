@@ -1,176 +1,218 @@
 package ru.fasdev.tfs.screen.fragment.streamList
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.freeletics.rxredux.StateAccessor
-import com.freeletics.rxredux.reduxStore
-import com.jakewharton.rxrelay2.PublishRelay
-import com.jakewharton.rxrelay2.Relay
-import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Observable.fromIterable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import ru.fasdev.tfs.TfsApp
-import ru.fasdev.tfs.data.mapper.toStreamUi
-import ru.fasdev.tfs.data.mapper.toTopicUi
-import ru.fasdev.tfs.di.module.StreamDomainModule
-import ru.fasdev.tfs.domain.stream.interactor.StreamInteractor
+import ru.fasdev.tfs.data.mapper.toStreamItem
+import ru.fasdev.tfs.data.mapper.toTopicItem
+import ru.fasdev.tfs.data.repository.streams.StreamsRepository
 import ru.fasdev.tfs.domain.stream.model.Stream
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.Store
+import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.item.emptySearch.EmptySearchItem
+import ru.fasdev.tfs.recycler.item.stream.StreamItem
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListAction
 import ru.fasdev.tfs.screen.fragment.streamList.mvi.StreamListState
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.StreamUi
-import ru.fasdev.tfs.view.MviView
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class StreamListViewModel : ViewModel() {
-    object StreamComponent {
-        val streamRepo = StreamDomainModule.getStreamRepo(
-            TfsApp.AppComponent.streamApi,
-            TfsApp.AppComponent.streamDao,
-            TfsApp.AppComponent.topicDao
-        )
-        val streamInteractor = StreamDomainModule.getStreamInteractor(streamRepo)
+class StreamListViewModel @Inject constructor(
+    private val streamsRepository: StreamsRepository
+) : ViewModel() {
+    private companion object {
+        const val OFFSET_ARRAY = 1
+        const val NULL_INDEX = -1
+        const val SEARCH_TIME_OUT = 500L
     }
 
-    private val streamInteractor: StreamInteractor = StreamComponent.streamInteractor
-
-    private val compositeDisposable = CompositeDisposable()
-    private val inputRelay: Relay<StreamListAction> = PublishRelay.create()
-    val input: Consumer<StreamListAction> get() = inputRelay
-
-    val store = inputRelay.reduxStore(
+    private val store: Store<Action, StreamListState> = Store(
         initialState = StreamListState(),
-        sideEffects = listOf(::loadAllStreamsSideEffect, ::searchSideEffect, ::loadTopicsSideEffect),
-        reducer = ::reducer
+        reducer = ::reducer,
+        middlewares = listOf(
+            ::sideActionLoadAllStreams, ::sideActionLoadSubStreams,
+            ::sideActionLoadTopics, ::sideActionRemoveTopics, ::sideActionSearchStreams
+        )
     )
 
-    fun attachView(mviView: MviView<StreamListState>) {
-        compositeDisposable += store.subscribe { mviView.render(it) }
-    }
+    private val wiring = store.wire()
+    private var viewBinding: Disposable = Disposables.empty()
 
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.clear()
+        wiring.dispose()
     }
 
-    fun reducer(state: StreamListState, action: StreamListAction): StreamListState {
+    fun bind(view: MviView<Action, StreamListState>) {
+        viewBinding = store.bind(view)
+    }
+
+    fun unBind() {
+        viewBinding.dispose()
+    }
+
+    private fun reducer(state: StreamListState, action: Action): StreamListState {
         return when (action) {
-            is StreamListAction.ErrorLoading -> state.copy(isLoading = false, error = action.error)
-            is StreamListAction.LoadData -> state.copy(isLoading = true, error = null)
-            is StreamListAction.LoadedArray -> state.copy(isLoading = false, error = null, itemsList = action.streams)
+            is StreamListAction.Internal.LoadedError -> {
+                return if (state.items.isEmpty()) {
+                    state.copy(isLoading = false, error = action.error)
+                } else {
+                    state
+                }
+            }
+            is StreamListAction.Internal.LoadingStreams -> state.copy(
+                isLoading = true,
+                error = null
+            )
+            is StreamListAction.Internal.LoadedStreams -> state.copy(
+                isLoading = false,
+                error = null,
+                items = action.streams
+            )
+            is StreamListAction.Internal.LoadedTopics -> state.copy(
+                error = null,
+                items = state.items
+                    .toMutableList()
+                    .apply { removeAll(action.topics) } // Для предотвращения дубликатов
+                    .flatMap { item ->
+                        if (item is StreamItem && item.uId.toLong() == action.idStream) {
+                            return@flatMap listOf(item.copy(isOpen = true)) + action.topics
+                        }
+
+                        return@flatMap listOf(item)
+                    }
+            )
+            is StreamListAction.Internal.RemoveTopics -> state.copy(
+                error = null,
+                items = state.items
+                    .map { item ->
+                        if (item is StreamItem && item.uId.toLong() == action.idStream) {
+                            return@map item.copy(isOpen = false)
+                        } else {
+                            return@map item
+                        }
+                    }
+                    .toMutableList()
+                    .apply { removeAll(action.topics) }
+            )
             else -> state
         }
     }
 
-    private fun Flowable<List<Stream>>.mapToDomain(): Flowable<List<StreamUi>> {
-        return concatMap {
-            Flowable.fromIterable(it)
-                .map { it.toStreamUi() }
+    private fun sideActionSearchStreams(
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
+    ): Observable<Action> {
+        return actions
+            .ofType(StreamListAction.Ui.SearchStreams::class.java)
+            .debounce(SEARCH_TIME_OUT, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .observeOn(Schedulers.io())
+            .switchMap { action ->
+                streamsRepository.searchQuery(action.query, action.isAmongSubs)
+                    .toObservable()
+                    .flatMap {
+                        Observable.fromIterable(it)
+                            .map<ViewType> { it.toStreamItem() }
+                            .switchIfEmpty(Observable.just(EmptySearchItem(uId = -1)))
+                            .toList()
+                            .toObservable()
+                    }
+                    .map<StreamListAction.Internal> { StreamListAction.Internal.LoadedStreams(it) }
+                    .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
+            }
+    }
+
+    private fun sideActionRemoveTopics(
+        actions: Observable<Action>,
+        stateFlow: Observable<StreamListState>
+    ): Observable<Action> {
+        return actions
+            .ofType(StreamListAction.Ui.RemoveTopics::class.java)
+            .withLatestFrom(stateFlow) { action, state ->
+                val items = state.items
+
+                val startIndex =
+                    items.indexOfFirst { it is StreamItem && it.uId.toLong() == action.idStream }
+
+                val subItems = items.subList(startIndex + OFFSET_ARRAY, items.size)
+                var endIndex = subItems.indexOfFirst { it is StreamItem }
+                if (endIndex == NULL_INDEX) endIndex = subItems.size
+
+                val topics = subItems.subList(0, endIndex)
+
+                return@withLatestFrom StreamListAction.Internal.RemoveTopics(
+                    action.idStream,
+                    topics
+                )
+            }
+    }
+
+    private fun sideActionLoadTopics(
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
+    ): Observable<Action> {
+        return actions
+            .ofType(StreamListAction.Ui.LoadTopics::class.java)
+            .observeOn(Schedulers.io())
+            .flatMap { action ->
+                streamsRepository.getOwnTopics(action.idStream)
+                    .flatMap {
+                        Observable.fromIterable(it)
+                            .map { it.toTopicItem(action.idStream) }
+                            .toList()
+                            .toObservable()
+                    }
+                    .map<StreamListAction.Internal> {
+                        StreamListAction.Internal.LoadedTopics(
+                            action.idStream,
+                            it
+                        )
+                    }
+                    .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
+            }
+    }
+
+    private fun sideActionLoadSubStreams(
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
+    ): Observable<Action> {
+        return actions
+            .ofType(StreamListAction.Ui.LoadSubStreams.javaClass)
+            .observeOn(Schedulers.io())
+            .flatMap { _ ->
+                streamsRepository.getOwnSubsStreams().loadStreams()
+            }
+    }
+
+    private fun sideActionLoadAllStreams(
+        actions: Observable<Action>,
+        state: Observable<StreamListState>
+    ): Observable<Action> {
+        return actions
+            .ofType(StreamListAction.Ui.LoadAllStreams.javaClass)
+            .observeOn(Schedulers.io())
+            .flatMap { _ ->
+                streamsRepository.getAllStreams().loadStreams()
+            }
+    }
+
+    private fun Observable<List<Stream>>.mapToStreamItem(): Observable<List<ViewType>> {
+        return flatMap {
+            Observable.fromIterable(it)
+                .map { it.toStreamItem() }
                 .toList()
-                .flatMapPublisher { Flowable.just(it) }
+                .toObservable()
         }
     }
 
-    private fun getStreamSource(mode: Int): Flowable<List<Stream>> {
-        return if (mode == StreamListFragment.ALL_MODE) streamInteractor.getAllStreams()
-        else streamInteractor.getSubStreams()
-    }
-
-    private fun loadAllStreamsSideEffect(
-        action: Observable<StreamListAction>,
-        state: StateAccessor<StreamListState>
-    ): Observable<StreamListAction> {
-        return action
-            .ofType(StreamListAction.SideEffectLoadAllStreams::class.java)
-            .switchMap {
-                getStreamSource(it.mode)
-                    .subscribeOn(Schedulers.io())
-                    .mapToDomain()
-                    .map {
-                        StreamListAction.LoadedArray(it)
-                    }
-                    .map { it as StreamListAction }
-                    .toObservable()
-                    .onErrorReturn { error -> StreamListAction.ErrorLoading(error) }
-                    .startWith(StreamListAction.LoadData)
-            }
-    }
-
-    private fun searchSideEffect(
-        action: Observable<StreamListAction>,
-        state: StateAccessor<StreamListState>
-    ): Observable<StreamListAction> {
-        return action
-            .ofType(StreamListAction.SideEffectSearchStreams::class.java)
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .distinctUntilChanged()
-            .switchMap {
-                val isSub = it.mode == StreamListFragment.SUBSCRIBED_MODE
-                streamInteractor
-                    .searchStream(it.query.trim().toLowerCase(), isSub)
-                    .subscribeOn(Schedulers.io())
-                    .flatMapObservable(::fromIterable)
-                    .map { it.toStreamUi() }
-                    .toList()
-                    .map {
-                        StreamListAction.LoadedArray(it)
-                    }
-                    .map { it as StreamListAction }
-                    .toObservable()
-                    .onErrorReturn { error -> StreamListAction.ErrorLoading(error) }
-                    .startWith(StreamListAction.LoadData)
-            }
-    }
-
-    private fun loadTopicsSideEffect(
-        action: Observable<StreamListAction>,
-        state: StateAccessor<StreamListState>
-    ): Observable<StreamListAction> {
-        return action
-            .ofType(StreamListAction.SideEffectLoadTopics::class.java)
-            .switchMap { action ->
-                val state = state()
-                val selectedStream =
-                    state.itemsList.filter { it is StreamUi }.map { it as StreamUi }
-                        .findLast { it.uId == action.idStream }
-                streamInteractor.getAllTopics(action.idStream.toLong())
-                    .subscribeOn(Schedulers.io())
-                    .concatMap {
-                        Flowable.fromIterable(it)
-                            .map {
-                                it.toTopicUi(selectedStream?.nameTopic.toString())
-                            }
-                            .toList()
-                            .map { topics ->
-                                val currentArray = state.itemsList.toMutableList()
-                                Log.d("CURRENT_STATE", state.toString())
-
-                                val currentStreamIndex =
-                                    currentArray.indexOfFirst { it.uId == action.idStream && it is StreamUi }
-                                val stream = currentArray[currentStreamIndex] as StreamUi
-                                currentArray[currentStreamIndex] =
-                                    stream.copy(isOpen = action.opened)
-
-                                currentArray.removeAll(topics)
-
-                                if (action.opened) {
-                                    currentArray.addAll(currentStreamIndex + 1, topics)
-                                }
-
-                                return@map currentArray
-                            }
-                            .flatMapPublisher { Flowable.just(it) }
-                    }
-                    .map {
-                        StreamListAction.LoadedArray(it)
-                    }
-                    .map { it as StreamListAction }
-                    .toObservable()
-                    .onErrorReturn { error -> StreamListAction.ErrorLoading(error) }
-                    .startWith(StreamListAction.LoadData)
-            }
+    private fun Observable<List<Stream>>.loadStreams(): Observable<StreamListAction.Internal> {
+        return mapToStreamItem()
+            .map<StreamListAction.Internal> { StreamListAction.Internal.LoadedStreams(it) }
+            .onErrorReturn { StreamListAction.Internal.LoadedError(it) }
+            .startWith(StreamListAction.Internal.LoadingStreams)
     }
 }

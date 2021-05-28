@@ -14,15 +14,13 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables.empty
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import ru.fasdev.tfs.R
-import ru.fasdev.tfs.data.mapper.Emoji
+import ru.fasdev.tfs.data.source.network.emoji.EmojiList
 import ru.fasdev.tfs.databinding.BottomDialogSelectEmojiBinding
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.EmojiHolderFactory
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewHolder.EmojiViewHolder
 import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
@@ -79,7 +77,7 @@ class SelectEmojiBottomDialog : BottomSheetDialogFragment(), EmojiViewHolder.OnS
 
     // #region Rx chains
     private fun loadEmoji() {
-        disposeEmojiLoad += Single.just(Emoji.values())
+        disposeEmojiLoad += Single.just(EmojiList.values())
             .flatMapObservable { Observable.fromIterable(it.withIndex()) }
             .map { EmojiUi(it.index, it.value.unicode, it.value.nameInZulip) }
             .toList()

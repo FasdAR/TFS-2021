@@ -1,6 +1,13 @@
 package ru.fasdev.tfs.data.mapper
 
 import ru.fasdev.tfs.domain.stream.model.Topic
-import ru.fasdev.tfs.screen.fragment.streamList.recycler.viewType.TopicUi
+import ru.fasdev.tfs.recycler.item.topic.TopicItem
 
-fun Topic.toTopicUi(streamName: String) = TopicUi(this.id.toInt(), streamName, name, 0)
+fun Topic.toTopicItem(idStream: Long): TopicItem {
+    return TopicItem(
+        uId = id.toInt(),
+        idStream = idStream,
+        nameTopic = name,
+        messageCount = lastMessageCount
+    )
+}

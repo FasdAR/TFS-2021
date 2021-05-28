@@ -13,8 +13,8 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.getHeightMeasuredMargin
 import ru.fasdev.tfs.core.ext.getWidthMeasuredMargin
 import ru.fasdev.tfs.core.ext.layout
-import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
 import ru.fasdev.tfs.databinding.ViewExternalMessageBinding
+import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
 
 class ExternalMessageView @JvmOverloads constructor(
     context: Context,
@@ -175,9 +175,9 @@ class ExternalMessageView @JvmOverloads constructor(
             if (avatarSrc.isDigitsOnly()) {
                 avatarImageView.setImageResource(avatarSrc.toInt())
             } else {
-               avatarImageView.load(avatarSrc) {
-                   crossfade(true)
-               }
+                avatarImageView.load(avatarSrc) {
+                    crossfade(true)
+                }
             }
         }
     }

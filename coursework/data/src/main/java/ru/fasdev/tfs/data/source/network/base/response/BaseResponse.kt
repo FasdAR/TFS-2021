@@ -1,16 +1,9 @@
 package ru.fasdev.tfs.data.source.network.base.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import ru.fasdev.tfs.data.source.network.base.model.ZulipResult
 
 interface BaseResponse {
     val code: String?
     val msg: String
-    val result: Result
-}
-
-@Serializable
-enum class Result {
-    @SerialName("success") SUCCESS,
-    @SerialName("error") ERROR
+    val result: ZulipResult
 }

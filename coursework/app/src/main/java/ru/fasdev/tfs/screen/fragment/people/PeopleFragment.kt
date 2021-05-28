@@ -1,15 +1,18 @@
 package ru.fasdev.tfs.screen.fragment.people
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxrelay2.PublishRelay
+import dagger.android.support.AndroidSupportInjection
 import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.setSystemInsetsInTop
 import ru.fasdev.tfs.databinding.FragmentPeopleBinding
@@ -17,25 +20,39 @@ import ru.fasdev.tfs.di.provide.ProvideFragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentRouter
 import ru.fasdev.tfs.fragmentRouter.FragmentScreen
 import ru.fasdev.tfs.fragmentRouter.OnBackPressedListener
-import ru.fasdev.tfs.recycler.adapter.RecyclerAdapter
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
+import ru.fasdev.tfs.mviCore.MviView
+import ru.fasdev.tfs.mviCore.entity.action.Action
+import ru.fasdev.tfs.recycler.base.adapter.RecyclerAdapter
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.item.user.UserViewHolder
+import ru.fasdev.tfs.screen.fragment.anotherProfile.AnotherProfileFragment
+import ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment
+import ru.fasdev.tfs.screen.fragment.info.emptyListState
+import ru.fasdev.tfs.screen.fragment.info.handleErrorState
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleAction
 import ru.fasdev.tfs.screen.fragment.people.mvi.PeopleState
 import ru.fasdev.tfs.screen.fragment.people.recycler.PeopleHolderFactory
-import ru.fasdev.tfs.screen.fragment.people.recycler.viewHolder.UserViewHolder
-import ru.fasdev.tfs.screen.fragment.profileAnother.ProfileAnotherFragment
-import ru.fasdev.tfs.view.MviView
 import ru.fasdev.tfs.view.searchToolbar.SearchToolbar
+import javax.inject.Inject
 
-class PeopleFragment : Fragment(R.layout.fragment_people),
+class PeopleFragment :
+    Fragment(R.layout.fragment_people),
     UserViewHolder.OnClickUserListener,
-    OnBackPressedListener, MviView<PeopleState> {
+    OnBackPressedListener,
+    MviView<Action, PeopleState>,
+    InfoPlaceholderFragment.Listener {
 
     companion object {
-        val TAG: String = PeopleFragment::class.java.simpleName
-        fun newInstance(): PeopleFragment = PeopleFragment()
+        private val TAG: String = PeopleFragment::class.java.simpleName
+        private fun newInstance(): PeopleFragment = PeopleFragment()
         fun getScreen() = FragmentScreen(TAG, newInstance())
     }
+
+    override val actions: PublishRelay<Action> = PublishRelay.create()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: PeopleViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentPeopleBinding? = null
     private val binding get() = _binding!!
@@ -46,7 +63,12 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
     private val holderFactory by lazy { PeopleHolderFactory(this) }
     private val adapter by lazy { RecyclerAdapter<ViewType>(holderFactory) }
 
-    private val viewModel: PeopleViewModel by viewModels()
+    private val infoFragment get() = childFragmentManager.findFragmentById(R.id.info_placeholder) as InfoPlaceholderFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,26 +96,32 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
             setSystemInsetsInTop()
             binding.searchLayout.attachToolbar = binding.toolbarLayout.root
             textChangeListener = SearchToolbar.TextChangeListener { query ->
-                viewModel.input.accept(
-                    PeopleAction.SideEffectSearchUsers(query)
-                )
+                actions.accept(PeopleAction.Ui.SearchUsers(query))
             }
         }
 
-        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvUsers.adapter = adapter
+        binding.usersRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.usersRv.adapter = adapter
 
-        viewModel.attachView(this)
-        viewModel.input.accept(PeopleAction.SideEffectLoadUsers)
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            if (binding.searchLayout.isSearch) {
+                actions.accept(PeopleAction.Ui.SearchUsers(binding.searchLayout.text))
+            } else {
+                actions.accept(PeopleAction.Ui.LoadUsers)
+            }
+        }
+
+        viewModel.bind(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        viewModel.unBind()
     }
 
     override fun onClickUser(idUser: Int, email: String) {
-        rootRouter.navigateTo(ProfileAnotherFragment.getScreen(idUser.toLong()))
+        rootRouter.navigateTo(AnotherProfileFragment.getScreen(idUser.toLong()))
         binding.searchLayout.hideKeyboard()
     }
 
@@ -106,23 +134,35 @@ class PeopleFragment : Fragment(R.layout.fragment_people),
         return false
     }
 
-    fun onError(throwable: Throwable) {
-        Snackbar.make(binding.root, throwable.message.toString(), Snackbar.LENGTH_LONG).show()
-    }
-
     override fun render(state: PeopleState) {
-        when {
-            state.error != null -> {
-                onError(state.error)
-            }
-            state.isLoading -> {
-                //TODO: В курсовой добавлю шиммер
-                Log.d("IS_LOADING", "LOADING")
-            }
-            else -> {
-                adapter.items = state.users
+        binding.swipeRefreshLayout.isRefreshing = state.isLoading
+        adapter.items = state.users ?: emptyList()
+
+        if (state.error != null) {
+            binding.usersRv.isGone = true
+            binding.infoPlaceholder.isGone = false
+
+            infoFragment.handleErrorState(state.error)
+        } else {
+            if (state.isLoading) {
+                binding.infoPlaceholder.isGone = true
+            } else {
+                if (!state.users.isNullOrEmpty()) {
+                    binding.infoPlaceholder.isGone = true
+                    binding.usersRv.isGone = false
+                } else {
+                    binding.usersRv.isGone = true
+                    binding.infoPlaceholder.isGone = false
+
+                    infoFragment.emptyListState(resources.getString(R.string.empty_users_list))
+                }
             }
         }
     }
-    // #endregion
+
+    override fun onBtnClickInfoPlaceholder(buttonType: InfoPlaceholderFragment.ButtonType) {
+        when (buttonType) {
+            InfoPlaceholderFragment.ButtonType.POSITIVE -> actions.accept(PeopleAction.Ui.LoadUsers)
+        }
+    }
 }

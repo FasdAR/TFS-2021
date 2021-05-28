@@ -1,14 +1,14 @@
 package ru.fasdev.tfs.screen.fragment.chat.recycler.diff
 
 import android.os.Bundle
-import ru.fasdev.tfs.recycler.diff.ItemCallback
-import ru.fasdev.tfs.recycler.viewHolder.ViewType
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewHolder.MessageViewHolder.Companion.KEY_PAYLOADS_REACTIONS
-import ru.fasdev.tfs.screen.fragment.chat.recycler.viewType.MessageUi
+import ru.fasdev.tfs.recycler.base.diff.ItemCallback
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewType
+import ru.fasdev.tfs.recycler.item.message.MessageItem
+import ru.fasdev.tfs.recycler.item.message.MessageViewHolder.Companion.KEY_PAYLOADS_REACTIONS
 
 class ChatItemCallback<T : ViewType> : ItemCallback<T>() {
     override fun getChangePayload(oldItem: T, newItem: T): Any? {
-        if (oldItem is MessageUi && newItem is MessageUi) {
+        if (oldItem is MessageItem && newItem is MessageItem) {
             val diffBundle = Bundle()
 
             if (oldItem.reactions != newItem.reactions) {

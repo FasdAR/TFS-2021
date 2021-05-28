@@ -1,8 +1,8 @@
 package ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewHolder
 
-import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 import ru.fasdev.tfs.databinding.ItemEmojiBinding
-import ru.fasdev.tfs.recycler.viewHolder.ViewHolder
+import ru.fasdev.tfs.recycler.base.viewHolder.ViewHolder
+import ru.fasdev.tfs.screen.bottomDialog.selectedEmoji.adapter.viewType.EmojiUi
 
 class EmojiViewHolder(
     private val viewBinding: ItemEmojiBinding,
@@ -16,7 +16,7 @@ class EmojiViewHolder(
     override fun bind(item: EmojiUi) {
         viewBinding.root.text = item.emoji
         viewBinding.root.setOnClickListener {
-            onSelectedListener?.onSelectedEmoji(item.emoji)
+            onSelectedListener?.onSelectedEmoji(item.emojiName)
         }
     }
 }

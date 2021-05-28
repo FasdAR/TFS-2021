@@ -42,37 +42,52 @@
         android:clipToPadding="false"
         tools:listitem="@layout/item_external_message"
         app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintBottom_toTopOf="@id/msg_text"/>
+        app:layout_constraintBottom_toTopOf="@id/msg_layout"/>
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_width="0dp"
-        android:layout_height="51dp"
-        android:id="@+id/msg_text"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="5dp"
-        android:hint="@string/to_write"
-        android:textSize="20sp"
-        android:textColor="@color/grey_400"
-        android:textColorHint="@color/grey_400"
-        android:paddingLeft="21dp"
-        android:paddingRight="21dp"
-        android:background="@drawable/sh_msg_edit"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/send_btn"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/info_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:name="ru.fasdev.tfs.screen.fragment.info.InfoPlaceholderFragment"
+        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintBottom_toTopOf="@id/msg_layout"/>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.TFS.Button.UnelevatedButton.IconOnly.Circle"
-        android:layout_width="39dp"
-        android:layout_height="39dp"
-        android:id="@+id/send_btn"
-        android:layout_marginEnd="15dp"
-        app:iconSize="24dp"
-        app:icon="@drawable/ic_add"
-        app:iconTint="?android:windowBackground"
-        app:layout_constraintTop_toTopOf="@id/msg_text"
-        app:layout_constraintBottom_toBottomOf="@id/msg_text"
-        app:layout_constraintRight_toRightOf="parent"/>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/msg_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_910"
+        android:paddingTop="6dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/msg_edt"
+            android:layout_width="0dp"
+            android:layout_height="51dp"
+            android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:hint="@string/to_write"
+            android:textSize="20sp"
+            android:textColor="@color/grey_400"
+            android:textColorHint="@color/grey_400"
+            android:paddingLeft="21dp"
+            android:paddingRight="21dp"
+            android:background="@drawable/sh_msg_edit" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.TFS.Button.UnelevatedButton.IconOnly.Circle"
+            android:layout_width="39dp"
+            android:layout_height="39dp"
+            android:id="@+id/send_btn"
+            android:layout_gravity="center_vertical"
+            app:iconSize="24dp"
+            app:icon="@drawable/ic_add"
+            app:iconTint="?android:windowBackground"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

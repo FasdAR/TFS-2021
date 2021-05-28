@@ -1,37 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:animateLayoutChanges="true">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/avatar"
-        android:layout_width="185dp"
-        android:layout_height="185dp"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TFS.Rectangle"
-        tools:src="@tools:sample/avatars" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/full_name"
-        android:layout_width="wrap_content"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_layer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="32sp"
-        android:textColor="@color/white"
-        app:fontFamily="@font/inter_medium"
-        tools:text="Darrell Steward"/>
+        android:visibility="gone"
+        app:shimmer_colored="true"
+        app:shimmer_base_color="@color/grey_910"
+        app:shimmer_base_alpha="1"
+        app:shimmer_highlight_color="@color/grey_900">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
-    <TextView
-        android:id="@+id/online_status"
-        android:layout_width="wrap_content"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="185dp"
+                android:layout_height="185dp"
+                android:background="@drawable/sh_shimmer"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TFS.Rectangle" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="32sp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/sh_shimmer"/>
+
+            <View
+                android:layout_width="46dp"
+                android:layout_height="16sp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sh_shimmer"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/data_layer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/green_500"
-        android:textSize="16sp"
-        tools:text="online"/>
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
-</LinearLayout>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avatar"
+            android:layout_width="185dp"
+            android:layout_height="185dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TFS.Rectangle"
+            tools:src="@tools:sample/avatars" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="32sp"
+            android:textColor="@color/white"
+            app:fontFamily="@font/inter_medium"
+            tools:text="Darrell Steward"/>
+
+        <TextView
+            android:id="@+id/online_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/green_500"
+            android:textSize="16sp"
+            tools:text="online"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</FrameLayout>

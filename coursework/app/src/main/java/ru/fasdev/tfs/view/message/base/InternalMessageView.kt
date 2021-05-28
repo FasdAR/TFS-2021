@@ -10,8 +10,8 @@ import ru.fasdev.tfs.R
 import ru.fasdev.tfs.core.ext.getHeightMeasuredMargin
 import ru.fasdev.tfs.core.ext.getWidthMeasuredMargin
 import ru.fasdev.tfs.core.ext.layout
-import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
 import ru.fasdev.tfs.databinding.ViewInternalMessageBinding
+import ru.fasdev.tfs.view.flexBox.FlexBoxLayout
 
 class InternalMessageView @JvmOverloads constructor(
     context: Context,
